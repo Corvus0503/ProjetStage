@@ -1,6 +1,12 @@
 import React from "react";
 import { useState } from "react";
 import "./styles/login.css"
+import IconButton from "@material-ui/core/IconButton";
+import InputLabel from "@material-ui/core/InputLabel";
+import Visibility from "@material-ui/icons/Visibility";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
+import Input from "@material-ui/core/Input";
 
 const Login = () =>{
     const [isShow, setIsShow] = useState(false)
@@ -15,11 +21,18 @@ const Login = () =>{
                 <h2>Bienvenue</h2>
                 <h3>Veuillez vous connecter pour continuer</h3>
                 <div className="input-box">
-                    <input type="text" placeholder="Nom d'utitilisateur" className="log-input"/>
+                    <Input type="text" placeholder="Nom d'utitilisateur" className="log-input"/>
                 </div>
                 <div className="input-box">
-                    <input type={isShow ? "text" : "password"} placeholder="Mot de passe" endA className="log-input"></input>
-                    <button onClick={showMdp}>{isShow ? "0_0" : "-_-"}</button>
+                    <Input type={isShow ? "text" : "password"} placeholder="Mot de passe" 
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton onClick={showMdp}>
+                            {isShow ? <Visibility /> : <VisibilityOff />}
+                        </IconButton>
+                        </InputAdornment>
+                    } 
+                    className="log-input"></Input>
                 </div>
                 <button className="log-btn">Connexion</button>
             </form>
