@@ -1,8 +1,13 @@
 .login{
     background-image: url(../images/login-bg.jpg);
-    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    background-size: cover;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .login-form{
     position: absolute;

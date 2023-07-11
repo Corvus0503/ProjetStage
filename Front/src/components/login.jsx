@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import "./styles/login.css"
 import IconButton from "@material-ui/core/IconButton";
@@ -7,13 +7,27 @@ import Visibility from "@material-ui/icons/Visibility";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Input from "@material-ui/core/Input";
+import axios from "axios"
 
 const Login = () =>{
     const [isShow, setIsShow] = useState(false)
+    const [user, setUser] = useState({
+        MATRICULE: "",
+        NOM_AG: "",
+        MDP: ""
+    })
     const showMdp = (e) => {
         e.preventDefault()
         setIsShow(!isShow)
     }
+    useEffect(() => {
+        axios.get("http://localhost:8080/admin").then(response => {
+              const {data} = response
+              setUser(data.result)  
+        })
+      }, []) ; 
+ 
+    console.log(user);
 
     return(
         <div className="login">
@@ -26,10 +40,10 @@ const Login = () =>{
                 <div className="input-box">
                     <Input type={isShow ? "text" : "password"} placeholder="Mot de passe" 
                     endAdornment={
-                        <InputAdornment position="end">
-                            <IconButton onClick={showMdp}>
-                            {isShow ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
+                            <InputAdornment position="end">
+                                <IconButton onClick={showMdp}>
+                                {isShow ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
                         </InputAdornment>
                     } 
                     className="log-input"></Input>

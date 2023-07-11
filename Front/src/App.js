@@ -1,5 +1,5 @@
 import './App.css';
-//import Login from './components/login';
+import Login from './components/login';
 import SideNav from './components/sidebar';
 import { useState } from 'react';
 
@@ -8,7 +8,8 @@ function App() {
   const togleSidebar = () => setIsOpen(!IsOpen)
   return (
     <div className="App">
-      <SideNav IsOpen={IsOpen} togleSidebar={togleSidebar}/>
+      <Login/>
+      {/*<SideNav IsOpen={IsOpen} togleSidebar={togleSidebar}/>*/}
     </div>
   );
 }

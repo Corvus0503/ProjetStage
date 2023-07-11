@@ -36,6 +36,7 @@
   }
   
   .nav-item{
+    display: flex;
     padding: 8px 8px 8px 20px;
     text-decoration: none;
     font-size: 18px;
@@ -57,13 +58,14 @@
     padding-top: 420px;
   }
   .dec-item{
-    padding: 8px 8px 8px 8px;
+    padding: 8px 8px 8px 20px;
     text-decoration: none;
     font-size: 18px;
     color: rgb(255, 255, 255);
     background-color: #0f111800;
     border-style: none;
     width: 100%;
+    display: flex;
   }
   .dec-item:hover{
     background-color: #1d20ca;
@@ -73,4 +75,94 @@
   }
   .nav-menu{
     display: flex;
+  }
+  @media screen and (max-width: 600px) {
+    .burger{
+      width: 35px;
+      height: 4px;
+      background-color: black;
+    }
+    .sidebar-toogle{
+      position: absolute;
+      top: 0;
+      right: -30px;
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      background-color: #00490400;
+      border-style: none;
+    }
+    .sidebar{
+      transition: 0.4s;
+    }
+    .sidebar{
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      width: 200px;
+      height: 100%;
+      background: #0f1118;
+    }
+    .sidebar.open{
+      translate: -80px 0;
+      background: #0f1118;
+    }
+    .sidebar h1{
+      padding-bottom: 20px;
+    }
+    .sidebar-toogle{
+      padding-left: 20px;
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      background-color: #ffffff00;
+      border-style: none;
+    }
+    
+    .nav-item{
+      display: flex;
+      padding: 8px 8px 8px 20px;
+      text-decoration: none;
+      font-size: 18px;
+      color: rgb(255, 255, 255);
+      display: flex;
+    }
+    .nav-item:hover{
+      background-color: #1d20ca;
+      transition-duration: 400ms;
+      color: white;
+      border-left: solid 2px wheat;
+    }
+    .active{
+      background-color: #1d20ca;
+      color: white;
+      border-left: solid 2px wheat;
+    }
+    .dec-cont{
+      padding-top: 420px;
+    }
+    .dec-item{
+      padding: 8px 8px 8px 20px;
+      text-decoration: none;
+      font-size: 18px;
+      color: rgb(255, 255, 255);
+      background-color: #0f111800;
+      border-style: none;
+      width: 100%;
+      display: flex;
+    }
+    .dec-item:hover{
+      background-color: #1d20ca;
+      transition-duration: 400ms;
+      color: white;
+      border-left: solid 2px wheat;
+    }
+    .nav-menu{
+      display: flex;
+    }
   }
