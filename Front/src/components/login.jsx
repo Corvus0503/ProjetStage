@@ -20,13 +20,22 @@ const Login = () =>{
         e.preventDefault()
         setIsShow(!isShow)
     }
+    const loadUser = async () => {
+        try {
+          const response = await axios.get('http://localhost:8080/admin');
+          setUser(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
     useEffect(() => {
-        axios.get("http://localhost:8080/admin").then(response => {
+        /*axios.get("http://localhost:8080/admin").then(response => {
               const {data} = response
               setUser(data.result)  
-        })
+        })*/
+        loadUser()
       }, []) ; 
- 
+
     console.log(user);
 
     return(

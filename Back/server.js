@@ -23,17 +23,10 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
-app.get("/admin", async function (request, response){
-    try{
-        const [result] = await getAdmin()
-        response.send({ success: true, result })
-    } catch (err) {
-        response.status(500).send({
-            success: false,
-            error: err,
-        })
-    }
-})
+app.get('/admin', function (req, res) {
+    //fetch all employees from db and send it 
+    getAdmin(req, res);
+  })
 
 app.listen(8080)
 console.log("It s running");
