@@ -5,11 +5,12 @@ import SideCat from "./images/SideCat";
 import SideValid from "./images/SideValid";
 import SideLougout from "./images/SideLogout";
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import './styles/sidebar.css'
 
 const SideNav = ({IsOpen, togleSidebar, deconexion}) =>{
   const [lien] = useState([
-    {name : 'Dashboard', icon: <SideDash/>},
+    {name : 'Dashboard', icon: <SideDash/>, lien: "/Dashboard"},
     {name : 'Catalogue', icon: <SideUser/>},
     {name : 'User', icon: <SideCat/>},
     {name : 'Validation', icon: <SideValid/>}
@@ -24,7 +25,7 @@ return(
                     <div className="burger"></div>
                     <div className="burger"></div>
                 </button>
-                {lien.map((i)=><div className="nav-item" activeClassName="active"><div style={{paddingRight: "22px"}}>{i.icon}</div>{i.name}</div>)}
+                {lien.map((i)=><NavLink to={i.lien} className="nav-item" activeClassName="active"><div style={{paddingRight: "22px"}}>{i.icon}</div>{i.name}</NavLink>)}
                 <div className="dec-cont"><button className="dec-item" onClick={deconexion}><div style={{paddingRight: "22px"}}><SideLougout/></div>Deconexion</button></div>
             </nav>
         </aside>

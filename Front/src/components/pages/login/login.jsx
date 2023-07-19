@@ -1,20 +1,27 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
-import "./styles/login.css"
+import "../../styles/login.css"
 import IconButton from "@material-ui/core/IconButton";
-import InputLabel from "@material-ui/core/InputLabel";
+//import InputLabel from "@material-ui/core/InputLabel";
 import Visibility from "@material-ui/icons/Visibility";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Input from "@material-ui/core/Input";
 import axios from "axios"
+import { Navigate, useNavigate } from "react-router-dom";
 
-const Login = () =>{
+const Login = ({isConn, setIsConn, saveCon}) =>{
+    const navigate = useNavigate();
     const [isShow, setIsShow] = useState(false)
     const [user, setUser] = useState({
         MATRICULE: "",
         NOM_AG: "",
-        MDP: ""
+        PASSWORD: ""
+    })
+
+    const [infoCon, setInfoCon] = useState({
+        pseudo: "",
+        mdp: ""
     })
     const showMdp = (e) => {
         e.preventDefault()
@@ -24,19 +31,32 @@ const Login = () =>{
         try {
           const response = await axios.get('http://localhost:8080/admin');
           setUser(response.data);
+          navigate("/Dashboard")
         } catch (error) {
           console.error(error);
         }
       };
+
     useEffect(() => {
-        /*axios.get("http://localhost:8080/admin").then(response => {
-              const {data} = response
-              setUser(data.result)  
-        })*/
         loadUser()
       }, []) ; 
 
-    console.log(user);
+    console.log(user)
+
+    const connexion = (e) => {
+        e.preventDefault()
+        for (let i in user){
+            if(user[i].NOM_AG===infoCon.pseudo && user[i].PASSWORD===infoCon.mdp){
+                setIsConn(!isConn)
+                saveCon()
+                console.log(isConn)
+                return <Navigate to="/Dashboard"/>
+            } else {
+                
+                alert("Pseudo ou mot de passer incorrect")
+            }
+          }
+    }
 
     return(
         <div className="login">
@@ -44,10 +64,10 @@ const Login = () =>{
                 <h2>Bienvenue</h2>
                 <h3>Veuillez vous connecter pour continuer</h3>
                 <div className="input-box">
-                    <Input type="text" placeholder="Nom d'utitilisateur" className="log-input"/>
+                    <Input value={infoCon.pseudo} onChange={e => setInfoCon({...infoCon, pseudo : e.target.value})} type="text" placeholder="Nom d'utitilisateur" className="log-input"/>
                 </div>
                 <div className="input-box">
-                    <Input type={isShow ? "text" : "password"} placeholder="Mot de passe" 
+                    <Input value={infoCon.mdp} onChange={e => setInfoCon({...infoCon, mdp : e.target.value})} type={isShow ? "text" : "password"} placeholder="Mot de passe" 
                     endAdornment={
                             <InputAdornment position="end">
                                 <IconButton onClick={showMdp}>
@@ -57,7 +77,7 @@ const Login = () =>{
                     } 
                     className="log-input"></Input>
                 </div>
-                <button className="log-btn">Connexion</button>
+                <button onClick={connexion} className="log-btn">Connexion</button>
             </form>
         </div>
     )

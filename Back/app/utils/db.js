@@ -12,7 +12,6 @@ async function getConnection(){
         console.log("Successfully connected");
         return connection
     } catch(err){
-
         console.log("NOT connected");
     }
     
