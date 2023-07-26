@@ -1,14 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
-//import { useAuth } from "../pages/login/authProvider";
+import { useAuth } from "../pages/login/authProvider";
 
-export const ProtectedRoute = ({isConn, redirectPath = '/login', children}) => {
-    //const {token} = useAuth()
-
-    if (!isConn){
-        return <Navigate to={redirectPath} replace/>
+export const ProtectedRoute = ({children}) => {
+    const { token } = useAuth();
+  
+    // Check if the user is authenticated
+    if (!token) {
+      return <Navigate to="/" replace/>;
     }
-        
-    return <Outlet/>
-
-
-}
+  
+    // If authenticated, render the child routes
+    return children ? children :  <Outlet />;
+  };

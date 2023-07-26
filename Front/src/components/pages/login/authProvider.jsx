@@ -1,34 +1,45 @@
-import {
-    createContext,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-  } from "react";
 import axios from "axios";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
-const AuthProvider= ({children}) =>{
-    const [isConn, setIsConn] = useState(false)
-    const saveCon = () =>{
-        sessionStorage.setItem("con", isConn)
+const AuthProvider = ({ children }) => {
+  const [token, setToken_] = useState(localStorage.getItem("token"));
+
+  const setToken = (newToken) => {
+    setToken_(newToken);
+    if (newToken) {
+      axios.defaults.headers.common["Authorization"] = "Bearer " + newToken;
+      localStorage.setItem("token", newToken);
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+      localStorage.removeItem("token");
     }
-    const getCon = () =>{
-        return sessionStorage.getItem("con")
+  };
+  
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = "Bearer" + token;
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
     }
-    useEffect(() => {
-        setIsConn(getCon())
-    }, [])
+  }, [token]);
 
-    
-    return(
-        <AuthContext.Provider value={{isConn, saveCon, getCon}}>{children}</AuthContext.Provider>
-    )
-}
+  const contextValue = useMemo(
+    () => ({
+      token,
+      setToken,
+    }),
+    [token]
+  );
+
+  return (
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+  );
+};
 
 export const useAuth = () => {
-    return useContext(AuthContext)
-}
+  return useContext(AuthContext);
+};
 
-export default AuthProvider
+export default AuthProvider;

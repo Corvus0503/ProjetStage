@@ -2,12 +2,18 @@ const OracleDB = require("oracledb");
 const { outFormat } = require("oracledb");
 const getConnection = require("./db");
 
-const getAdmin = async (req, res) => {
+const getAdmin = async (req, res, pseudo, mdp) => {
     
       try {
         const connection = await getConnection()
-        const result = await connection.execute('SELECT * FROM AGENT');
-        res.json(result.rows);
+        const result = await connection.execute('SELECT * FROM AGENT WHERE NOM_UTIL_AG=:pseudo AND PASSWORD=:mdp', [pseudo, mdp]);
+        if (result.rows.length == 0) {
+          res.status(401).json({ message: 'Invalid credentials' });
+        } else {
+          // Authentication reussi
+          res.send(result.rows)
+        }
+    
         await connection.close();
       } catch (error) {
         console.error(error);
@@ -15,14 +21,33 @@ const getAdmin = async (req, res) => {
       }
 };
 
+const getAdminList = async (req, res) => {
+    
+  try {
+    const connection = await getConnection()
+    const result = await connection.execute('SELECT * FROM AGENT');
+    res.json(result.rows);
+    console.log("donnée chargé")
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 const addAdmin = async (req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION) => {
   
   try {
     const connection = await getConnection()
     const result = await connection.execute(
-      'INSERT INTO AGENT(MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', 
-      [MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION]);
+      'INSERT INTO AGENT (MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14)', 
+      [MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION]).catch((error) => {
+        console.error(error);
+        throw error; // Re-throw the error to be caught by the global error handler
+      });;
     res.json(result.rows);
+    connection.commit();
+    console.log("donnée ajoutée")
     await connection.close();
   } catch (error) {
     console.error(error);
@@ -35,7 +60,7 @@ const updateAdmin = async (req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NO
   try {
     
     const connection = await getConnection()
-    const result = await connection.execute('UPDATE AGENT SET MATRICULE=?, FONCTION_AG=?, MAIL_AG=?, NOM_AG=?, NOM_UTIL_A=?, TYPE_AG=?, PRENOM_AG=?, ADRESSE_AG=?, TEL_AG=?, PASSWORD=?, PHOTO=?, GENRE=?, ACTIVATION=?, CODE_DIVISION=? where MATRICULE=?', 
+    const result = await connection.execute('UPDATE AGENT SET MATRICULE=:MATRICULE, FONCTION_AG=:FONCTION_AG, MAIL_AG=:MAIL_AG, NOM_AG=:NOM_AG, NOM_UTIL_AG=:NOM_UTIL_AG, TYPE_AG=:TYPE_AG, PRENOM_AG=:PRENOM_AG, ADRESSE_AG=:ADRESSE_AG, TEL_AG=:TEL_AG, PASSWORD=:PASSWORD, PHOTO=:PHOTO, GENRE=:GENRE, ACTIVATION=:ACTIVATION, CODE_DIVISION=:CODE_DIVISION where MATRICULE=:', 
       [MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id]);
     res.json(result.rows);
     await connection.close();
@@ -214,7 +239,7 @@ const getDivision = async (req, res) => {
     
   try {
     const connection = await getConnection()
-    const result = await connection.execute('SELECT * FROM CA DIVISION');
+    const result = await connection.execute('SELECT * FROM DIVISION');
     res.json(result.rows);
     await connection.close();
   } catch (error) {
@@ -261,6 +286,7 @@ const deleteDivision = async (req, res, id) => {
 
 module.exports = {
     getAdmin,
+    getAdminList,
     addAdmin,
     updateAdmin,
     deleteAdmin,

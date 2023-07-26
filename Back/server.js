@@ -2,7 +2,7 @@ const { response } = require("express")
 const express = require("express")
 const cors = require("cors")
 const { 
-    getAdmin, addAdmin, updateAdmin, deleteAdmin,
+    getAdmin, getAdminList, addAdmin, updateAdmin, deleteAdmin,
     getCompte, addCompte, updateCompte, deleteCompte,
     getCategorie, addCategorie, updateCategorie, deleteCategorie,
     getService, addService, updateService, deleteService,
@@ -29,14 +29,18 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
-app.get('/admin', function (req, res) { 
-    getAdmin(req, res);
+app.get('/admin/userList', function (req, res) {
+    getAdminList(req, res);
   })
-app.post('/compte', function (req, res) {
+
+app.post('/admin', function (req, res) {
+    let {pseudo, mdp} = req.body
+    getAdmin(req, res, pseudo, mdp);
+  })
+app.post('/admin/newUser', function (req, res) {
     let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION} = req.body
     addAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION);
 })
-
 app.put('/compte/:id', function (req, res) {
     let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION} = req.body
     let {id} = req.params

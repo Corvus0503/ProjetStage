@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Dashboard = () => {
+const Dashboard = ({user}) => {
+    
     return(
         <>
-            <h1>Dadhboard</h1>
+            <h1>Bienvenue </h1>
         </>
     )
 }

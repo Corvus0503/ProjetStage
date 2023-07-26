@@ -7,55 +7,52 @@ import Visibility from "@material-ui/icons/Visibility";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Input from "@material-ui/core/Input";
-import axios from "axios"
 import { Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "./authProvider";
+import axios from "axios"
 
-const Login = ({isConn, setIsConn, saveCon}) =>{
+const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
     const navigate = useNavigate();
+    const { setToken } = useAuth();
     const [isShow, setIsShow] = useState(false)
-    const [user, setUser] = useState({
-        MATRICULE: "",
-        NOM_AG: "",
-        PASSWORD: ""
-    })
-
-    const [infoCon, setInfoCon] = useState({
-        pseudo: "",
-        mdp: ""
-    })
+    
     const showMdp = (e) => {
         e.preventDefault()
         setIsShow(!isShow)
     }
+    const [infoCon, setInfoCon] = useState({
+        pseudo: "",
+        mdp: ""
+    })
+
     const loadUser = async () => {
         try {
-          const response = await axios.get('http://localhost:8080/admin');
+          const response = await axios.post('http://localhost:8080/admin', infoCon);
           setUser(response.data);
-          navigate("/Dashboard")
         } catch (error) {
           console.error(error);
         }
+        /*axios.post('http://localhost:8080/admin', infoCon).then((response) => {
+            if (!response.data.message) {
+                setUser(response.data);
+            } else {
+                console.log (response.data[0].message);
+            }
+        });*/
       };
-
-    useEffect(() => {
-        loadUser()
-      }, []) ; 
-
-    console.log(user)
 
     const connexion = (e) => {
         e.preventDefault()
-        for (let i in user){
-            if(user[i].NOM_AG===infoCon.pseudo && user[i].PASSWORD===infoCon.mdp){
-                setIsConn(!isConn)
+        loadUser()
+            if(user[0].NOM_UTIL_AG===infoCon.pseudo && user[0].PASSWORD===infoCon.mdp){
+                setToken("test");
+                setIsConn(true)
                 saveCon()
-                console.log(isConn)
-                return <Navigate to="/Dashboard"/>
+                navigate("/Dashboard", { replace: true });
             } else {
-                
                 alert("Pseudo ou mot de passer incorrect")
             }
-          }
+          
     }
 
     return(
