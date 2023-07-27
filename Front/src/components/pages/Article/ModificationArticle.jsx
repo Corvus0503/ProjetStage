@@ -1,24 +1,62 @@
-import { DatePicker } from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-// import  LocalizationProvider  from '@mui/x-date-pickers/LocalizationProvider'
+import React from 'react'
+import Modal from 'react-modal';
 import {
   Button,
   Grid,
   styled,
 } from "@mui/material";
-import React, { useState } from "react";
-import axios from 'axios'
+import { useState } from "react";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
+import axios from "axios"
 
+// const ITEM_HEIGHT = 48;
+// const ITEM_PADDING_TOP = 8;
+// // const MenuProps = {
+// //   PaperProps: {
+// //     style: {
+// //       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+// //       width: 250,
+// //     },
+// //   },
+// // };
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '55%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    height: '80%',
+    width: '70%'
+  },
+};
+
+// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
+Modal.setAppElement(document.getElementById('root'));
 const TextField = styled(TextValidator)(() => ({
-  width: "100%",
-  marginBottom: "16px",
+  width: "80%",
+  marginBottom: "13px",
 }));
 
+const ModificationArticle = ({List, chargerListAdmin}) => {
+  let subtitle;
+  const [modalIsOpen, setIsOpen] = useState(false);
 
-const ModificationArticle = () => {
-  const [state, setState] = useState({ date: new Date() });
+  function openModal() {
+    setIsOpen(true);
+    setArticle(List)
+  }
+
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
 
   const [article,setArticle] = useState({
     FORMULE: " ",
@@ -31,41 +69,39 @@ const ModificationArticle = () => {
 
 
 
-  const addNewArticle = async()=>{
-    try {
-        await axios.put(`http://localhost:8080/article/:id`, article)
-        alert("submited")
+const updateArticle = id => {
+  axios.put(`http://localhost:8080/article/${id}`, article).then(response => {
+    setArticle({
+        FORMULE: " ",
+    	DESIGNATION_ART:" ",
+    	SPECIFICITE_ART:" ",
+    	UNITE_ART:" ",
+    	EFFECTIF_ART:" ",
+    	ID_CAT:" ",
+    });
+    chargerListAdmin()
+    closeModal()
+    console.log('Article modifier avec succès.');
+  }).catch(error =>{console.error(error);})
+}
 
 
-    } catch (error) {
-        console.log(`Erreur : ${error}`)
-    }
-  }
-
-  const handleSubmit = async (event) => {
-
-    event.preventDefault();
-    console.log(article)
-    addNewArticle();
+  const handleChange = (e) => {
+    setArticle({ ...article, [e.target.name]: e.target.value });
   };
-
-  const handleChange = (event) => {
-    event.persist();
-    setArticle({ ...article, [event.target.name]: event.target.value });
-  };
-
-  const handleDateChange = (date) => setState({ ...state, date });
-
-  const {
-    date
-  } = state;
-  
-
 
   return (
-    <div className=" container  ">
-        
-      <ValidatorForm onError={() => null} onSubmit={handleSubmit} className="container card center shadow mt-4 p-5" >
+    <div>
+      <button onClick={openModal}>Open Modal</button>
+      <Modal
+        isOpen={modalIsOpen}
+        onAfterOpen={afterOpenModal}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+      ><ValidatorForm onError={() => null} >
+        <div className="container card center shadow mt-4 p-5">
+        <h1 align="left"> Modification d'un Article </h1>
         <hr />
           <Grid container spacing={6}>
             <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -102,21 +138,6 @@ const ModificationArticle = () => {
                 label="Spécification"
                 validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
               />
-
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  value={date}
-                  onChange={handleDateChange}
-                  renderInput={(props) => (
-                    <TextField
-                      {...props}
-                      label="Date picker"
-                      id="mui-pickers-date"
-                      sx={{ mb: 2, width: "100%" }}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -150,15 +171,21 @@ const ModificationArticle = () => {
                 errorMessages={["this field is required", "email non valide"]}
               />
             </Grid>
-            <Button color="primary" className=" m-5 mb-2 mt-2" variant="contained" type="submit" >
-              {/*<Icon>send</Icon>*/}
-              Modifier
-            </Button>
+	      <Button onClick={() => {
+          updateArticle(article.FORMULE)
+          console.log(article)
+        }} 	color="success" variant="contained" >
+          {/*<Icon>send</Icon>*/}
+          Modifier
+        </Button>
           </Grid>
+        </div>
 
       </ValidatorForm>
+
+      </Modal>
     </div>
   );
-};
+}
 
-export default ModificationArticle;
+export default ModificationArticle

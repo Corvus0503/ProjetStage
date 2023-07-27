@@ -148,14 +148,14 @@ app.get('/article', function (req, res) {
   })
 
 app.post('/article', function (req, res) {
-    const {FORMULE, DESIGNATION_ART, SPECIFICITE_ART, EFFECTIF_ART, ID_CAT, UNITE_ART} = req.body;
-    addArticle(req, res,  FORMULE, DESIGNATION_ART, SPECIFICITE_ART, EFFECTIF_ART, ID_CAT, UNITE_ART );
+    const {FORMULE, DESIGNATION_ART, SPECIFICITE_ART,UNITE_ART, EFFECTIF_ART, ID_CAT } = req.body;
+    addArticle(req, res,  FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT );
 })
 
 app.put('/article/:id', function (req, res) {
-    let { FORMULE, DESIGNATION_ART, SPECIFICITE_ART, EFFECTIF_ART, ID_CAT, UNITE_ART} = req.body
+    let { FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT} = req.body
     let {id} = req.params
-    updateArticle(req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, EFFECTIF_ART, ID_CAT, UNITE_ART, id);
+    updateArticle(req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id);
 })
 
 app.delete('/article/:id', function (req, res) {

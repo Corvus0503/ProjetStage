@@ -81,7 +81,7 @@ const Article = () => {
                 onChange={handleChange}
                 errorMessages={["this field is required"]}
                 label="Formule"
-                validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
+                validators={["required", "minStringLength: 1", "maxStringLength: 9"]}
               />
 
               <TextField

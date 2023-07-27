@@ -102,9 +102,13 @@ const addArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, U
   try {
     const connection = await getConnection();
     const result = await connection.execute(
-      'INSERT INTO ARTICLE(FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT) VALUES (:FORMULE, :DESIGNATION_ART, :SPECIFICITE_ART, :UNITE_ART, :EFFECTIF_ART, :ID_CAT)',
+      'INSERT INTO ARTICLE(FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT) VALUES (:1, :2, :3, :4, :5, :6)',
       [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT]
     );
+
+
+// const sqlQuery = 'INSERT INTO ARTICLE(FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT) VALUES (:1, :2, :3, :4, :5, :6)';
+// console.log('SQL Query:', sqlQuery);
     res.json(result.rows);
     connection.commit()
     await connection.close();
@@ -116,20 +120,18 @@ const addArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, U
 const updateArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id) => {
   try {
     // Convertir les champs numériques en nombres entiers
-    const formuleInt = parseInt(FORMULE, 10);
-    const effectifInt = parseInt(EFFECTIF_ART, 10);
-    const idCatInt = parseInt(ID_CAT, 10);
-
-    // Valider si les conversions sont valides
-    if (isNaN(formuleInt) || isNaN(effectifInt) || isNaN(idCatInt)) {
-      throw new Error("Veuillez saisir des valeurs numériques valides.");
-    }
 
     const connection = await getConnection();
     const result = await connection.execute(
       'UPDATE ARTICLE SET FORMULE=:1, DESIGNATION_ART=:2, SPECIFICITE_ART=:3, UNITE_ART=:4, EFFECTIF_ART=:5, ID_CAT=:6 WHERE FORMULE=:7',
-      [formuleInt, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, effectifInt, idCatInt, id]
+      [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id]
     );
+    console.log('FORMULE:', FORMULE);
+    console.log('DESIGNATION_ART:', DESIGNATION_ART);
+    console.log('SPECIFICITE_ART:', SPECIFICITE_ART);
+    console.log('UNITE_ART:', UNITE_ART);
+    console.log('EFFECTIF_ART:', EFFECTIF_ART);
+    console.log('ID_CAT:', ID_CAT);
     res.json(result.rows);
     connection.commit();
     await connection.close();
