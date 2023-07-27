@@ -4,12 +4,12 @@ oracledb.outFormat = OUT_FORMAT_OBJECT
 async function getConnection(){
     try{
         connection = await oracledb.getConnection({
-            user: 'fride',
-            password: 'fride0503$h',
+            user: 'Herizo_berny',
+            password: 'Zoutch2023',
             connectString: 'localhost:1521/orcl'
         });
 
-        console.log("Successfully connected");
+        console.log("Connecté à la base de donnée");
         return connection
     } catch(err){
         console.log("NOT connected");

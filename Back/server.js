@@ -2,11 +2,11 @@ const { response } = require("express")
 const express = require("express")
 const cors = require("cors")
 const { 
-    getAdmin, getAdminList, addAdmin, updateAdmin, deleteAdmin,
+    getAdmin, addAdmin, updateAdmin, deleteAdmin,
     getCompte, addCompte, updateCompte, deleteCompte,
     getCategorie, addCategorie, updateCategorie, deleteCategorie,
     getService, addService, updateService, deleteService,
-    getDivision, addDivision, updateDivision, deleteDivision
+    getDivision, addDivision, updateDivision, deleteDivision, getArticle, addArticle, updateArticle, deleteArticle
 } = require("./app/utils/querryHelpers")
 const app = express()
 
@@ -16,38 +16,39 @@ app.use(express.json())
 
 const whitelist = ["http://localhost:3001"]
 
-const corsOptions = {
-    origin: function (origin, callback){
-        if (!origin || whitelist.indexOf(origin) !=1){
-            callback(null, true)
-        } else {
-            callback(new Error("Not alowed by CORS"))
-        }
-    },
-    Credential: true,
-}
+// const corsOptions = {
+//     origin: function (origin, callback){
+//         if (!origin || whitelist.indexOf(origin) !=1){
+//             callback(null, true)
+//         } else {
+//             callback(new Error("Not alowed by CORS"))
+//         }
+//     },
+//     Credential: true,
+// }
 
-app.use(cors(corsOptions))
-
-app.get('/admin/userList', function (req, res) {
-    getAdminList(req, res);
-  })
+app.use(cors())
 
 app.post('/admin', function (req, res) {
     let {pseudo, mdp} = req.body
     getAdmin(req, res, pseudo, mdp);
   })
-app.post('/admin/newUser', function (req, res) {
+
+app.get('/user', function (req,res){
+    getUser(req,res)
+})
+
+app.post('/user', function (req, res) {
     let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION} = req.body
     addAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION);
 })
-app.put('/compte/:id', function (req, res) {
+app.put('/user/:id', function (req, res) {
     let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION} = req.body
     let {id} = req.params
     updateAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id);
 })
 
-app.delete('/compte/:id', function (req, res) {
+app.delete('/user/:id', function (req, res) {
     let {id} = req.params
     deleteAdmin(req, res, id);
 })
@@ -138,6 +139,28 @@ app.put('/division/:id', function (req, res) {
 app.delete('/division/:id', function (req, res) {
     let {id} = req.params
     deleteDivision(req, res, id);
+})
+
+//Article controller
+
+app.get('/article', function (req, res) {
+    getArticle(req, res);
+  })
+
+app.post('/article', function (req, res) {
+    const {FORMULE, DESIGNATION_ART, SPECIFICITE_ART, EFFECTIF_ART, ID_CAT, UNITE_ART} = req.body;
+    addArticle(req, res,  FORMULE, DESIGNATION_ART, SPECIFICITE_ART, EFFECTIF_ART, ID_CAT, UNITE_ART );
+})
+
+app.put('/article/:id', function (req, res) {
+    let { FORMULE, DESIGNATION_ART, SPECIFICITE_ART, EFFECTIF_ART, ID_CAT, UNITE_ART} = req.body
+    let {id} = req.params
+    updateArticle(req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, EFFECTIF_ART, ID_CAT, UNITE_ART, id);
+})
+
+app.delete('/article/:id', function (req, res) {
+    let {id} = req.params
+    deleteArticle(req, res, id);
 })
 
 app.listen(8080)
