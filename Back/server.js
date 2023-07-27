@@ -41,17 +41,16 @@ app.post('/admin/newUser', function (req, res) {
     let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION} = req.body
     addAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION);
 })
-app.put('/compte/:id', function (req, res) {
+app.put('/admin/:id', function (req, res) {
     let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION} = req.body
     let {id} = req.params
     updateAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id);
 })
 
-app.delete('/compte/:id', function (req, res) {
+app.delete('/admin/:id', function (req, res) {
     let {id} = req.params
     deleteAdmin(req, res, id);
 })
-
 
 //compte controller
 app.get('/compte', function (req, res) {

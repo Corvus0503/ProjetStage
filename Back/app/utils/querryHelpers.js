@@ -56,13 +56,14 @@ const addAdmin = async (req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_U
 };
 
 const updateAdmin = async (req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id) => {
-  
+  console.log("id = "+id)
   try {
-    
+    console.log("id = "+id)
     const connection = await getConnection()
-    const result = await connection.execute('UPDATE AGENT SET MATRICULE=:MATRICULE, FONCTION_AG=:FONCTION_AG, MAIL_AG=:MAIL_AG, NOM_AG=:NOM_AG, NOM_UTIL_AG=:NOM_UTIL_AG, TYPE_AG=:TYPE_AG, PRENOM_AG=:PRENOM_AG, ADRESSE_AG=:ADRESSE_AG, TEL_AG=:TEL_AG, PASSWORD=:PASSWORD, PHOTO=:PHOTO, GENRE=:GENRE, ACTIVATION=:ACTIVATION, CODE_DIVISION=:CODE_DIVISION where MATRICULE=:', 
+    const result = await connection.execute('UPDATE AGENT SET MATRICULE=:1, FONCTION_AG=:2, MAIL_AG=:3, NOM_AG=:4, NOM_UTIL_AG=:5, TYPE_AG=:6, PRENOM_AG=:7, ADRESSE_AG=:8, TEL_AG=:9, PASSWORD=:10, PHOTO=:11, GENRE=:12, ACTIVATION=:13, CODE_DIVISION=:14 where MATRICULE=:15', 
       [MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id]);
     res.json(result.rows);
+    connection.commit();
     await connection.close();
   } catch (error) {
     console.error(error);

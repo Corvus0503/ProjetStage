@@ -20,8 +20,8 @@ import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import axios from "axios"
 
 const TextField = styled(TextValidator)(() => ({
-  width: "80%",
-  marginBottom: "13px",
+  width: "100%",
+  marginBottom: "16px",
 }));
 
 const ITEM_HEIGHT = 48;
@@ -35,10 +35,10 @@ const MenuProps = {
   },
 };
 
-const Signup = () => {
+const ModUser = () => {
   const [state, setState] = useState({ date: new Date() });
   const [confirmMdp, setConfirmMdp] = useState("")
-  const [newUser, setNewUser] = useState({
+  const [modUser, setModUser] = useState({
     MATRICULE: "",
     FONCTION_AG: "",
     MAIL_AG: "",
@@ -57,8 +57,8 @@ const Signup = () => {
 
 const addNewUser = async () => {
   try {
-    await axios.post('http://localhost:8080/admin/newUser', newUser);
-    setNewUser({
+    await axios.put('http://localhost:8080/admin', modUser);
+    setModUser({
       MATRICULE: "",
       FONCTION_AG: "",
       MAIL_AG: "",
@@ -91,12 +91,12 @@ const addNewUser = async () => {
   }, [state.password]);
 
   const handleSubmit = (event) => {
-    console.log(newUser)
+    console.log(modUser)
     addNewUser()
   };
 
   const handleChange = (e) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value });
+    setModUser({ ...modUser, [e.target.name]: e.target.value });
   };
 
   const handleDateChange = (date) => setState({ ...state, date });
@@ -110,7 +110,7 @@ const addNewUser = async () => {
           <TextField
               type="text"
               name="MATRICULE"
-              value={newUser.MATRICULE}
+              value={modUser.MATRICULE}
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Matricule"
@@ -120,7 +120,7 @@ const addNewUser = async () => {
             <TextField
               type="text"
               name="CODE_DIVISION"
-              value={newUser.CODE_DIVISION}
+              value={modUser.CODE_DIVISION}
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Code division"
@@ -131,7 +131,7 @@ const addNewUser = async () => {
               type="text"
               name="FONCTION_AG"
               //id="standard-basic"
-              value={newUser.FONCTION_AG}
+              value={modUser.FONCTION_AG}
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Fonction"
@@ -143,7 +143,7 @@ const addNewUser = async () => {
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={newUser.TYPE_AG}
+                value={modUser.TYPE_AG}
                 label="Age"
                 onChange={handleChange}
                 MenuProps={MenuProps}
@@ -159,7 +159,7 @@ const addNewUser = async () => {
               type="text"
               name="NOM_UTIL_AG"
               //id="standard-basic"
-              value={newUser.NOM_UTIL_AG}
+              value={modUser.NOM_UTIL_AG}
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Nom d'utilisteur"
@@ -171,7 +171,7 @@ const addNewUser = async () => {
               name="NOM_AG"
               label="Nom"
               onChange={handleChange}
-              value={newUser.NOM_AG}
+              value={modUser.NOM_AG}
               validators={["required"]}
               errorMessages={["this field is required"]}
             />
@@ -181,7 +181,7 @@ const addNewUser = async () => {
               name="PRENOM_AG"
               label="Prenom"
               onChange={handleChange}
-              value={newUser.PRENOM_AG}
+              value={modUser.PRENOM_AG}
               validators={["required"]}
               errorMessages={["this field is required"]}
             />  
@@ -190,7 +190,7 @@ const addNewUser = async () => {
               type="email"
               name="MAIL_AG"
               label="Email"
-              value={newUser.MAIL_AG}
+              value={modUser.MAIL_AG}
               onChange={handleChange}
               validators={["required", "isEmail"]}
               errorMessages={["this field is required", "email non valide"]}
@@ -205,7 +205,7 @@ const addNewUser = async () => {
                 name="ADRESSE_AG"
                 label="Adresse"
                 onChange={handleChange}
-                value={newUser.ADRESSE_AG}
+                value={modUser.ADRESSE_AG}
                 errorMessages={["this field is required"]}
                 validators={["required"]}
               />
@@ -213,7 +213,7 @@ const addNewUser = async () => {
             <TextField
               type="text"
               name="TEL_AG"
-              value={newUser.TEL_AG}
+              value={modUser.TEL_AG}
               label="Contact"
               onChange={handleChange}
               validators={["required"]}
@@ -224,7 +224,7 @@ const addNewUser = async () => {
               name="PASSWORD"
               type="password"
               label="Password"
-              value={newUser.PASSWORD}
+              value={modUser.PASSWORD}
               onChange={handleChange}
               validators={["required"]}
               errorMessages={["this field is required"]}
@@ -242,7 +242,7 @@ const addNewUser = async () => {
               row
               name="GENRE"
               sx={{ mb: 2 }}
-              value={newUser.GENRE}
+              value={modUser.GENRE}
               onChange={handleChange}
             >
               <FormControlLabel
@@ -264,7 +264,7 @@ const addNewUser = async () => {
               row
               name="ACTIVATION"
               sx={{ mb: 2 }}
-              value={newUser.ACTIVATION}
+              value={modUser.ACTIVATION}
               onChange={handleChange}
             >
               <FormControlLabel
@@ -294,4 +294,4 @@ const addNewUser = async () => {
   );
 };
 
-export default Signup;
+export default ModUser;

@@ -13,6 +13,8 @@ import {
 import { useState } from "react";
 import axios from "axios"
 import { React, useEffect } from "react";
+import TestModal from "./TestModal";
+import { useNavigate } from "react-router-dom";
   
   const StyledTable = styled(Table)(() => ({
     whiteSpace: "pre",
@@ -26,6 +28,7 @@ import { React, useEffect } from "react";
   
   //A ne pas toucher
   const UserList = () => {
+    const navigate = useNavigate();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [adminList, setAdminList] = useState([]);
@@ -44,6 +47,9 @@ import { React, useEffect } from "react";
     chargerListAdmin();
   }, []);
   
+  const toogleModUser = () =>{
+    navigate("/ModUser", { replace: true });
+  }
     const handleChangePage = (_, newPage) => {
       setPage(newPage);
     };
@@ -70,17 +76,18 @@ import { React, useEffect } from "react";
           <TableBody>
             {adminList
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((adminList) => (
-                <TableRow key={adminList.MATRICULE}>
-                  <TableCell align="left">{adminList.MATRICULE}</TableCell>
-                  <TableCell align="center">{adminList.NOM_UTIL_AG}</TableCell>
-                  <TableCell align="center">{adminList.FONCTION_AG}</TableCell>
-                  <TableCell align="center">{adminList.TEL_AG}</TableCell>
-                  <TableCell align="center">{adminList.ACTIVATION}</TableCell>
+              .map((List) => (
+                <TableRow key={List.MATRICULE}>
+                  <TableCell align="left">{List.MATRICULE}</TableCell>
+                  <TableCell align="center">{List.NOM_UTIL_AG}</TableCell>
+                  <TableCell align="center">{List.FONCTION_AG}</TableCell>
+                  <TableCell align="center">{List.TEL_AG}</TableCell>
+                  <TableCell align="center">{List.ACTIVATION}</TableCell>
                   <TableCell align="right">
                     <IconButton>
-                      <Icon color="error"></Icon>
+                      <Icon color="error"><TestModal List={List} adminList={adminList} chargerListAdmin={chargerListAdmin}/></Icon>
                     </IconButton>
+                    
                   </TableCell>
                 </TableRow>
               ))}
@@ -100,6 +107,7 @@ import { React, useEffect } from "react";
           backIconButtonProps={{ "aria-label": "Previous Page" }}
         />
       </Box>
+      
     </div>
       
     );

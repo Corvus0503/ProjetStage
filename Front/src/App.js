@@ -12,6 +12,7 @@ import { ProtectedRoute } from './components/routes/protectedRoute';
 import Signup from './components/pages/login/Signup';
 import Topnav from './components/Topnav';
 import UserList from './components/pages/user/UserList';
+import ModUser from './components/pages/user/modUser';
 
 function App() {
   const [IsOpen, setIsOpen] = useState (false)
@@ -61,6 +62,7 @@ function App() {
               <Route path="/Prevision" element={<Previsions />} />
               <Route path="/Signup" element={<Signup />} />
               <Route path="/UserList" element={<UserList />} />
+              <Route path="/ModUser" element={<ModUser />} />
             </Route>
           <Route path="/*" element={<p>There's nothing here: 404!</p>} />
           </Routes>
