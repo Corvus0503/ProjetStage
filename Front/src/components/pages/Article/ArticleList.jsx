@@ -41,6 +41,13 @@ const chargerListAdmin = async () => {
   }
 };
 
+const handleDelete = id=>{
+    axios.delete(`http://localhost:8080/article/${id}`).then(reponse=>{
+      chargerListAdmin()}).catch (error =>{
+      console.error(`Erreur: ${error}`)
+}) 
+}
+
 useEffect(() => {
   chargerListAdmin();
 }, []);
@@ -84,13 +91,16 @@ useEffect(() => {
 
                 <TableCell align="left"  >
                   
-                    <button className="btn btn-primary" > <ModificationArticle  List={List} ArticleList={ArticleList}  chargerListAdmin={chargerListAdmin} /> </button>
-
-                  <IconButton>
-                    <Icon color="error"> * </Icon>
+                     
+                  
+                  
+                  <IconButton >
+                     <ModificationArticle  List={List} ArticleList={ArticleList}  chargerListAdmin={chargerListAdmin} />
                   </IconButton>
-                  <IconButton>
-                    <Icon color="error"> i </Icon>
+                   
+
+                  <IconButton onClick={()=>handleDelete(List.FORMULE)}>
+                    <Icon color="error"> X </Icon>
                   </IconButton>
                 </TableCell>
               </TableRow>

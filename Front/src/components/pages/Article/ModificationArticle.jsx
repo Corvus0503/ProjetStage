@@ -28,20 +28,19 @@ const customStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-    height: '80%',
-    width: '70%'
+    height: '50%',
+    width: '50%'
   },
 };
 
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement(document.getElementById('root'));
 const TextField = styled(TextValidator)(() => ({
-  width: "80%",
+  width: "100%",
   marginBottom: "13px",
 }));
 
 const ModificationArticle = ({List, chargerListAdmin}) => {
-  let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
 
   function openModal() {
@@ -73,11 +72,11 @@ const updateArticle = id => {
   axios.put(`http://localhost:8080/article/${id}`, article).then(response => {
     setArticle({
         FORMULE: " ",
-    	DESIGNATION_ART:" ",
-    	SPECIFICITE_ART:" ",
-    	UNITE_ART:" ",
-    	EFFECTIF_ART:" ",
-    	ID_CAT:" ",
+        DESIGNATION_ART:" ",
+        SPECIFICITE_ART:" ",
+        UNITE_ART:" ",
+        EFFECTIF_ART:" ",
+        ID_CAT:" ",
     });
     chargerListAdmin()
     closeModal()
@@ -91,8 +90,9 @@ const updateArticle = id => {
   };
 
   return (
-    <div>
-      <button onClick={openModal}>Open Modal</button>
+    <>
+      <h6 onClick={openModal} className='' > Modification
+       </h6>
       <Modal
         isOpen={modalIsOpen}
         onAfterOpen={afterOpenModal}
@@ -100,13 +100,13 @@ const updateArticle = id => {
         style={customStyles}
         contentLabel="Example Modal"
       ><ValidatorForm onError={() => null} >
-        <div className="container card center shadow mt-4 p-5">
+        <div >
         <h1 align="left"> Modification d'un Article </h1>
         <hr />
           <Grid container spacing={6}>
             <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
               
-            <TextField
+            {/* <TextField
                 type="text"
                 name="FORMULE"
                 id="standard-basic"
@@ -115,7 +115,7 @@ const updateArticle = id => {
                 errorMessages={["this field is required"]}
                 label="Formule"
                 validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
-              />
+              /> */}
 
               <TextField
                 type="text"
@@ -138,10 +138,7 @@ const updateArticle = id => {
                 label="Spécification"
                 validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
               />
-            </Grid>
-
-            <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-            <TextField
+              <TextField
                 type="text"
                 name="UNITE_ART"
                 label="Unité"
@@ -150,6 +147,10 @@ const updateArticle = id => {
                 validators={["required","minStringLength: 1", "maxStringLength: 9"]}
                 errorMessages={["this field is required"]}
               />
+            </Grid>
+
+            <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+
 
               <TextField
                 type="number"
@@ -174,17 +175,18 @@ const updateArticle = id => {
 	      <Button onClick={() => {
           updateArticle(article.FORMULE)
           console.log(article)
-        }} 	color="success" variant="contained" >
+        }} 	color="success" variant="contained" className='m-5 mt-2 mb-2'  >
           {/*<Icon>send</Icon>*/}
           Modifier
         </Button>
           </Grid>
         </div>
+        <button className='btn btn-danger p-4 pt-1 pb-1'onClick={closeModal} > Annuler </button>
 
       </ValidatorForm>
 
       </Modal>
-    </div>
+    </>
   );
 }
 
