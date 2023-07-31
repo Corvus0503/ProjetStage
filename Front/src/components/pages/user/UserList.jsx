@@ -15,6 +15,8 @@ import axios from "axios"
 import { React, useEffect } from "react";
 import TestModal from "./TestModal";
 import { useNavigate } from "react-router-dom";
+import ConfirmationDialog from "../../utils/ConfirmationDialog";
+import DeleteIcon from '@mui/icons-material/Delete';
   
   const StyledTable = styled(Table)(() => ({
     whiteSpace: "pre",
@@ -30,8 +32,10 @@ import { useNavigate } from "react-router-dom";
   const UserList = () => {
     const navigate = useNavigate();
     const [page, setPage] = useState(0);
+    const [user, setUser] = useState(null);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [adminList, setAdminList] = useState([]);
+    const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
 
   const chargerListAdmin = async () => {
     try {
@@ -43,13 +47,33 @@ import { useNavigate } from "react-router-dom";
     }
   };
 
+  const deleteUser = id => {
+    axios.delete(`http://localhost:8080/admin/${id}`).then(response => {
+      chargerListAdmin()
+      console.log('Le USer a été supprimé avec succès.');
+    }).catch(error =>{console.error(error);})
+  }
+
   useEffect(() => {
     chargerListAdmin();
   }, []);
+
+  const handleDeleteUser = (user) => {
+    setUser(user);
+    setShouldOpenConfirmationDialog(true);
+  };
+
+  const handleConfirmationResponse = () => {
+    deleteUser(user)
+    handleDialogClose()
+  };
+
+  const handleDialogClose = () => {
+    //setShouldOpenEditorDialog(false);
+    setShouldOpenConfirmationDialog(false);
+    chargerListAdmin();
+  };
   
-  const toogleModUser = () =>{
-    navigate("/ModUser", { replace: true });
-  }
     const handleChangePage = (_, newPage) => {
       setPage(newPage);
     };
@@ -58,55 +82,95 @@ import { useNavigate } from "react-router-dom";
       setRowsPerPage(+event.target.value);
       setPage(0);
     };
+
+    const renderImage = (photoBlob) => {
+      if(!photoBlob){
+        return null
+      }
+
+      const reader = new FileReader()
+      return new Promise((resolve, reject) => {
+        reader.onload = () => {
+          resolve(reader.result)
+        }
+        reader.onerror = (error) => {
+          reject(error)
+        }
+        reader.readAsDataURL(photoBlob)
+      })
+    }
+
+
     console.log(adminList)
     return (
-    <div className="container">
-        <Box width="100%" overflow="auto">
-        <StyledTable>
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">Matricule</TableCell>
-              <TableCell align="center">Nom d'utilisateur</TableCell>
-              <TableCell align="center">Fonction</TableCell>
-              <TableCell align="center">Contact</TableCell>
-              <TableCell align="center">Activation</TableCell>
-              <TableCell align="right">Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {adminList
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((List) => (
-                <TableRow key={List.MATRICULE}>
-                  <TableCell align="left">{List.MATRICULE}</TableCell>
-                  <TableCell align="center">{List.NOM_UTIL_AG}</TableCell>
-                  <TableCell align="center">{List.FONCTION_AG}</TableCell>
-                  <TableCell align="center">{List.TEL_AG}</TableCell>
-                  <TableCell align="center">{List.ACTIVATION}</TableCell>
-                  <TableCell align="right">
-                    <IconButton>
-                      <Icon color="error"><TestModal List={List} adminList={adminList} chargerListAdmin={chargerListAdmin}/></Icon>
-                    </IconButton>
-                    
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </StyledTable>
-  
-        <TablePagination
-          sx={{ px: 2 }}
-          page={page}
-          component="div"
-          rowsPerPage={rowsPerPage}
-          count={adminList.length}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          nextIconButtonProps={{ "aria-label": "Next Page" }}
-          backIconButtonProps={{ "aria-label": "Previous Page" }}
-        />
-      </Box>
+    <div className="containerBG">
+        <div className="container mt-5 p-5 card shadow">
+          <Box width="100%" overflow="auto">
+          <StyledTable>
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">Matricule</TableCell>
+                <TableCell align="center">Nom d'utilisateur</TableCell>
+                <TableCell align="center">Fonction</TableCell>
+                <TableCell align="center">Contact</TableCell>
+                <TableCell align="center">Activation</TableCell>
+                <TableCell align="right">Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {adminList
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((List) => (
+
+                  <TableRow key={List.MATRICULE}>
+                    <TableCell align="left">{List.PHOTO_AG && (
+                      <img
+                      src={`data:image/jpeg;base64,${Buffer.from(
+                        List.PHOTO_AG).toString('base64')}`}
+                      alt={List.NOM_AG}
+                      style={{ width: '150px', height: '150px' }}
+                      />
+                    )}{List.MATRICULE}</TableCell>
+                    <TableCell align="center">{List.NOM_UTIL_AG}</TableCell>
+                    <TableCell align="center">{List.FONCTION_AG}</TableCell>
+                    <TableCell align="center">{List.TEL_AG}</TableCell>
+                    <TableCell align="center">{List.ACTIVATION}</TableCell>
+                    <TableCell align="right">
+                      <IconButton>
+                        <TestModal List={List} adminList={adminList} chargerListAdmin={chargerListAdmin}/>
+                      </IconButton>
+                      <IconButton onClick={() => handleDeleteUser(List.MATRICULE)}>
+                        
+                        <DeleteIcon color="error"/>
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </StyledTable>
+    
+          <TablePagination
+            sx={{ px: 2 }}
+            page={page}
+            component="div"
+            rowsPerPage={rowsPerPage}
+            count={adminList.length}
+            onPageChange={handleChangePage}
+            rowsPerPageOptions={[5, 10, 25]}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            nextIconButtonProps={{ "aria-label": "Next Page" }}
+            backIconButtonProps={{ "aria-label": "Previous Page" }}
+          />
+          {shouldOpenConfirmationDialog && (
+              <ConfirmationDialog
+                text="Voulez vous supprimer cet utilisateur?"
+                open={shouldOpenConfirmationDialog}
+                onConfirmDialogClose={handleDialogClose}
+                onYesClick={handleConfirmationResponse}
+              />
+            )}
+          </Box>
+        </div>
       
     </div>
       

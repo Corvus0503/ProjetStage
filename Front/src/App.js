@@ -39,7 +39,7 @@ function App() {
     setIsConn(getCon())
   }, [])
 
-  //console.log(user.NOM_UTIL_AG)
+ console.log(user)
 
   return (
       <div className={`App ${IsOpen ? "" : "open"}`}>

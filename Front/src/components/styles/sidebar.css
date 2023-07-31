@@ -27,6 +27,7 @@
     padding-bottom: 20px;
   }
   .sidebar-toogle{
+    padding-top: 20px;
     padding-left: 20px;
     display: grid;
     place-items: center;
@@ -48,11 +49,16 @@
     transition-duration: 400ms;
     color: white;
     border-left: solid 2px wheat;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+
   }
   .active{
     background-color: #1d20ca;
     color: white;
     border-left: solid 2px wheat;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
   }
   .dec-cont{
     padding-top: 420px;
@@ -192,4 +198,11 @@
 .topnav a.active {
   background-color: #04AA6D;
   color: white;
+}
+
+.sideText{
+  color: white;
+}
+.sideText.open{
+  translate: -300px;
 }

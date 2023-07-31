@@ -2,6 +2,7 @@ import { DatePicker } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import {
+  Autocomplete,
   Button,
   Checkbox,
   FormControlLabel,
@@ -24,19 +25,18 @@ const TextField = styled(TextValidator)(() => ({
   marginBottom: "13px",
 }));
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
+const AutoComplete = styled(Autocomplete)(() => ({
+  width: "80%",
+  marginBottom: "13px",
+}));
+
+const suggestions = [
+  {label : "Admin"},
+  {label : "AG"},
+  {label : "User"}
+]
 
 const Signup = () => {
-  const [state, setState] = useState({ date: new Date() });
   const [confirmMdp, setConfirmMdp] = useState("")
   const [newUser, setNewUser] = useState({
     MATRICULE: "",
@@ -49,15 +49,24 @@ const Signup = () => {
     ADRESSE_AG: "",
     TEL_AG: "",
     PASSWORD: "",
-    PHOTO: "",
     GENRE: "",
     ACTIVATION: "",
-    CODE_DIVISION: ""
+    CODE_DIVISION: "",
+    photo: null
 })
 
 const addNewUser = async () => {
   try {
-    await axios.post('http://localhost:8080/admin/newUser', newUser);
+    const formDataToSend = new FormData();
+    for (const key in newUser) {
+      formDataToSend.append(key, newUser[key]);
+    }
+
+      await axios.post("http://localhost:8080/admin/newUser", formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
     setNewUser({
       MATRICULE: "",
       FONCTION_AG: "",
@@ -69,10 +78,10 @@ const addNewUser = async () => {
       ADRESSE_AG: "",
       TEL_AG: "",
       PASSWORD: "",
-      PHOTO: "",
       GENRE: "",
       ACTIVATION: "",
-      CODE_DIVISION: ""
+      CODE_DIVISION: "",
+      photo: null
     });
     console.log('Le USer a été ajouté avec succès.');
   } catch (error) {
@@ -81,14 +90,22 @@ const addNewUser = async () => {
 };
 
 
-  useEffect(() => {
-    ValidatorForm.addValidationRule("isPasswordMatch", (value) => {
-      if (value !== state.password) return false;
-
-      return true;
+    const [state, setState] = useState({
+      date: new Date(),
+      password: "",
+      confirmPassword: "", // Add confirmPassword to form state
     });
-    return () => ValidatorForm.removeValidationRule("isPasswordMatch");
-  }, [state.password]);
+
+// ...
+
+useEffect(() => {
+  ValidatorForm.addValidationRule("isPasswordMatch", (value) => {
+    if (value !== state.password) return false;
+    return true;
+  });
+  return () => ValidatorForm.removeValidationRule("isPasswordMatch");
+}, [state.password]);
+
 
   const handleSubmit = (event) => {
     console.log(newUser)
@@ -99,14 +116,34 @@ const addNewUser = async () => {
     setNewUser({ ...newUser, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setNewUser({ ...newUser, photo: file })
+  };
+
   const handleDateChange = (date) => setState({ ...state, date });
 
 
   return (
-    <div className="container">
+    <div className="container mt-5 p-5 card shadow">
       <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
         <Grid container spacing={6}>
           <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+          <input
+            accept="image/*"
+            style={{ display: 'none' }}
+            id="raised-button-file"
+            multiple
+            type="file"
+            name='photo'
+            onChange={handleFileChange}
+          />
+          <label htmlFor="raised-button-file">
+            <Button variant="raised" component="span">
+              Upload
+            </Button>
+          </label> 
+          
           <TextField
               type="text"
               name="MATRICULE"
@@ -138,21 +175,14 @@ const addNewUser = async () => {
               validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
             />
 
-            <FormControl>
-            <InputLabel id="demo-simple-select-label">Type AG</InputLabel>
-            <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={newUser.TYPE_AG}
-                label="Age"
-                onChange={handleChange}
-                MenuProps={MenuProps}
-              >
-                <MenuItem value={"Admin"}>Admin</MenuItem>
-                <MenuItem value={"Affaire Generale"}>Affaire Generale</MenuItem>
-                <MenuItem value={"Utilisteur"}>Utilisteur</MenuItem>
-              </Select>
-            </FormControl>
+            <AutoComplete
+                options={suggestions}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField {...params} value={newUser.TYPE_AG}
+                  onChange={handleChange} name="TYPE_AG" label="Type" variant="outlined" fullWidth />
+                )}
+              />
 
 
             <TextField
@@ -186,7 +216,10 @@ const addNewUser = async () => {
               errorMessages={["this field is required"]}
             />  
 
-            <TextField
+          </Grid>
+
+          <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+          <TextField
               type="email"
               name="MAIL_AG"
               label="Email"
@@ -195,11 +228,6 @@ const addNewUser = async () => {
               validators={["required", "isEmail"]}
               errorMessages={["this field is required", "email non valide"]}
             />
-
-            
-          </Grid>
-
-          <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
             <TextField
                 type="text"
                 name="ADRESSE_AG"

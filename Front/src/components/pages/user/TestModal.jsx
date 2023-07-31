@@ -1,5 +1,5 @@
 import React from 'react'
-import Modal from 'react-modal';
+//import Modal from 'react-modal';
 import { DatePicker } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
@@ -15,11 +15,14 @@ import {
   styled,
   Select,
   MenuItem,
-  InputLabel
+  InputLabel,
+  IconButton
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
+import { Modal } from 'react-bootstrap';
 import axios from "axios"
+import CreateIcon from '@mui/icons-material/Create';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -46,7 +49,7 @@ const customStyles = {
 };
 
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
-Modal.setAppElement(document.getElementById('root'));
+//Modal.setAppElement(document.getElementById('root'));
 const TextField = styled(TextValidator)(() => ({
   width: "80%",
   marginBottom: "13px",
@@ -89,33 +92,8 @@ const TestModal = ({List, chargerListAdmin}) => {
     CODE_DIVISION: ""
 })
 
-const addNewUser = async (id) => {
-  try {
-    await axios.put(`http://localhost:8080/admin/${id}`, modUser);
-    setModUser({
-      MATRICULE: "",
-      FONCTION_AG: "",
-      MAIL_AG: "",
-      NOM_AG: "",
-      NOM_UTIL_AG: "",
-      TYPE_AG: "",
-      PRENOM_AG: "",
-      ADRESSE_AG: "",
-      TEL_AG: "",
-      PASSWORD: "",
-      PHOTO: "",
-      GENRE: "",
-      ACTIVATION: "",
-      CODE_DIVISION: ""
-    });
-    chargerListAdmin()
-    console.log('Le USer a été ajouté avec succès.');
-  } catch (error) {
-    console.error(error);
-  }
-};
 
-const updateBook = id => {
+const updateUser = id => {
   axios.put(`http://localhost:8080/admin/${id}`, modUser).then(response => {
     setModUser({
       MATRICULE: "",
@@ -149,26 +127,21 @@ const updateBook = id => {
     return () => ValidatorForm.removeValidationRule("isPasswordMatch");
   }, [state.password]);
 
-  const handleSubmit = (event) => {
-    console.log(modUser)
-    addNewUser()
-  };
-
   const handleChange = (e) => {
     setModUser({ ...modUser, [e.target.name]: e.target.value });
   };
 
   return (
     <div>
-      <button onClick={openModal}>Open Modal</button>
+      <IconButton onClick={openModal}>
+          <CreateIcon color="primary"/>
+      </IconButton>
+      
       <Modal
-        isOpen={modalIsOpen}
-        onAfterOpen={afterOpenModal}
-        onRequestClose={closeModal}
-        style={customStyles}
-        contentLabel="Example Modal"
+        className="fade" show={modalIsOpen} onHide={closeModal}
       >
-        <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
+        <Modal.Body>
+        <ValidatorForm onError={() => null}>
         <Grid container spacing={6}>
           <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
           <TextField
@@ -332,11 +305,13 @@ const updateBook = id => {
           </Grid>
         </Grid>
 
-        <Button onClick={() => updateBook(List.MATRICULE)} color="success" variant="contained" type="submit">
+        <Button onClick={() => updateUser(List.MATRICULE)} color="success" variant="contained" type="submit">
           {/*<Icon>send</Icon>*/}
           Modifier
         </Button>
       </ValidatorForm>
+        </Modal.Body>
+        
       </Modal>
     </div>
   );

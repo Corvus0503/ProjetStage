@@ -32,8 +32,8 @@ return(
                     <div className="burger"></div>
                     <div className="burger"></div>
                     <div className="burger"></div>
-                </button>
-                {lien.map((i)=><NavLink to={i.lien} className="nav-item" activeClassName="active"><div style={{paddingRight: "22px"}}>{i.icon}</div>{i.name}</NavLink>)}
+                </button><br/><br/>
+                {lien.map((i)=><NavLink to={i.lien} className="nav-item" activeClassName="active"><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)}
                 <div className="dec-cont"><button className="dec-item" onClick={deconnexion}><div style={{paddingRight: "22px"}}><SideLougout/></div>Deconexion</button></div>
             </nav>
         </aside>
