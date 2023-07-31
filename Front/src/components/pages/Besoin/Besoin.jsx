@@ -3,8 +3,10 @@ import {
   styled,
 } from "@mui/material";
 import React from "react";
-import Breadcrumb from "../Utils/Breadcrumb";
-import ToggleablePills from '../Utils/ToggleablePills';
+import Breadcrumb from "../../Utils/Breadcrumb";
+import ToggleablePills from '../../Utils/ToggleablePills';
+import BesoinList from "./BesoinList";
+
 
 
 const Container = styled("div")(({ theme }) => ({
@@ -25,6 +27,10 @@ const Besoin = () => {
         <Card className="shadow" >
             <div className="mt-5">
               <ToggleablePills/>   
+            </div>
+
+            <div>
+              <BesoinList/>
             </div>
         </Card>        
     </Container>

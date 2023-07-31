@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import NewBesoin from "../Besoin/NewBesoin";
-import BesoinEnAttent from "../Besoin/BesoinEnAttent";
-import BesoinRefuse from "../Besoin/BesoinRefuse";
+import NewBesoin from "../pages/Besoin/NewBesoin";
+import BesoinEnAttent from "../pages/Besoin/BesoinEnAttent";
+import BesoinRefuse from "../pages/Besoin/BesoinRefuse";
 
 
 

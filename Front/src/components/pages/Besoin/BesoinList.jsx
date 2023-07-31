@@ -6,7 +6,7 @@ import {
   import { React, useEffect } from "react";
   //import ModificationArticle from "./ModificationArticle";
   import DeleteIcon from '@mui/icons-material/Delete';
-import ConfirmationDialog from "../Utils/ConfirmationDialog";
+import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 
   const Container = styled("div")(({ theme }) => ({
     margin: "30px",
@@ -81,6 +81,12 @@ import ConfirmationDialog from "../Utils/ConfirmationDialog";
       };
       console.log(besoinList);
 
+      const renderETAT_BESOIN = (ETAT_BESOIN) => {
+        if (ETAT_BESOIN === "En attente") return <span className="badge rounded-pill bg-warning">{ETAT_BESOIN}</span>;
+        if (ETAT_BESOIN === "refusé") return <span className="badge rounded-pill bg-danger">{ETAT_BESOIN}</span>;
+        if (ETAT_BESOIN === "valider") return <span className="badge rounded-pill bg-success">{ETAT_BESOIN}</span>;
+      };
+
     return (
 
         <Container className="mt-5">
@@ -98,6 +104,7 @@ import ConfirmationDialog from "../Utils/ConfirmationDialog";
                           <TableCell align="center"> Spécification </TableCell>
                           <TableCell align="center"> Quantité </TableCell>
                           <TableCell align="center"> Unité </TableCell>
+                          <TableCell align="center"> Etat de besoin </TableCell>
                           <TableCell align="left"> Option </TableCell>
                           </TableRow>
                       </TableHead>
@@ -112,6 +119,7 @@ import ConfirmationDialog from "../Utils/ConfirmationDialog";
                             <TableCell align="center">{besoinList.SPECIFICITE_ART}</TableCell>
                             <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                             <TableCell align="center">{besoinList.UNITE}</TableCell>
+                            <TableCell align="center">{renderETAT_BESOIN(besoinList.ETAT_BESOIN)}</TableCell>
 
                             <TableCell align="left"  >                               
                                 

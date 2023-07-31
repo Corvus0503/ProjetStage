@@ -279,63 +279,63 @@ const deleteService = async (id) => {
   }
 };
 
-const getDivision = async () => {
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const getDivision = async (req, res) => {
   try {
     const connection = await getConnection();
-    const result = await connection.query('SELECT * FROM DIVISION');
+    const result = await connection.execute('SELECT DIVISION.*,SERVICE.* FROM DIVISION INNER JOIN SERVICE ON DIVISION.CODE_SER = SERVICE.CODE_SER');
+    res.json(result.rows)
+    connection.commit()
     await connection.close();
-    return result.rows;
   } catch (error) {
     console.error(error);
     throw new Error('Internal server error');
   }
 };
 
-const addDivision = async (CODE_DIVISION, CODE_SER, LABEL_DIVISION) => {
+const addDivision = async (req,res,CODE_DIVISION, CODE_SER, LABEL_DIVISION) => {
   try {
     const connection = await getConnection();
-    const result = await connection.execute('INSERT INTO DIVISION(CODE_DIVISION, CODE_SER, LABEL_DIVISION) VALUES (:CODE_DIVISION, :CODE_SER, :LABEL_DIVISION)', {
-      CODE_DIVISION: CODE_DIVISION,
-      CODE_SER: CODE_SER,
-      LABEL_DIVISION: LABEL_DIVISION
-    });
+    const result = await connection.execute('INSERT INTO DIVISION(CODE_DIVISION, CODE_SER, LABEL_DIVISION) VALUES (:CODE_DIVISION, :CODE_SER, :LABEL_DIVISION)',
+    [CODE_DIVISION,      CODE_SER,      LABEL_DIVISION] );
+    res.json(result.rows);
     await connection.commit();
     await connection.close();
-    return result.rows;
   } catch (error) {
     console.error(error);
-    throw new Error('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-const updateDivision = async (CODE_DIVISION, CODE_SER, LABEL_DIVISION, id) => {
+const updateDivision = async (req,res,CODE_DIVISION, CODE_SER, LABEL_DIVISION, id) => {
   try {
     const connection = await getConnection();
-    const result = await connection.execute('UPDATE DIVISION SET CODE_DIVISION = :CODE_DIVISION, CODE_SER = :CODE_SER, LABEL_DIVISION = :LABEL_DIVISION WHERE CODE_DIVISION = :id', {
-      CODE_DIVISION: CODE_DIVISION,
-      CODE_SER: CODE_SER,
-      LABEL_DIVISION: LABEL_DIVISION,
-      id: id
-    });
+    const result = await connection.execute('UPDATE DIVISION SET CODE_DIVISION = :CODE_DIVISION, CODE_SER = :CODE_SER, LABEL_DIVISION = :LABEL_DIVISION WHERE CODE_DIVISION = :id',[CODE_DIVISION, CODE_SER, LABEL_DIVISION, id]);
+    res.json(result.rows)
     await connection.commit();
     await connection.close();
-    return result.rows;
-  } catch (error) {
+  } 
+  catch (error) {
     console.error(error);
-    throw new Error('Internal server error');
+    res.status(500).json({ error: error.message });
   }
 };
 
-const deleteDivision = async (id) => {
+const deleteDivision = async (req,res,id) => {
   try {
+    const query = "DELETE FROM AGENT WHERE AGENT.CODE_DIVISION = :id"
     const connection = await getConnection();
-    const result = await connection.execute('DELETE FROM DIVISION WHERE CODE_DIVISION = :id', [id]);
+    const reponse= await connection.execute(query,[id]);
+    res.json(reponse.rows);
+    await connection.commit();
+    const result = await connection.execute('DELETE FROM DIVISION WHERE CODE_DIVISION = :id', [id]);    
+    res.json(result.rows);
     await connection.commit();
     await connection.close();
-    return result.rows;
   } catch (error) {
     console.error(error);
-    throw new Error('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -388,6 +388,7 @@ const getBesoin= async (req, res)=> {
   const query = `SELECT BESOIN.* , ARTICLE.*, AGENT.* FROM ((BESOIN
     INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
     INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+    
   `;
 
   try {

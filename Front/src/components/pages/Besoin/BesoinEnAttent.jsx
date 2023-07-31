@@ -6,7 +6,7 @@ import axios from "axios"
 import { React, useEffect } from "react";
 //import ModificationArticle from "./ModificationArticle";
 import DeleteIcon from '@mui/icons-material/Delete';
-import ConfirmationDialog from "../Utils/ConfirmationDialog";
+import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 
 const Container = styled("div")(({ theme }) => ({
   margin: "30px",
@@ -94,6 +94,7 @@ useEffect(() => {
                 <TableCell align="center"> Spécification </TableCell>
                 <TableCell align="center"> Quantité </TableCell>
                 <TableCell align="center"> Unité </TableCell>
+                <TableCell align="center"> Etat de Besoin </TableCell>
                 <TableCell align="left"> Option </TableCell>
                 </TableRow>
             </TableHead>
@@ -108,6 +109,7 @@ useEffect(() => {
                     <TableCell align="center">{besoinList.SPECIFICITE_ART}</TableCell>
                     <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                     <TableCell align="center">{besoinList.UNITE}</TableCell>
+                    <TableCell align="center">{besoinList.ETAT_BESOIN}</TableCell>
 
                     <TableCell align="left"  >                               
                         

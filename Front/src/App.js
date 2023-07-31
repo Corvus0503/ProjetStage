@@ -12,7 +12,9 @@ import Topnav from './components/Topnav';
 import Article from './components/pages/Article/Article';
 import ArticleList from './components/pages/Article/ArticleList';
 import ModificationArticle from './components/pages/Article/ModificationArticle';
-import Besoin from './components/Besoin/Besoin';
+import Besoin from './components/pages/Besoin/Besoin';
+import NewDivision from './components/pages/Division/NewDivision';
+import Division from './components/pages/Division/Division';
 
 
 
@@ -67,6 +69,7 @@ function App() {
               <Route path="/ArticleList" element={<ArticleList />} />
               <Route path="/ModificationArticle" element={<ModificationArticle />} />
               <Route path="/Besoin" element={<Besoin/>} />
+              <Route path="/division" element={<Division/>} />
 
             </Route>
           <Route path="/*" element={<p className='h1 text-center'>There's nothing here: 404!</p>} />
