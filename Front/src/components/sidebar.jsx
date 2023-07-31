@@ -1,19 +1,22 @@
 import React from "react";
 import SideDash from "./images/SideDash";
 import SideUser from "./images/SideUser";
-import SideCat from "./images/SideCat";
-import SideValid from "./images/SideValid";
+// import SideCat from "./images/SideCat";
+// import SideValid from "./images/SideValid";
 import SideLougout from "./images/SideLogout";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "./pages/login/authProvider";
 import './styles/sidebar.css'
+import ArticleIcone from "./images/ArticleIcone";
 
 const SideNav = ({IsOpen, togleSidebar, deconexion}) =>{
     const { setToken } = useAuth();
   const [lien] = useState([
     {name : 'Dashboard', icon: <SideDash/>, lien: "/Dashboard"},
     {name : 'Prevision', icon: <SideUser/>, lien: "/Prevision"},
+    {name: 'Article',icon: <ArticleIcone/> ,lien:"/Article" },
+    {name: 'Besoin', lien:"/Besoin" }
     /*{name : 'User', icon: <SideCat/>},
     {name : 'Validation', icon: <SideValid/>}*/
 ])

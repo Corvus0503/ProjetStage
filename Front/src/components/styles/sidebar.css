@@ -33,6 +33,8 @@
     height: 30px;
     background-color: #ffffff00;
     border-style: none;
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
   
   .nav-item{
@@ -42,18 +44,23 @@
     font-size: 18px;
     color: rgb(255, 255, 255);
     display: flex;
+
   }
   .nav-item:hover{
-    background-color: #1d20ca;
+    background-color: white;
     transition-duration: 400ms;
-    color: white;
-    border-left: solid 2px wheat;
+    color: black;
+    border-left: solid 2px  #1d20ca;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
   }
-  .active{
-    background-color: #1d20ca;
-    color: white;
-    border-left: solid 2px wheat;
-  }
+  /* .active{
+    background-color: white;
+    color: black;
+    border-left: solid 2px  #1d20ca;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+  } */
   .dec-cont{
     padding-top: 420px;
   }
@@ -71,15 +78,17 @@
     background-color: #1d20ca;
     transition-duration: 400ms;
     color: white;
-    border-left: solid 2px wheat;
+    border-left: solid 2px  #1d20ca;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
   }
   .nav-menu{
     display: flex;
   }
   @media screen and (max-width: 600px) {
     .burger{
-      width: 35px;
-      height: 4px;
+      width: 25px;
+      height: 3px;
       background-color: black;
     }
     .sidebar-toogle{

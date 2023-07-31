@@ -6,7 +6,7 @@ const {
     getCompte, addCompte, updateCompte, deleteCompte,
     getCategorie, addCategorie, updateCategorie, deleteCategorie,
     getService, addService, updateService, deleteService,
-    getDivision, addDivision, updateDivision, deleteDivision, getArticle, addArticle, updateArticle, deleteArticle
+    getDivision, addDivision, updateDivision, deleteDivision, getArticle, addArticle, updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinAtt, getBesoinRef
 } = require("./app/utils/querryHelpers")
 const app = express()
 
@@ -163,5 +163,38 @@ app.delete('/article/:id', function (req, res) {
     deleteArticle(req, res, id);
 })
 
+
+//Besoin controller 
+    //getter
+app.get('/besoin', (req,res)=>{
+    getBesoin(req, res)
+})
+app.get('/besoinAtt', function(req, res){
+    getBesoinAtt(req,res);
+})
+app.get('/besoinRef', function(req, res){
+    getBesoinRef(req,res);
+})
+    //delete
+app.delete('/besoin/:id', function(req,res){
+    let{id} = req.params;
+    deleteBesoin(req, res, id);
+})
+
+    //setter
+app.put('/besoin/:id', function(req, res){
+    let{NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE}=req.body
+    let{id}=req.params
+    updateBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
+})
+    //Creator
+app.post('/besoin', function(req, res){
+    const {NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE}=req.body
+    addBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
+})
+
+
+
+
 app.listen(8080)
-console.log("It s running");
+console.log("It s running at: http://localhost:8080");

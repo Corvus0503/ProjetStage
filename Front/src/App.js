@@ -2,19 +2,19 @@ import './App.css';
 import Login from './components/pages/login/login';
 import { useEffect, useState } from 'react';
 import AuthProvider from './components/pages/login/authProvider';
-//import Routes from './components/routes/routeIdex';
 import { Route, Routes } from 'react-router-dom';
-//import Routes from './components/routes/routeIdex';
 import SideNav from './components/sidebar';
 import Dashboard from './components/pages/Dashboard/dashboard';
 import Previsions from './components/pages/Previsions/prevision';
 import { ProtectedRoute } from './components/routes/protectedRoute';
 import Signup from './components/pages/login/Signup';
 import Topnav from './components/Topnav';
-import UserList from './components/pages/user/UserList';
 import Article from './components/pages/Article/Article';
 import ArticleList from './components/pages/Article/ArticleList';
 import ModificationArticle from './components/pages/Article/ModificationArticle';
+import Besoin from './components/Besoin/Besoin';
+
+
 
 function App() {
   const [IsOpen, setIsOpen] = useState (false)
@@ -66,10 +66,13 @@ function App() {
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />
               <Route path="/ModificationArticle" element={<ModificationArticle />} />
+              <Route path="/Besoin" element={<Besoin/>} />
+
             </Route>
           <Route path="/*" element={<p className='h1 text-center'>There's nothing here: 404!</p>} />
           </Routes>
         </AuthProvider>
+        
       </div>
    );
    

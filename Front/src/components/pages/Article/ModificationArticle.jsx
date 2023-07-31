@@ -4,7 +4,9 @@ import {
   Button,
   Grid,
   styled,
+  IconButton,
 } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
 import { useState } from "react";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import axios from "axios"
@@ -91,8 +93,8 @@ const updateArticle = id => {
 
   return (
     <>
-      <h6 onClick={openModal} className='' > Modification
-       </h6>
+      <IconButton onClick={openModal} className='' > <EditIcon color='primary'/>
+       </IconButton>
       <Modal
         isOpen={modalIsOpen}
         onAfterOpen={afterOpenModal}
