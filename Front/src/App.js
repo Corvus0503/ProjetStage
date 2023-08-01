@@ -49,8 +49,10 @@ function App() {
       <div className={`App ${IsOpen ? "" : "open"}`}>
         
         <AuthProvider>
-          {isConn && <SideNav deconexion={deconexion} IsOpen={IsOpen} setIsOpen={setIsOpen} togleSidebar={togleSidebar}/>}
-          {isConn && <Topnav />}
+          {/* {isConn && <SideNav deconexion={deconexion} IsOpen={IsOpen} setIsOpen={setIsOpen} togleSidebar={togleSidebar}/>}
+          {isConn && <Topnav />} */}
+          <SideNav deconexion={deconexion} IsOpen={IsOpen} setIsOpen={setIsOpen} togleSidebar={togleSidebar}/>
+          <Topnav />
           <Routes>
             <Route index element={<Login 
             isConn={isConn} setIsConn={setIsConn} saveCon={saveCon}

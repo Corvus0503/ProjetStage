@@ -11,6 +11,7 @@ import React, { useState } from "react";
 import axios from 'axios'
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import Breadcrumb from "../../Utils/Breadcrumb";
+import { Modal} from '@mui/material';
 
 const TextField = styled(TextValidator)(() => ({
   width: "100%",
@@ -24,10 +25,23 @@ const Container = styled("div")(({ theme }) => ({
     marginBottom: "30px",
     [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
   },
+  boxShadow: theme.shadows[5],
+}));
+const CustomModal = styled(Modal)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const ModalContent = styled('div')(({ theme }) => ({
+  backgroundColor: '#fff',
+  boxShadow: theme.shadows[5],
+  padding: theme.spacing(2, 4, 3),
+
 }));
 
 
-const NewDivision = () => {
+const NewDivision = ({ isOpen, onClose }) => {
   const [state, setState] = useState({ date: new Date() });
 
   const [division,setDivision] = useState({
@@ -66,81 +80,94 @@ const NewDivision = () => {
   const {
     date
   } = state;
+
+  const handleCloseModal = () => {
+    onClose();
+  };
   
 
 
   return (
 
-    <Container>
-      <div className="breadcrumb">
-            <Breadcrumb routeSegments={[{ name: "Liste des Division" }]} />
-        </div>
-
-      <ValidatorForm onError={() => null} onSubmit={handleSubmit} >
-          <div className=" card center shadow p-5">
-          <h1 align="left"> Ajout d'un nouveau Division </h1>
-          <hr />
-              <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-                
-              <TextField
-                  type="text"
-                  name="CODE_DIVISION"
-                  label="Unité"
-                  onChange={handleChange}
-                  value={division.CODE_DIVISION}
-                  validators={["required","minStringLength: 1", "maxStringLength: 9"]}
-                  errorMessages={["this field is required"]}
-                />              
-
-                <TextField
-                  type="text"
-                  name="CODE_SER"
-                  id="standard-basic"
-                  value={division.CODE_SER}
-                  onChange={handleChange}
-                  errorMessages={["this field is required"]}
-                  label="Désignation"
-                  validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
-                />
-
-                <TextField
-                  type="text"
-                  name="LABEL_DIVISION"
-                  id="standard-basic"
-                  value={division.LABEL_DIVISION }
-                  onChange={handleChange}
-                  errorMessages={["this field is required"]}
-                  label="Spécification"
-                  validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
-                />
-
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    value={date}
-                    onChange={handleDateChange}
-                    renderInput={(props) => (
+    <CustomModal open={isOpen} onClose={onClose}>
+        <Container>            
+              <ValidatorForm onError={() => null} onSubmit={handleSubmit} >
+                  <div className=" card center shadow p-5">
+                  <h1 align="left"> Ajout d'un nouveau Division </h1>
+                  <hr />
+                      <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+                        
                       <TextField
-                        {...props}
-                        label="Date picker"
-                        id="mui-pickers-date"
-                        sx={{ mb: 2, width: "100%" }}
-                      />
-                    )}
-                  />
-                </LocalizationProvider>
+                          type="text"
+                          name="CODE_DIVISION"
+                          label="Code Division"
+                          placeholder="Saisir ici le code de division...."
+                          onChange={handleChange}
+                          value={division.CODE_DIVISION}
+                          validators={["required","minStringLength: 1", "maxStringLength: 9"]}
+                          errorMessages={["this field is required"]}
+                        />              
 
-              <div className="text-start">
-                <Button color="primary" className=" m-5 mb-2 mt-2 " variant="contained" type="submit" >
-                    {/*<Icon>send</Icon>*/}
-                    Enregister
-                </Button>
-              </div>
-            </Grid>
-          </div>
+                        <TextField
+                          type="text"
+                          name="CODE_SER"
+                          id="standard-basic"
+                          placeholder="Saisir ici le code de Service...."
+                          value={division.CODE_SER}
+                          onChange={handleChange}
+                          errorMessages={["this field is required"]}
+                          label="Code Service"
+                          validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
+                        />
 
-      </ValidatorForm>
+                        <TextField
+                          type="text"
+                          name="LABEL_DIVISION"
+                          id="standard-basic"
+                          value={division.LABEL_DIVISION }
+                          onChange={handleChange}
+                          errorMessages={["this field is required"]}
+                          placeholder="Saisir ici le nom de Division...."
+                          label="Libellé"
+                          validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
+                        />
 
-    </Container>
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                          <DatePicker
+                            value={date}
+                            onChange={handleDateChange}
+                            renderInput={(props) => (
+                              <TextField
+                                {...props}
+                                label="Date picker"
+                                id="mui-pickers-date"
+                                sx={{ mb: 2, width: "100%" }}
+                              />
+                            )}
+                          />
+                        </LocalizationProvider>
+
+                        <div className="text-center">
+
+                        <Button color="primary" className="me-2 "  variant="outlined" type="submit">
+                            Enregister
+                          </Button>
+                          <Button color="secondary" className=" me-2 ms-1 ps-4 pe-4" variant="outlined" onClick={handleCloseModal}>
+                            Fermer
+                          </Button>
+                          
+                        </div>
+                    </Grid>
+                  </div>
+
+              </ValidatorForm>
+
+        </Container> 
+
+    
+    </CustomModal>
+
+
     
   );
 };
