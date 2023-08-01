@@ -41,11 +41,11 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
         });*/
       };
 
-    const connexion = (e) => {
+    const connexion = async (e) => {
         e.preventDefault()
-        loadUser()
+        await loadUser()
             if(user[0].NOM_UTIL_AG===infoCon.pseudo && user[0].PASSWORD===infoCon.mdp){
-                setToken("test");
+                setToken(JSON.stringify(user));
                 setIsConn(true)
                 saveCon()
                 navigate("/Dashboard", { replace: true });

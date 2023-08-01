@@ -1,9 +1,9 @@
 import './App.css';
 import Login from './components/pages/login/login';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AuthProvider from './components/pages/login/authProvider';
 //import Routes from './components/routes/routeIdex';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useRevalidator } from 'react-router-dom';
 //import Routes from './components/routes/routeIdex';
 import SideNav from './components/sidebar';
 import Dashboard from './components/pages/Dashboard/dashboard';
@@ -13,6 +13,9 @@ import Signup from './components/pages/login/Signup';
 import Topnav from './components/Topnav';
 import UserList from './components/pages/user/UserList';
 import ModUser from './components/pages/user/modUser';
+import Article from './components/pages/Article/Article';
+import ArticleList from './components/pages/Article/ArticleList';
+import Besoin from './components/pages/Besoin/Besoin';
 
 function App() {
   const [IsOpen, setIsOpen] = useState (false)
@@ -29,14 +32,18 @@ function App() {
       setIsConn(false)
       saveCon()
   }
-  const [user, setUser] = useState({
+  const [user, setUser] = useState([{
     MATRICULE: "",
     NOM_UTIL_AG: "",
-    PASSWORD: ""
-})
+    PASSWORD: "",
+    TYPE_AG: ""
+}])
+
     
   useEffect(() => {
     setIsConn(getCon())
+    const tokenString = localStorage.getItem('token');
+    setUser(JSON.parse(tokenString))
   }, [])
 
  console.log(user)
@@ -57,12 +64,23 @@ function App() {
               element={<Login isConn={isConn} setIsConn={setIsConn} saveCon={saveCon}
               user={user} setUser={setUser} getCon={getCon} />}
             />
-            <Route element={<ProtectedRoute isConn={isConn} />}>
+            <Route element={<ProtectedRoute user={user} perm={'admin'}/>}>
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
               <Route path="/Prevision" element={<Previsions />} />
               <Route path="/Signup" element={<Signup />} />
               <Route path="/UserList" element={<UserList />} />
               <Route path="/ModUser" element={<ModUser />} />
+              <Route path="/Article" element={<Article />} />
+              <Route path="/ArticleList" element={<ArticleList />} />
+              <Route path="/Besoin" element={<Besoin/>} />
+            </Route>
+            <Route element={<ProtectedRoute user={user} perm={'user'}/>}>
+              <Route path="/Dashboard" element={<Dashboard user={user} />} />
+              <Route path="/Prevision" element={<Previsions />} />
+              <Route path="/Signup" element={<Signup />} />
+              <Route path="/Article" element={<Article />} />
+              <Route path="/ArticleList" element={<ArticleList />} />
+              <Route path="/Besoin" element={<Besoin/>} />
             </Route>
           <Route path="/*" element={<p>There's nothing here: 404!</p>} />
           </Routes>

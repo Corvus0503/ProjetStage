@@ -123,14 +123,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
                 .map((List) => (
 
                   <TableRow key={List.MATRICULE}>
-                    <TableCell align="left">{List.PHOTO_AG && (
-                      <img
-                      src={`data:image/jpeg;base64,${Buffer.from(
-                        List.PHOTO_AG).toString('base64')}`}
-                      alt={List.NOM_AG}
-                      style={{ width: '150px', height: '150px' }}
-                      />
-                    )}{List.MATRICULE}</TableCell>
+                    <TableCell align="left">{List.MATRICULE}</TableCell>
                     <TableCell align="center">{List.NOM_UTIL_AG}</TableCell>
                     <TableCell align="center">{List.FONCTION_AG}</TableCell>
                     <TableCell align="center">{List.TEL_AG}</TableCell>

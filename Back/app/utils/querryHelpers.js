@@ -320,6 +320,189 @@ const deleteDivision = async (req, res, id) => {
   }
 };
 
+
+
+// Vous pouvez utiliser ces fonctions dans vos contrôleurs pour gérer les requêtes liées à la base de données.
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//requete Besoin
+
+
+const addBesoin = async (req, res,NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, QUANTITE_ACC, UNITE, ETAT_DEMANDE) => {
+  const query = `
+    INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, QUANTITE_ACC, UNITE, ETAT_DEMANDE)
+    VALUES (:NUM_BESOIN, :MATRICULE, :FORMULE, :DATE_BESOIN, :DATE_CONFIRM, :TIME_CONFIRM, :QUANTITE, :QUANTITE_ACC, :UNITE, :ETAT_DEMANDE)
+  `;
+
+
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query, [NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE], 
+      { autoCommit: true });
+    res.json(result.rows);
+    console.log('Besoin ajouté :', result.rowsAffected);
+    connection.release();
+  } catch (err) {
+    console.error('Erreur lors de l\'ajout du besoin :', err);
+  }
+};
+
+const updateBesoin = async (NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id) => {
+  const query = `
+    UPDATE BESOIN SET MATRICULE = :MATRICULE, FORMULE = :FORMULE, DATE_BESOIN = :DATE_BESOIN, DATE_CONFIRM = :DATE_CONFIRM,
+    TIME_CONFIRM = :TIME_CONFIRM, QUANTITE = :QUANTITE, QUANTITE_ACC = :QUANTITE_ACC, UNITE = :UNITE, ETAT_DEMANDE = :ETAT_DEMANDE
+    WHERE NUM_BESOIN = :NUM_BESOIN
+  `;
+
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query, [NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id], { autoCommit: true });
+    console.log('Besoin mis à jour :', result.rowsAffected);
+    res.json(result.rows);
+    connection.release();
+  } catch (err) {
+    console.error('Erreur lors de la mise à jour du besoin :', err);
+  }
+};
+
+const getBesoin= async (req, res)=> {
+  const query = `SELECT BESOIN.* , ARTICLE.*, AGENT.* FROM ((BESOIN
+    INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+    INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+    
+  `;
+
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query);
+    res.json(result.rows)
+    connection.commit();
+    connection.release();
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+
+
+const deleteBesoin = async (req, res, id) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('DELETE FROM BESOIN WHERE NUM_BESOIN=:id', [id]);
+    res.json(result.rows);
+    connection.commit()
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+const getBesoinAtt = async (req,res) =>{
+  const query = `
+  SELECT BESOIN.*, ARTICLE.*, AGENT.*
+  FROM ((BESOIN
+  INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+  INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+  WHERE BESOIN.ETAT_BESOIN = 'En attente'
+`;
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query);
+    res.json(result.rows)
+    connection.commit();
+    connection.release();
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+const getBesoinRef = async (req,res) =>{
+  const query = `
+  SELECT BESOIN.*, ARTICLE.*, AGENT.*
+  FROM ((BESOIN
+  INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+  INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+  WHERE BESOIN.ETAT_BESOIN = 'refusé'
+`;
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query);
+    res.json(result.rows)
+    connection.commit();
+    connection.release();
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+
+////////////////////////////////////////////////////////////////////////
+
+// Requetes article
+
+const getArticle = async (req, res) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('SELECT ARTICLE.*, CATEGORIE.LABEL_CAT FROM ARTICLE INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT');
+    res.json(result.rows);
+    connection.commit();
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+const addArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(
+      'INSERT INTO ARTICLE(FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT) VALUES (:1, :2, :3, :4, :5, :6)',
+      [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT]
+    );
+    res.json(result.rows);
+    connection.commit()
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+const updateArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id) => {
+  try {
+    // Convertir les champs numériques en nombres entiers
+
+    const connection = await getConnection();
+    const result = await connection.execute(
+      'UPDATE ARTICLE SET FORMULE=:1, DESIGNATION_ART=:2, SPECIFICITE_ART=:3, UNITE_ART=:4, EFFECTIF_ART=:5, ID_CAT=:6 WHERE FORMULE=:7',
+      [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id]
+    );
+    res.json(result.rows);
+    connection.commit();
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+const deleteArticle = async (req, res, id) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('DELETE FROM ARTICLE WHERE FORMULE=:id', [id]);
+    res.json(result.rows);
+    connection.commit()
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 module.exports = {
     getAdmin,
     getAdminList,

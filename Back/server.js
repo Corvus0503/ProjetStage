@@ -197,5 +197,57 @@ app.delete('/division/:id', function (req, res) {
     deleteDivision(req, res, id);
 })
 
+//Article controller
+
+app.get('/article', function (req, res) {
+    getArticle(req, res);
+  })
+
+app.post('/article', function (req, res) {
+    const {FORMULE, DESIGNATION_ART, SPECIFICITE_ART,UNITE_ART, EFFECTIF_ART, ID_CAT } = req.body;
+    addArticle(req, res,  FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT );
+})
+
+app.put('/article/:id', function (req, res) {
+    let { FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT} = req.body
+    let {id} = req.params
+    updateArticle(req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id);
+})
+
+app.delete('/article/:id', function (req, res) {
+    let {id} = req.params
+    deleteArticle(req, res, id);
+})
+
+
+//Besoin controller 
+    //getter
+app.get('/besoin', (req,res)=>{
+    getBesoin(req, res)
+})
+app.get('/besoinAtt', function(req, res){
+    getBesoinAtt(req,res);
+})
+app.get('/besoinRef', function(req, res){
+    getBesoinRef(req,res);
+})
+    //delete
+app.delete('/besoin/:id', function(req,res){
+    let{id} = req.params;
+    deleteBesoin(req, res, id);
+})
+
+    //setter
+app.put('/besoin/:id', function(req, res){
+    let{NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE}=req.body
+    let{id}=req.params
+    updateBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
+})
+    //Creator
+app.post('/besoin', function(req, res){
+    const {NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE}=req.body
+    addBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
+})
+
 app.listen(8080)
 console.log("It s running");
