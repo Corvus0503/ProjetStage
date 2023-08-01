@@ -33,13 +33,6 @@ const CustomModal = styled(Modal)(() => ({
   justifyContent: 'center',
 }));
 
-const ModalContent = styled('div')(({ theme }) => ({
-  backgroundColor: '#fff',
-  boxShadow: theme.shadows[5],
-  padding: theme.spacing(2, 4, 3),
-
-}));
-
 
 const NewDivision = ({ isOpen, onClose }) => {
   const [state, setState] = useState({ date: new Date() });

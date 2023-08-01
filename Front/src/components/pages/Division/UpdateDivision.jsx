@@ -23,20 +23,30 @@ import axios from "axios"
 // // };
 
 const customStyles = {
-  content: {
-    top: '50%',
-    left: '55%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    height: '50%',
-    width: '50%'
-  },
-};
+    content: {
+      top: '50%',
+      left: '55%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Ajoute une ombre légère
+      backgroundColor: '#fff', // Couleur de fond de la modal
+      borderRadius: '8px', // Ajoute des coins arrondis
+      padding: '16px', // Ajoute un peu d'espace intérieur
+    },
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', // Couleur d'overlay (noir avec une opacité de 50%)
+    },
+  };
+
 
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement(document.getElementById('root'));
+
 const TextField = styled(TextValidator)(() => ({
   width: "100%",
   marginBottom: "13px",
@@ -93,14 +103,12 @@ const updatedivision = id => {
         isOpen={modalIsOpen}
         onAfterOpen={afterOpenModal}
         onRequestClose={closeModal}
-        style={customStyles}
-        contentLabel="Example Modal"
+        style={customStyles }
       ><ValidatorForm onError={() => null} >
         <div >
         <h1 align="left"> Modification d'un division </h1>
         <hr />
-          <Grid >
-            <Grid >
+            <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }} >
               
             {/* <TextField
                 type="text"
@@ -120,7 +128,8 @@ const updatedivision = id => {
                 value={division.CODE_DIVISION}
                 onChange={handleChange}
                 errorMessages={["this field is required"]}
-                label="Désignation"
+                label="Code De Division "
+                placeholder='Saisir le Code De Division...... '
                 validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
               />
 
@@ -131,30 +140,35 @@ const updatedivision = id => {
                 value={division.CODE_SER }
                 onChange={handleChange}
                 errorMessages={["this field is required"]}
-                label="Spécification"
+                label="Code De Service"
+                placeholder='Saisir le Code De Service...... '
                 validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
               />
               <TextField
                 type="text"
                 name="LABEL_DIVISION"
-                label="Unité"
+                label="Label de division"
                 onChange={handleChange}
                 value={division.LABEL_DIVISION}
+                placeholder='Saisir le Libellé De Division...... '
                 validators={["required","minStringLength: 1", "maxStringLength: 9"]}
                 errorMessages={["this field is required"]}
               />
-            </Grid>
-            <Button onClick={() => {
-                updatedivision(division.CODE_DIVISION)
-                console.log(division)
-                }} 	color="success" variant="contained" className='m-5 mt-2 mb-2'  >
-                {/*<Icon>send</Icon>*/}
-                Modifier
-            </Button>
+
+              <div className="text-center" >
+              <Button onClick={() => {
+                    updatedivision(division.CODE_DIVISION)
+                    console.log(division)
+                    }} 	color="success" variant="outlined" className='me-2 '>
+                    {/*<Icon>send</Icon>*/}
+                    Modifier
+               </Button>
+               <Button color="secondary" className=" me-2 ms-1 ps-4 pe-4" variant="outlined" onClick={closeModal}>Annuler</Button>
+
+              </div>
+            
           </Grid>
         </div>
-        <button className='btn btn-danger p-4 pt-1 pb-1'onClick={closeModal} > Annuler </button>
-
       </ValidatorForm>
 
       </Modal>

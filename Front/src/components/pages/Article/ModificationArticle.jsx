@@ -30,8 +30,16 @@ const customStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-    height: '50%',
-    width: '50%'
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Ajoute une ombre légère
+    backgroundColor: '#fff', // Couleur de fond de la modal
+    borderRadius: '8px', // Ajoute des coins arrondis
+    padding: '16px', // Ajoute un peu d'espace intérieur
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Couleur d'overlay (noir avec une opacité de 50%)
   },
 };
 
@@ -105,7 +113,6 @@ const updateArticle = id => {
         <div >
         <h1 align="left"> Modification d'un Article </h1>
         <hr />
-          <Grid container spacing={6}>
             <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
               
             {/* <TextField
@@ -149,9 +156,6 @@ const updateArticle = id => {
                 validators={["required","minStringLength: 1", "maxStringLength: 9"]}
                 errorMessages={["this field is required"]}
               />
-            </Grid>
-
-            <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
 
 
               <TextField
@@ -173,19 +177,22 @@ const updateArticle = id => {
                 validators={["required"]}
                 errorMessages={["this field is required", "email non valide"]}
               />
-            </Grid>
-	      <Button onClick={() => {
-          updateArticle(article.FORMULE)
-          console.log(article)
-        }} 	color="success" variant="contained" className='m-5 mt-2 mb-2'  >
-          {/*<Icon>send</Icon>*/}
-          Modifier
-        </Button>
+
+            <div className="text-center">
+              <Button onClick={() => {
+                updateArticle(article.FORMULE)
+                console.log(article)
+              }} 		color="success" variant="outlined" className='me-2 '  >
+                {/*<Icon>send</Icon>*/}
+                Modifier
+              </Button>
+              <Button color="secondary" className=" me-2 ms-1 ps-4 pe-4" variant="outlined" onClick={closeModal}>Annuler</Button>
+            </div>
+
+	     
           </Grid>
         </div>
-        <button className='btn btn-danger p-4 pt-1 pb-1'onClick={closeModal} > Annuler </button>
-
-      </ValidatorForm>
+       </ValidatorForm>
 
       </Modal>
     </>
