@@ -23,10 +23,10 @@ function App() {
   const togleSidebar = () => setIsOpen(!IsOpen)
 
   const saveCon = () =>{
-    sessionStorage.setItem("con", isConn)
+    localStorage.setItem("con", isConn)
   }
   const getCon = () =>{
-    return sessionStorage.getItem("con")
+    return localStorage.getItem("con")
   }
   const deconexion = () =>{
       setIsConn(false)
@@ -52,8 +52,8 @@ function App() {
       <div className={`App ${IsOpen ? "" : "open"}`}>
         
         <AuthProvider>
-          {isConn && <SideNav deconexion={deconexion} IsOpen={IsOpen} setIsOpen={setIsOpen} togleSidebar={togleSidebar}/>}
-          {isConn && <Topnav />}
+          {isConn && <SideNav user={user} deconexion={deconexion} IsOpen={IsOpen} setIsOpen={setIsOpen} togleSidebar={togleSidebar}/>}
+          {isConn && <Topnav user={user} />}
           <Routes>
             <Route index element={<Login 
             isConn={isConn} setIsConn={setIsConn} saveCon={saveCon}
