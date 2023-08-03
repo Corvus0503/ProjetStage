@@ -2,34 +2,44 @@ const OracleDB = require("oracledb");
 const { outFormat } = require("oracledb");
 const getConnection = require("./db");
 
-//admin
+//login only
+
+function replacer(key, value) {
+  // If the property is circular, skip it
+  if (key === 'parent' && value instanceof Array) {
+    return undefined;
+  }
+  return value;
+}
 
 const getAdmin = async (req, res, pseudo, mdp) => {
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute(
-      'SELECT * FROM AGENT WHERE NOM_UTIL_AG=:pseudo AND PASSWORD=:mdp',
-      [pseudo, mdp]
-    );
-
-    if (result.rows.length === 0) {
-      res.status(401).json({ message: 'Invalid credentials' });
-    } else {
-      res.send(result.rows);
-    }
-
-    await connection.close();
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+    
+      try {
+        const connection = await getConnection()
+        const result = await connection.execute('SELECT * FROM AGENT WHERE NOM_UTIL_AG=:pseudo AND PASSWORD=:mdp', [pseudo, mdp]);
+        if (result.rows.length == 0) {
+          res.status(401).json({ message: 'Invalid credentials' });
+        } else {
+          // Authentication reussi
+          const jsonString = jsonStringify(result.rows, replacer, 2);
+          res.send(jsonString)
+        }
+    
+        await connection.close();
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
 };
 
-const getUser = async (req, res) => {
+//Liste Agent 
+
+const getAdminList = async (req, res) => {
   try {
     const connection = await getConnection();
     const result = await connection.execute('SELECT * FROM AGENT');
     res.json(result.rows);
+    console.log("donnée chargé")
     await connection.close();
   } catch (error) {
     console.error(error);
@@ -527,7 +537,7 @@ const deleteArticle = async (req, res, id) => {
 };
 
  module.exports = {
-   getUser,
+   getAdminList,
    getAdmin,
    addAdmin,
    updateAdmin,

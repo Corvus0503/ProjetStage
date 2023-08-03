@@ -2,7 +2,6 @@ import { DatePicker } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import {
-  Autocomplete,
   Button,
   Checkbox,
   FormControlLabel,
@@ -21,24 +20,25 @@ import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import axios from "axios"
 
 const TextField = styled(TextValidator)(() => ({
-  width: "80%",
-  marginBottom: "13px",
+  width: "100%",
+  marginBottom: "16px",
 }));
 
-const AutoComplete = styled(Autocomplete)(() => ({
-  width: "80%",
-  marginBottom: "13px",
-}));
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
-const suggestions = [
-  {label : "Admin"},
-  {label : "AG"},
-  {label : "User"}
-]
-
-const Signup = () => {
+const ModUser = () => {
+  const [state, setState] = useState({ date: new Date() });
   const [confirmMdp, setConfirmMdp] = useState("")
-  const [newUser, setNewUser] = useState({
+  const [modUser, setModUser] = useState({
     MATRICULE: "",
     FONCTION_AG: "",
     MAIL_AG: "",
@@ -49,25 +49,16 @@ const Signup = () => {
     ADRESSE_AG: "",
     TEL_AG: "",
     PASSWORD: "",
+    PHOTO: "",
     GENRE: "",
     ACTIVATION: "",
-    CODE_DIVISION: "",
-    photo: null
+    CODE_DIVISION: ""
 })
 
 const addNewUser = async () => {
   try {
-    const formDataToSend = new FormData();
-    for (const key in newUser) {
-      formDataToSend.append(key, newUser[key]);
-    }
-
-      await axios.post("http://localhost:8080/admin/newUser", formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-    setNewUser({
+    await axios.put('http://localhost:8080/admin', modUser);
+    setModUser({
       MATRICULE: "",
       FONCTION_AG: "",
       MAIL_AG: "",
@@ -78,10 +69,10 @@ const addNewUser = async () => {
       ADRESSE_AG: "",
       TEL_AG: "",
       PASSWORD: "",
+      PHOTO: "",
       GENRE: "",
       ACTIVATION: "",
-      CODE_DIVISION: "",
-      photo: null
+      CODE_DIVISION: ""
     });
     console.log('Le USer a été ajouté avec succès.');
   } catch (error) {
@@ -90,64 +81,36 @@ const addNewUser = async () => {
 };
 
 
-    const [state, setState] = useState({
-      date: new Date(),
-      password: "",
-      confirmPassword: "", // Add confirmPassword to form state
+  useEffect(() => {
+    ValidatorForm.addValidationRule("isPasswordMatch", (value) => {
+      if (value !== state.password) return false;
+
+      return true;
     });
-
-// ...
-
-useEffect(() => {
-  ValidatorForm.addValidationRule("isPasswordMatch", (value) => {
-    if (value !== state.password) return false;
-    return true;
-  });
-  return () => ValidatorForm.removeValidationRule("isPasswordMatch");
-}, [state.password]);
-
+    return () => ValidatorForm.removeValidationRule("isPasswordMatch");
+  }, [state.password]);
 
   const handleSubmit = (event) => {
-    console.log(newUser)
+    console.log(modUser)
     addNewUser()
   };
 
   const handleChange = (e) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setNewUser({ ...newUser, photo: file })
+    setModUser({ ...modUser, [e.target.name]: e.target.value });
   };
 
   const handleDateChange = (date) => setState({ ...state, date });
 
 
   return (
-    <div className="container mt-5 p-5 card shadow">
+    <div className="container">
       <ValidatorForm onSubmit={handleSubmit} onError={() => null}>
         <Grid container spacing={6}>
           <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-          <input
-            accept="image/*"
-            style={{ display: 'none' }}
-            id="raised-button-file"
-            multiple
-            type="file"
-            name='photo'
-            onChange={handleFileChange}
-          />
-          <label htmlFor="raised-button-file">
-            <Button variant="raised" component="span">
-              Upload
-            </Button>
-          </label> 
-          
           <TextField
               type="text"
               name="MATRICULE"
-              value={newUser.MATRICULE}
+              value={modUser.MATRICULE}
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Matricule"
@@ -157,7 +120,7 @@ useEffect(() => {
             <TextField
               type="text"
               name="CODE_DIVISION"
-              value={newUser.CODE_DIVISION}
+              value={modUser.CODE_DIVISION}
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Code division"
@@ -168,28 +131,35 @@ useEffect(() => {
               type="text"
               name="FONCTION_AG"
               //id="standard-basic"
-              value={newUser.FONCTION_AG}
+              value={modUser.FONCTION_AG}
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Fonction"
               validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
             />
 
-            <AutoComplete
-                options={suggestions}
-                getOptionLabel={(option) => option.label}
-                renderInput={(params) => (
-                  <TextField {...params} value={newUser.TYPE_AG}
-                  onChange={handleChange} name="TYPE_AG" label="Type" variant="outlined" fullWidth />
-                )}
-              />
+            <FormControl>
+            <InputLabel id="demo-simple-select-label">Type AG</InputLabel>
+            <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={modUser.TYPE_AG}
+                label="Age"
+                onChange={handleChange}
+                MenuProps={MenuProps}
+              >
+                <MenuItem value={"Admin"}>Admin</MenuItem>
+                <MenuItem value={"Affaire Generale"}>Affaire Generale</MenuItem>
+                <MenuItem value={"Utilisteur"}>Utilisteur</MenuItem>
+              </Select>
+            </FormControl>
 
 
             <TextField
               type="text"
               name="NOM_UTIL_AG"
               //id="standard-basic"
-              value={newUser.NOM_UTIL_AG}
+              value={modUser.NOM_UTIL_AG}
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Nom d'utilisteur"
@@ -201,7 +171,7 @@ useEffect(() => {
               name="NOM_AG"
               label="Nom"
               onChange={handleChange}
-              value={newUser.NOM_AG}
+              value={modUser.NOM_AG}
               validators={["required"]}
               errorMessages={["this field is required"]}
             />
@@ -211,29 +181,31 @@ useEffect(() => {
               name="PRENOM_AG"
               label="Prenom"
               onChange={handleChange}
-              value={newUser.PRENOM_AG}
+              value={modUser.PRENOM_AG}
               validators={["required"]}
               errorMessages={["this field is required"]}
             />  
 
-          </Grid>
-
-          <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-          <TextField
+            <TextField
               type="email"
               name="MAIL_AG"
               label="Email"
-              value={newUser.MAIL_AG}
+              value={modUser.MAIL_AG}
               onChange={handleChange}
               validators={["required", "isEmail"]}
               errorMessages={["this field is required", "email non valide"]}
             />
+
+            
+          </Grid>
+
+          <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
             <TextField
                 type="text"
                 name="ADRESSE_AG"
                 label="Adresse"
                 onChange={handleChange}
-                value={newUser.ADRESSE_AG}
+                value={modUser.ADRESSE_AG}
                 errorMessages={["this field is required"]}
                 validators={["required"]}
               />
@@ -241,7 +213,7 @@ useEffect(() => {
             <TextField
               type="text"
               name="TEL_AG"
-              value={newUser.TEL_AG}
+              value={modUser.TEL_AG}
               label="Contact"
               onChange={handleChange}
               validators={["required"]}
@@ -252,7 +224,7 @@ useEffect(() => {
               name="PASSWORD"
               type="password"
               label="Password"
-              value={newUser.PASSWORD}
+              value={modUser.PASSWORD}
               onChange={handleChange}
               validators={["required"]}
               errorMessages={["this field is required"]}
@@ -270,7 +242,7 @@ useEffect(() => {
               row
               name="GENRE"
               sx={{ mb: 2 }}
-              value={newUser.GENRE}
+              value={modUser.GENRE}
               onChange={handleChange}
             >
               <FormControlLabel
@@ -292,7 +264,7 @@ useEffect(() => {
               row
               name="ACTIVATION"
               sx={{ mb: 2 }}
-              value={newUser.ACTIVATION}
+              value={modUser.ACTIVATION}
               onChange={handleChange}
             >
               <FormControlLabel
@@ -322,4 +294,4 @@ useEffect(() => {
   );
 };
 
-export default Signup;
+export default ModUser;
