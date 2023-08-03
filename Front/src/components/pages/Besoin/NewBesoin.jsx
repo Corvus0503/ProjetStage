@@ -16,7 +16,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';//join files3
 import MenuIcon from '@mui/icons-material/Menu';//menu
 import ArticleListModal from "./ListeArticle";
 import ParentComponent from "./test";
-
+import InputAdornment from "@material-ui/core/InputAdornment";
 
 
 const TextField = styled(TextValidator)(() => ({
@@ -108,83 +108,49 @@ const NewBesoin = () => {
                 <div className=" card center shadow p-5">
                     <h1 align="left"> Ajout d'un nouveau Besoin </h1>
                     <hr />
-                    <Grid>
-                        <div className="text-start ">
-                            <div className="mb-3">
-                                <label className="h4 ms-2 " > Catégorie : </label>
-                                <div class="input-group ">
-                                    <input type="text" class="form-control" placeholder="Entrer le Catégorie....." required />
-                                    <button className="p-3 ps-3 pe-3 btn btn-outline-primary" onClick={handleModalOpen}><FileUploadIcon/> </button>
-                                </div> 
-                            </div>
-                            <div className="mb-3"> 
-                                <label className="h4 ms-2" > Article : </label>
-                                <div class="input-group ">
-                                    <input type="text" class="form-control" name="FORMULE" value={besoin.FORMULE} onChange={handleChange} placeholder="Entrer l'Article....." required />
-                                    <button className="p-3 btn btn-outline-primary" onClick={handleModalOpen}><FileUploadIcon/> </button>
-                                </div>
-                            </div>
-                            <div className="mb-3">
-                                <label className="h4 ms-2" > Quantité : </label>
-                                <div class="input-group ">
-                                    <input type="text" class="form-control" placeholder="Entrer la Quantité....." required />
-                                    <button className="p-3 ps-3 pe-3 pb-2 btn btn-outline-primary"> <h5> Unité </h5> </button>
-                                </div>
-                            </div>
-                            <div className="mb-3">
-                                <label className="h4 ms-2" > Prix Unitaire de l'Article : </label>
-                                <div class="input-group ">
-                                    <input type="text" class="form-control" placeholder="Entrer la Prix Unitaire....." required />
-                                    <button className="p-3 pb-2 btn btn-outline-primary"> <h5> Ariary </h5> </button>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-11">
-                                     <TextField 
-                                        placeholder="Matricule de l'Agent..."
-                                        label="Matricule de l'Agent"
-                                        name="MATRICULE"
-                                        onChange={handleChange}
-                                        value={besoin.MATRICULE}
-                                        validators={["required","minStringLength: 1"]}
-                                        errorMessages={['Vous devez remplir ce Champs']}
-                                    />
+                <Grid>
+                    <TextField
+                        placeholder="Matricule de l'Agent..."
+                        label="Matricule de l'Agent"
+                        name="MATRICULE"
+                        onChange={handleChange}
+                        value={besoin.MATRICULE}
+                        validators={["required","minStringLength: 1"]}
+                        errorMessages={['Vous devez remplir ce Champs']}
+                        InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <button className="btn btn-outline-primary" onClick={handleModalOpen}>
+                                    <FileUploadIcon/> 
+                                </button>
+                                <ArticleListModal isModalOpen={isModalOpen} closeModal={handleModalClose} />
+                            </InputAdornment>
+                        ),
+                        }}
+                    />
+                    
+                    <TextField 
+                        placeholder="Quantité..."
+                        label='Quantité'
+                        name=""
+                        // onChange={handleChange}
+                        // value=""
+                        validators={["required","minStringLength: 1"]}
+                        errorMessages={['Vous devez remplir ce Champs']}
+                        InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <button className="btn btn-outline-primary" onClick={handleModalOpen}>
+                                    <FileUploadIcon/> 
+                                </button>
+                                <ArticleListModal isModalOpen={isModalOpen} closeModal={handleModalClose} />
+                            </InputAdornment>
+                        ),
+                        }}
+                    /> 
+                </Grid>
 
-                                </div>
-                                <div className="col-1">
-                                    <button className="p-3 ps-5 pe-5 btn btn-outline-warning" onClick={handleModalOpen}><FileUploadIcon/> </button>
-                                    <ArticleListModal isModalOpen={isModalOpen} closeModal={handleModalClose} />
-                                    {/* <button className="p-3 ps-5 pe-5 btn btn-outline-warning">
-                                        test
-                                    </button> */}
-                                </div>
-                                
-                            </div>
-                            <div className="row">
-                                <div className="col-11">
-                                    <TextField 
-                                        placeholder="Quantité..."
-                                        label='Quantité'
-                                        name=""
-                                        // onChange={handleChange}
-                                        // value=""
-                                        validators={["required","minStringLength: 1"]}
-                                        errorMessages={['Vous devez remplir ce Champs']}
-                                    />
-                                </div>
-                                <div className="col-1">
-                                <button className="p-3 ps-5 pe-5 btn btn-outline-warning" onClick={handleModalOpen}><FileUploadIcon/> </button>
-                                </div>
-                                
-                            </div>
-
-                            
-
-                            
-                        </div>                        
-                    </Grid>
-
-                    <div className="text-start">
+                  <div className="text-start">
                         <button className="btn btn-primary"> 
                              <AddCircleIcon color="white"/> Ajouter
                         </button>
