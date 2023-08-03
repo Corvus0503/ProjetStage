@@ -5,7 +5,7 @@ import {
 import React from "react";
 import Breadcrumb from "../../Utils/Breadcrumb";
 import ToggleablePills from '../../Utils/ToggleablePills';
-import BesoinList from "./BesoinList";
+
 
 
 
@@ -29,9 +29,7 @@ const Besoin = () => {
               <ToggleablePills/>   
             </div>
 
-            <div>
-              <BesoinList/>
-            </div>
+            
         </Card>        
     </Container>
   )

@@ -13,8 +13,10 @@ import Article from './components/pages/Article/Article';
 import ArticleList from './components/pages/Article/ArticleList';
 import ModificationArticle from './components/pages/Article/ModificationArticle';
 import Besoin from './components/pages/Besoin/Besoin';
+import BesoinList from './components/pages/Besoin/BesoinList';
 import NewDivision from './components/pages/Division/NewDivision';
 import Division from './components/pages/Division/Division';
+
 
 
 
@@ -71,6 +73,7 @@ function App() {
               <Route path="/ArticleList" element={<ArticleList />} />
               <Route path="/ModificationArticle" element={<ModificationArticle />} />
               <Route path="/Besoin" element={<Besoin/>} />
+              <Route path="/Besoinlist" element={<BesoinList/>} />
               <Route path="/division" element={<Division/>} />
 
             </Route>

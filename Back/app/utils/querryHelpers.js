@@ -143,65 +143,8 @@ const deleteCompte = async (id) => {
   }
 };
 
-// Les autres fonctions (addCategorie, updateCategorie, deleteCategorie, getService, addService, updateService, deleteService, getDivision, addDivision, updateDivision, deleteDivision) peuvent être corrigées de la même manière en utilisant les paramètres nommés dans les requêtes préparées.
 
-const getCategorie = async () => {
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute('SELECT * FROM CATEGORIE');
-    await connection.close();
-    return result.rows;
-  } catch (error) {
-    console.error(error);
-    throw new Error('Internal server error');
-  }
-};
-
-const addCategorie = async (ID_CAT, LABEL_CAT, NUM_CMPT) => {
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute('INSERT INTO CATEGORIE(ID_CAT, LABEL_CAT, NUM_CMPT) VALUES (ID_CAT.nextval, :LABEL_CAT, :NUM_CMPT)', {
-      LABEL_CAT: LABEL_CAT,
-      NUM_CMPT: NUM_CMPT
-    });
-    await connection.commit();
-    await connection.close();
-    return result.rows;
-  } catch (error) {
-    console.error(error);
-    throw new Error('Internal server error');
-  }
-};
-
-const updateCategorie = async (LABEL_CAT, NUM_CMPT, id) => {
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute('UPDATE CATEGORIE SET LABEL_CAT = :LABEL_CAT, NUM_CMPT = :NUM_CMPT WHERE ID_CAT = :id', {
-      LABEL_CAT: LABEL_CAT,
-      NUM_CMPT: NUM_CMPT,
-      id: id
-    });
-    await connection.commit();
-    await connection.close();
-    return result.rows;
-  } catch (error) {
-    console.error(error);
-    throw new Error('Internal server error');
-  }
-};
-
-const deleteCategorie = async (id) => {
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute('DELETE FROM CATEGORIE WHERE ID_CAT = :id', [id]);
-    await connection.commit();
-    await connection.close();
-    return result.rows;
-  } catch (error) {
-    console.error(error);
-    throw new Error('Internal server error');
-  }
-};
+//Requete Pour Service
 
 const getService = async () => {
   try {
@@ -339,8 +282,6 @@ const deleteDivision = async (req,res,id) => {
   }
 };
 
-// Vous pouvez utiliser ces fonctions dans vos contrôleurs pour gérer les requêtes liées à la base de données.
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -385,9 +326,12 @@ const updateBesoin = async (NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIR
 };
 
 const getBesoin= async (req, res)=> {
-  const query = `SELECT BESOIN.* , ARTICLE.*, AGENT.* FROM ((BESOIN
+  const query = `SELECT BESOIN.* , ARTICLE.*, AGENT.*, CATEGORIE.*,DIVISION.* FROM ((((BESOIN
     INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
     INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+    INNER JOIN CATEGORIE ON ARTICLE.ID_CAT=CATEGORIE.ID_CAT)
+    INNER JOIN DIVISION ON AGENT.CODE_DIVISION=DIVISION.CODE_DIVISION) 
+
     
   `;
 
@@ -456,6 +400,69 @@ const getBesoinRef = async (req,res) =>{
 
 ////////////////////////////////////////////////////////////////////////
 
+
+// Requete Categorie
+
+const getCategorie = async (req,res) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('SELECT * FROM CATEGORIE');
+    res.json(result.rows);
+    await connection.close();
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' }) };
+};
+
+const addCategorie = async (req, res, LABEL_CAT, NUM_CMPT) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('INSERT INTO CATEGORIE(ID_CAT, LABEL_CAT, NUM_CMPT) VALUES (:LABEL_CAT, :NUM_CMPT)', {
+      LABEL_CAT: LABEL_CAT,
+      NUM_CMPT: NUM_CMPT,
+      
+    });
+    res.json(result.rows)
+    await connection.commit();
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const updateCategorie = async (req, res,LABEL_CAT, NUM_CMPT, id) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('UPDATE CATEGORIE SET LABEL_CAT = :LABEL_CAT, NUM_CMPT = :NUM_CMPT WHERE ID_CAT = :id', {
+      LABEL_CAT: LABEL_CAT,
+      NUM_CMPT: NUM_CMPT,
+      id: id
+    });
+    res.json(result.rows)
+    await connection.commit();
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const deleteCategorie = async (req, res,id) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('DELETE FROM CATEGORIE WHERE ID_CAT = :id', [id]);
+    res.json(result.rows)
+    await connection.commit();
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
 // Requetes article
 
 const getArticle = async (req, res) => {
@@ -463,7 +470,6 @@ const getArticle = async (req, res) => {
     const connection = await getConnection();
     const result = await connection.execute('SELECT ARTICLE.*, CATEGORIE.LABEL_CAT FROM ARTICLE INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT');
     res.json(result.rows);
-    connection.commit();
     await connection.close();
   } catch (error) {
     console.error(error);
@@ -552,5 +558,5 @@ const deleteArticle = async (req, res, id) => {
    deleteBesoin,
    getBesoinRef,
    getBesoinAtt,
- };
-
+ 
+  };

@@ -11,6 +11,8 @@ import React, { useState } from "react";
 import axios from 'axios'
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import Breadcrumb from "../../Utils/Breadcrumb";
+import ArticleList from "./ArticleList";
+
 
 const TextField = styled(TextValidator)(() => ({
   width: "100%",
@@ -76,7 +78,7 @@ const Article = () => {
 
     <Container>
       <div className="breadcrumb">
-            <Breadcrumb routeSegments={[{ name: "Liste des Article" }]} />
+            <Breadcrumb routeSegments={[{ name: "Article" }]} />
         </div>
 
       <ValidatorForm onError={() => null} onSubmit={handleSubmit} >

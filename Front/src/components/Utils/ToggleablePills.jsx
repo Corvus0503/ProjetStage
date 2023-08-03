@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import NewBesoin from "../pages/Besoin/NewBesoin";
 import BesoinEnAttent from "../pages/Besoin/BesoinEnAttent";
 import BesoinRefuse from "../pages/Besoin/BesoinRefuse";
-
-
-
+import BesoinList from "../pages/Besoin/BesoinList";
 
 const ToggleablePills = () => {
   const [activePill, setActivePill] = useState("pill1");
@@ -46,7 +44,9 @@ const ToggleablePills = () => {
         <hr className="m-3 mt-2 mb-2"/>
       
         {/* Contenu conditionnel en fonction de l'onglet actif */}
-        {activePill === "pill1" && <div > <NewBesoin /> </div>}
+        {activePill === "pill1" && <div > <NewBesoin /> <div>
+              <BesoinList/>
+            </div></div>}
 
         {activePill === "pill2" && <div> <BesoinEnAttent/> </div>}
 

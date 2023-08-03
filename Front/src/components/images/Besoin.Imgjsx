@@ -1,0 +1,10 @@
+import React from 'react'
+import NewFiles from './icons8_create_document_28px.png'
+
+const ArticleIcone = () => {
+  return (
+    <img src={NewFiles} alt=''/>
+  )
+}
+
+export default ArticleIcone

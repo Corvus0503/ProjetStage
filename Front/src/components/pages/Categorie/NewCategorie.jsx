@@ -10,7 +10,6 @@ import {
 import React, { useState } from "react";
 import axios from 'axios'
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import Breadcrumb from "../../Utils/Breadcrumb";
 import { Modal} from '@mui/material';
 
 const TextField = styled(TextValidator)(() => ({
@@ -34,20 +33,20 @@ const CustomModal = styled(Modal)(() => ({
 }));
 
 
-const NewDivision = ({ isOpen, onClose }) => {
+const NewCategorie = ({ isOpen, onClose }) => {
   const [state, setState] = useState({ date: new Date() });
 
-  const [division,setDivision] = useState({
-    CODE_DIVISION:"",
-    CODE_SER:"",
-    LABEL_DIVISION:""
+  const [categorie,setCategorie] = useState({
+    ID_CAT:"",
+    LABEL_CAT:"",
+    NUM_CMPT:""
   })
 
 
 
-  const addNewDivision = async()=>{
+  const addNewCategorie = async()=>{
     try {
-        await axios.post(`http://localhost:8080/division`, division)
+        await axios.post(`http://localhost:8080/categorie`, categorie)
         alert("submited")
 
 
@@ -58,13 +57,13 @@ const NewDivision = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (event) => {
 
-    console.log(division)
-    addNewDivision();
-    setDivision({
+    console.log(categorie)
+    addNewCategorie();
+    setCategorie({
 
-      CODE_DIVISION:"",
-      CODE_SER:"",
-      LABEL_DIVISION:""      
+      ID_CAT:"",
+      LABEL_CAT:"",
+      NUM_CMPT:""      
       
     })
   };
@@ -73,7 +72,7 @@ const NewDivision = ({ isOpen, onClose }) => {
 
   const handleChange = (event) => {
     event.persist();
-    setDivision({ ...division, [event.target.name]: event.target.value });
+    setCategorie({ ...categorie, [event.target.name]: event.target.value });
   };
 
   const handleDateChange = (date) => setState({ ...state, date });
@@ -98,43 +97,43 @@ const NewDivision = ({ isOpen, onClose }) => {
         <Container>            
               <ValidatorForm onError={() => null} onSubmit={handleSubmit} >
                   <div className=" card center shadow p-5">
-                  <h1 align="left"> Ajout d'un nouveau Division </h1>
+                  <h1 align="left"> Ajout d'un nouveau Categorie </h1>
                   <hr />
                       <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
                         
                       <TextField
                           type="text"
-                          name="CODE_DIVISION"
-                          label="Code Division"
-                          placeholder="Saisir ici le code de division...."
+                          name="ID_CAT"
+                          label="Code Categorie"
+                          placeholder="Saisir ici le code de Categorie...."
                           onChange={handleChange}
-                          value={division.CODE_DIVISION}
+                          value={categorie.ID_CAT}
                           validators={["required","minStringLength: 1", "maxStringLength: 9"]}
                           errorMessages={["this field is required"]}
                         />              
 
                         <TextField
                           type="text"
-                          name="CODE_SER"
+                          name="LABEL_CAT"
                           id="standard-basic"
-                          placeholder="Saisir ici le code de Service...."
-                          value={division.CODE_SER}
+                          placeholder="Saisir ici le Labelle de Catégorie..."
+                          value={categorie.LABEL_CAT}
                           onChange={handleChange}
                           errorMessages={["this field is required"]}
-                          label="Code Service"
+                          label="Labelle de Catégorie"
                           validators={["required", "minStringLength: 1", "maxStringLength: 9"]}
                         />
 
                         <TextField
                           type="text"
-                          name="LABEL_DIVISION"
+                          name="NUM_CMPT"
                           id="standard-basic"
-                          value={division.LABEL_DIVISION }
+                          value={categorie.NUM_CMPT }
                           onChange={handleChange}
                           errorMessages={["this field is required"]}
-                          placeholder="Saisir ici le nom de Division...."
-                          label="Libellé"
-                          validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
+                          placeholder="Saisir ici le nu méro de Compte..."
+                          label="Numéro de compte"
+                          validators={["required", "minStringLength: 1", "maxStringLength: 9"]}
                         />
 
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -177,4 +176,4 @@ const NewDivision = ({ isOpen, onClose }) => {
   );
 };
 
-export default NewDivision;
+export default NewCategorie;
