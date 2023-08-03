@@ -40,11 +40,13 @@ function App() {
 }])
 
     
-  useEffect(() => {
-    setIsConn(getCon())
-    const tokenString = localStorage.getItem('token');
-    setUser(JSON.parse(tokenString))
-  }, [])
+
+  //  useEffect(() => {
+  //    setIsConn(getCon())
+  //    const tokenString = localStorage.getItem('token');
+  //   //setUser(JSON.parse(tokenString))
+  //  }, [])
+
 
  console.log(user)
 
