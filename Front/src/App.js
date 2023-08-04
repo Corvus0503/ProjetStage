@@ -72,7 +72,7 @@ function App() {
               <Route path="/ModUser" element={<ModUser />} />
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />
-              <Route path="/Besoin" element={<Besoin/>} />
+              <Route path="/Besoin" element={<Besoin user={user}/>} />
             </Route>
             <Route element={<ProtectedRoute user={user} perm={'user'}/>}>
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
@@ -80,7 +80,7 @@ function App() {
               <Route path="/Signup" element={<Signup />} />
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />
-              <Route path="/Besoin" element={<Besoin/>} />
+              <Route path="/Besoin" element={<Besoin user={user}/>} />
             </Route>
           <Route path="/*" element={<p>There's nothing here: 404!</p>} />
           </Routes>

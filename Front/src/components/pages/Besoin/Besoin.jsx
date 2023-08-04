@@ -18,7 +18,8 @@ const Container = styled("div")(({ theme }) => ({
     },
   }));
 
-const Besoin = () => {
+const Besoin = (user) => {
+
   return (
     <Container >
         <div className="breadcrumb">
@@ -26,7 +27,7 @@ const Besoin = () => {
         </div>
         <Card className="shadow" >
             <div className="mt-5">
-              <ToggleablePills/>   
+              <ToggleablePills user={user}/>   
             </div>
 
             

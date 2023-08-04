@@ -172,7 +172,7 @@ useEffect(() => {
               onChange={handleChange}
               errorMessages={["this field is required"]}
               label="Fonction"
-              validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
+              validators={["required", "minStringLength: 4", "maxStringLength: 20"]}
             />
 
             <AutoComplete
