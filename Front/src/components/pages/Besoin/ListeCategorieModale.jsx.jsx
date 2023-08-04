@@ -16,47 +16,44 @@ const StyledTable = styled(Table)(() => ({
   },
 }));
 
-// ArticleListModal est un composant de dialogue qui affiche une liste d'articles dans un tableau
+// categorieListModal est un composant de dialogue qui affiche une liste d'categories dans un tableau
 // Il prend en paramètres les propriétés suivantes :
 // - isModalOpen : un booléen pour afficher ou masquer le dialogue
 // - closeModal : une fonction de rappel pour fermer le dialogue
 // - onRowSelect : une fonction de rappel pour sélectionner une ligne du tableau
-const ArticleListModal = ({ isModalOpen, closeModal, onRowSelect }) => {
+const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) => {
   // State pour la pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // State pour stocker la liste des articles
-  const [ArticleListe, setArticleListe] = useState([]);
+  // State pour stocker la liste des categories
+  const [CategorieList, setCategorieList] = useState([]);
 
-  // State pour stocker la ligne d'article sélectionnée
+  // State pour stocker la ligne d'categorie sélectionnée
   const [selectedRow, setSelectedRow] = useState({
-    MATRICULE: '',
-    FORMULE: '',
-    DATE_BESOIN: '',
-    QUANTITE: '',
-    UNITE: '',
-    ETAT_BESOIN: '',
+    ID_CAT:"",
+    LABEL_CAT:""
   });
 
   // Gestionnaire de sélection de ligne
-  const handleSelectRow = (row) => {
-    onRowSelect(row); // Appeler la fonction de rappel onRowSelect pour passer les données de la ligne sélectionnée au composant parent
-    closeModal(); // Fermer le dialogue après avoir sélectionné la ligne
+  const handleSelectCatRow = (row) => {
+    onRowCatSelect(row); // Appeler la fonction de rappel onRowSelect pour passer les données de la ligne sélectionnée au composant parent
+    console.log(row)
+    closeCatModal(); // Fermer le dialogue après avoir sélectionné la ligne
   };
 
-  // Fonction pour charger la liste des articles depuis l'API
+  // Fonction pour charger la liste des categories depuis l'API
   const chargerListAdmin = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/article");
-      setArticleListe(response.data);
+      const response = await axios.get("http://localhost:8080/categorie");
+      setCategorieList(response.data);
       console.log("Données chargées");
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Utiliser useEffect pour charger la liste des articles lorsque le composant est monté
+  // Utiliser useEffect pour charger la liste des categories lorsque le composant est monté
   useEffect(() => {
     chargerListAdmin();
   }, []);
@@ -72,47 +69,39 @@ const ArticleListModal = ({ isModalOpen, closeModal, onRowSelect }) => {
   }
 
   return (
-    // Le composant de dialogue pour afficher la liste des articles
+    // Le composant de dialogue pour afficher la liste des categories
     <Dialog
-      open={isModalOpen}
-      onClose={closeModal}
-      aria-labelledby="article-list-dialog"
+      open={isModalCatOpen}
+      onClose={closeCatModal}
+      aria-labelledby="categorie-list-dialog"
       fullWidth
       maxWidth="md"
       sx={{
         boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)", // Personnaliser les propriétés de l'ombre ici
       }}
     >
-      <DialogTitle id="article-list-dialog" >      
-        Liste des Articles        
-      </DialogTitle>
+      <DialogTitle id="categorie-list-dialog">Liste des categories</DialogTitle>
       <DialogContent>
         <div className="m-5 mt-3 mb-3">
           <StyledTable>
             <TableHead>
               <TableRow>
                 <TableCell align="left">N°</TableCell>
-                <TableCell align="center">Désignation</TableCell>
-                <TableCell align="center">Spécification</TableCell>
-                <TableCell align="center">Effectif</TableCell>
-                <TableCell align="center">Unité</TableCell>
+                <TableCell align="center">Catégorie</TableCell>
                 <TableCell align="center">Opération</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {/* Boucle pour afficher les lignes du tableau en fonction de la pagination */}
-              {ArticleListe.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((List) => (
-                <TableRow key={ArticleListe.FORMULE}>
-                  <TableCell align="left">{List.FORMULE}</TableCell>
-                  <TableCell align="center">{List.DESIGNATION_ART}</TableCell>
-                  <TableCell align="center">{List.SPECIFICITE_ART}</TableCell>
-                  <TableCell align="center">{List.EFFECTIF_ART}</TableCell>
-                  <TableCell align="center">{List.UNITE_ART}</TableCell>
+              {CategorieList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((List) => (
+                <TableRow key={CategorieList.ID_CAT}>
+                  <TableCell align="left">{List.ID_CAT}</TableCell>
+                  <TableCell align="center">{List.LABEL_CAT}</TableCell>
                   <TableCell align="center">
                     {/* Bouton pour sélectionner une ligne du tableau */}
                     <IconButton onClick={() => {
-                      handleSelectRow(List);
-                      closeModal();
+                      handleSelectCatRow(List);
+                      closeCatModal();
                     }}>
                       <DriveFileMoveIcon color="primary" />
                     </IconButton>
@@ -128,7 +117,7 @@ const ArticleListModal = ({ isModalOpen, closeModal, onRowSelect }) => {
             page={page}
             component="div"
             rowsPerPage={rowsPerPage}
-            count={ArticleListe.length}
+            count={CategorieList.length}
             onPageChange={handleChangePage}
             rowsPerPageOptions={[5, 10, 25]}
             onRowsPerPageChange={handleChangeRowsPerPage}
@@ -140,12 +129,12 @@ const ArticleListModal = ({ isModalOpen, closeModal, onRowSelect }) => {
       </DialogContent>
       <DialogActions>
         {/* Bouton pour fermer le dialogue */}
-          <Button onClick={closeModal} color="warning">
-             Fermer
-          </Button>
+        <Button onClick={closeCatModal} color="warning">
+          Fermer
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default ArticleListModal;
+export default CategorieListModal;

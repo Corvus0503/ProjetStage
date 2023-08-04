@@ -7,6 +7,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import ArticleListModal from "./ListeArticle";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import CategorieListModal from "./ListeCategorieModale.jsx";
 
 // Styling du composant TextField à l'aide de Styled-components
 const TextField = styled(TextValidator)(() => ({
@@ -26,7 +27,12 @@ const Container = styled("div")(({ theme }) => ({
 
 // Composant principal du formulaire de nouveau besoin
 const NewBesoin = (user) => {
-  // State pour stocker les données de l'article sélectionné
+  // State pour stocker les données de l'article et Categorie sélectionné
+  const [selectedCategorie, setSelectedCategorie] = useState({
+    ID_CAT: "",
+    LABEL_CAT: "",
+  });
+
   const [selectedArticle, setSelectedArticle] = useState({
     DESIGNATION_ART: "",
     FORMULE: "",
@@ -39,6 +45,7 @@ const NewBesoin = (user) => {
   // State pour stocker les données du nouveau besoin à ajouter
   const [besoin, setBesoin] = useState({
     MATRICULE: '',
+    LABEL_CAT:"",
     FORMULE: '',
     DATE_BESOIN: '',
     QUANTITE: '',
@@ -46,22 +53,36 @@ const NewBesoin = (user) => {
     ETAT_BESOIN: '',
   });
 
-  // State pour gérer l'ouverture et la fermeture de la modal de liste d'articles
+  // State pour gérer l'ouverture et la fermeture de la modal de liste d'articles et Catégorie
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fonction pour ouvrir la modal de liste d'articles
+  const [isModalCatOpen,setIsModalCatOpen] = useState(false);
+
+  // Fonction pour ouvrir la modal de liste d'articles et de Categories
   const handleModalOpen = () => {
     setIsModalOpen(true);
   };
 
-  // Fonction pour fermer la modal de liste d'articles
+  const handelModalCatOpen =()=>{
+    setIsModalCatOpen(true);
+  }
+
+  // Fonction pour fermer la modal de liste d'articles et de Categories
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
 
-  // Fonction pour gérer la sélection d'un article dans la modal
+  const handleModalCatClose = () => {
+    setIsModalCatOpen(false);
+  };
+
+  // Fonction pour gérer la sélection d'un article et de Catégorie dans la modal
   const handleRowSelect = (selectedRow) => {
     setSelectedArticle(selectedRow);
+    setUnité(selectedRow.UNITE_ART)
+  };
+  const handleRowCatSelect = (selectedCatRow) => {
+    setSelectedCategorie(selectedCatRow);
   };
 
   // Fonction pour envoyer les données du nouveau besoin au serveur
@@ -84,9 +105,11 @@ const NewBesoin = (user) => {
   // Fonction pour gérer les changements dans les champs de saisie
   const handleChange = (event) => {
     event.persist();
-    setBesoin({ ...besoin, [event.target.name]: event.target.value });
+    setSelectedArticle({ ...selectedArticle, [event.target.name]: event.target.value });
+    setBesoin({...besoin, [event.target.name]: event.target.value})
   };
 
+  const[unite,setUnité] = useState("Unité")
   // Rendu du composant principal
   return (
     <div>
@@ -96,18 +119,35 @@ const NewBesoin = (user) => {
             <h1 align="left"> Ajout d'un nouveau Besoin </h1>
             <hr />
             <Grid>
-              <TextField
-                placeholder="Matricule de l'Agent..."
-                label="Matricule de l'Agent"
-                name="MATRICULE"
-                onChange={handleChange}
-                value={selectedArticle.DESIGNATION_ART}
-                validators={["required", "minStringLength: 1"]}
-                errorMessages={['Ce champ est obligatoire']}
+            <TextField
+                placeholder="Categorie..."
+                label='Catégorie'
+                name=""
+                // onChange={handleChange}
+                value={selectedCategorie.LABEL_CAT}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <button className="btn btn-outline-primary" onClick={handleModalOpen}>
+                        <h1 style={{border:"none",color:'SlateBlue',backgroundColor:"white"}}>|</h1>
+                      <button style={{border:"none",color:'SlateBlue',backgroundColor:"white"}} onClick={handelModalCatOpen}>
+                        <FileUploadIcon />
+                      </button>
+                      <CategorieListModal onRowCatSelect={handleRowCatSelect} isModalCatOpen={isModalCatOpen} closeCatModal={handleModalCatClose} />
+                    </InputAdornment>
+                  ),
+                }}
+                />
+              <TextField
+                placeholder="Article..."
+                label="Article"
+                name="DESIGNATION_ART"
+                onChange={handleChange}
+                value={selectedArticle.DESIGNATION_ART}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                        <h1 style={{border:"none",color:'SlateBlue',backgroundColor:"white"}}>|</h1>
+                      <button style={{border:"none",color:'SlateBlue',backgroundColor:"white"}} onClick={handleModalOpen}>
                         <FileUploadIcon />
                       </button>
                       <ArticleListModal isModalOpen={isModalOpen} closeModal={handleModalClose} />
@@ -118,17 +158,17 @@ const NewBesoin = (user) => {
 
               <TextField
                 placeholder="Quantité..."
+                type="number"
                 label='Quantité'
-                name=""
+                name="QUANTITE"
                 // onChange={handleChange}
-                // value=""
-                validators={["required", "minStringLength: 1"]}
-                errorMessages={['Ce champ est obligatoire']}
+                value={besoin.QUANTITE}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <button className="btn btn-outline-primary" onClick={handleModalOpen}>
-                        <FileUploadIcon />
+                        <h1 style={{border:"none",color:'SlateBlue',backgroundColor:"white"}}>|</h1>
+                      <button style={{border:"none",color:'SlateBlue',backgroundColor:"white"}} onClick={handleModalOpen}>
+                        <h6 className="mt-2"> {unite} </h6>
                       </button>
                       <ArticleListModal onRowSelect={handleRowSelect} isModalOpen={isModalOpen} closeModal={handleModalClose} />
                     </InputAdornment>
