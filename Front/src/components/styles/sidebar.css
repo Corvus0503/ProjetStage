@@ -173,7 +173,7 @@
     }
   }
 
-  .topnav {
+.topnav {
   background-color: #333;
   overflow: hidden;
 }
@@ -205,4 +205,8 @@
 }
 .sideText.open{
   translate: -300px;
+}
+
+.topbar{
+  margin-left: 50%;
 }

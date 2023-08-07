@@ -23,14 +23,13 @@ function App() {
   const togleSidebar = () => setIsOpen(!IsOpen)
 
   const saveCon = () =>{
-    localStorage.setItem("con", isConn)
+    sessionStorage.setItem("con", isConn)
   }
   const getCon = () =>{
-    return localStorage.getItem("con")
+    return sessionStorage.getItem("con")
   }
   const deconexion = () =>{
-      setIsConn(false)
-      saveCon()
+      sessionStorage.removeItem("con")
   }
   const [user, setUser] = useState([{
     MATRICULE: "",
@@ -53,7 +52,7 @@ function App() {
         
         <AuthProvider>
           {isConn && <SideNav user={user} deconexion={deconexion} IsOpen={IsOpen} setIsOpen={setIsOpen} togleSidebar={togleSidebar}/>}
-          {isConn && <Topnav user={user} />}
+          {/*isConn && <Topnav user={user} />*/}
           <Routes>
             <Route index element={<Login 
             isConn={isConn} setIsConn={setIsConn} saveCon={saveCon}
@@ -64,7 +63,7 @@ function App() {
               element={<Login isConn={isConn} setIsConn={setIsConn} saveCon={saveCon}
               user={user} setUser={setUser} getCon={getCon} />}
             />
-            <Route element={<ProtectedRoute user={user} perm={'admin'}/>}>
+            <Route element={<ProtectedRoute user={user} perm={'Admin'}/>}>
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
               <Route path="/Prevision" element={<Previsions />} />
               <Route path="/Signup" element={<Signup />} />
@@ -74,7 +73,7 @@ function App() {
               <Route path="/ArticleList" element={<ArticleList />} />
               <Route path="/Besoin" element={<Besoin/>} />
             </Route>
-            <Route element={<ProtectedRoute user={user} perm={'user'}/>}>
+            <Route element={<ProtectedRoute user={user} perm={'User'}/>}>
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
               <Route path="/Prevision" element={<Previsions />} />
               <Route path="/Signup" element={<Signup />} />

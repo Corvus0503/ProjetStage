@@ -2,6 +2,8 @@ const { response } = require("express")
 const express = require("express")
 const multer = require('multer')
 const cors = require("cors")
+const bodyParser = require('body-parser')
+const path = require('path');
 const OracleDB = require("oracledb");
 const getConnection = require("./app/utils/db.js");
 const { 
@@ -16,27 +18,39 @@ const app = express()
 const err = "Il y a une erreur quelque part"
 
 app.use(express.json())
-
-app.use(express.urlencoded({ extended: true }));
-
-// Configure multer for file upload handling
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+app.use(bodyParser.json());
+// Multer configuration for file upload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '../Front/src/uploads/'); // Set the destination folder for file uploads
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // Use original filename with timestamp
+    },
+  });
+  
+  const upload = multer({ storage });
 
 const whitelist = ["http://localhost:3001"]
 
-const corsOptions = {
-    origin: function (origin, callback){
-        if (!origin || whitelist.indexOf(origin) !=1){
-            callback(null, true)
-        } else {
-            callback(new Error("Not alowed by CORS"))
-        }
-    },
-    Credential: true,
-}
+// const corsOptions = {
+//     origin: function (origin, callback){
+//         if (!origin || whitelist.indexOf(origin) !=1){
+//             callback(null, true)
+//         } else {
+//             callback(new Error("Not alowed by CORS"))
+//         }
+//     },
+//     Credential: true,
+// }
 
-app.use(cors(corsOptions))
+app.use(cors())
+
+const server = app.listen(8080, () => {
+    console.log("Server is running on port 8080");
+});
+  
+const io = require("socket.io")(server);
 
 app.get('/admin/userList', function (req, res) {
     getAdminList(req, res);
@@ -47,60 +61,16 @@ app.post('/admin', function (req, res) {
     getAdmin(req, res, pseudo, mdp);
   })
 
-app.post('/admin/newUser', upload.single('photo'), async function (req, res) {
-    const formData = req.body;
-    const photo = req.file;
-
-  try {
-    const connection = await getConnection()
-    const procedure = `BEGIN INSERT_AGENT_WITH_IMAGE(
-    :MATRICULE,
-    :FONCTION_AG,
-    :MAIL_AG,
-    :NOM_AG,
-    :NOM_UTIL_AG,
-    :TYPE_AG,
-    :PRENOM_AG,
-    :ADRESSE_AG,
-    :TEL_AG,
-    :PASSWORD,
-    :GENRE,
-    :ACTIVATION,
-    :CODE_DIVISION,
-    :photo); END;`;
-
-    // Bind the parameters to the procedure call
-    const binds = {
-      MATRICULE: formData.MATRICULE,
-      FONCTION_AG: formData.FONCTION_AG,
-      MAIL_AG: formData.MAIL_AG,
-      NOM_AG: formData.NOM_AG,
-      NOM_UTIL_AG: formData.NOM_UTIL_AG,
-      TYPE_AG: formData.TYPE_AG,
-      PRENOM_AG: formData.PRENOM_AG,
-      ADRESSE_AG: formData.ADRESSE_AG,
-      TEL_AG: formData.TEL_AG,
-      PASSWORD: formData.PASSWORD,
-      GENRE: formData.GENRE,
-      ACTIVATION: formData.ACTIVATION,
-      CODE_DIVISION: formData.CODE_DIVISION,
-      photo: { val: photo ? photo.buffer : null, type: OracleDB.BLOB }
-    };
-
-    // Execute the procedure
-    const result = await connection.execute(procedure, binds, { autoCommit: true });
-    connection.release();
-
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error while subscribing:', error);
-    res.status(500).json({ message: 'Failed to subscribe' });
-  }
+app.post('/admin/newUser', upload.single('PHOTO'), function (req, res) {
+    let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, GENRE, ACTIVATION, CODE_DIVISION} = req.body
+    const PHOTO = req.file ? req.file.filename : null;
+    addAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION);
 })
 
 
-app.put('/admin/:id', function (req, res) {
-    let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION} = req.body
+app.put('/admin/:id', upload.single('PHOTO'),function (req, res) {
+    let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, GENRE, ACTIVATION, CODE_DIVISION} = req.body
+    const PHOTO = req.file ? req.file.filename : null;
     let {id} = req.params
     updateAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id);
 })
@@ -249,5 +219,3 @@ app.post('/besoin', function(req, res){
     addBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
 })
 
-app.listen(8080)
-console.log("It s running");

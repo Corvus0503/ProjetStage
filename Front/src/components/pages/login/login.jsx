@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import "../../styles/login.css"
+import LoginPhoto from"../../images/account-validation-bg-mob.png"
+import LoginAvatar from"../../images/blog-wp-login.png"
 import IconButton from "@material-ui/core/IconButton";
 //import InputLabel from "@material-ui/core/InputLabel";
 import Visibility from "@material-ui/icons/Visibility";
@@ -10,6 +12,7 @@ import Input from "@material-ui/core/Input";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "./authProvider";
 import axios from "axios"
+
 
 const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
     const navigate = useNavigate();
@@ -57,25 +60,32 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
 
     return(
         <div className="login">
-            <form className="login-form">
-                <h2>Bienvenue</h2>
-                <h3>Veuillez vous connecter pour continuer</h3>
-                <div className="input-box">
-                    <Input value={infoCon.pseudo} onChange={e => setInfoCon({...infoCon, pseudo : e.target.value})} type="text" placeholder="Nom d'utitilisateur" className="log-input"/>
-                </div>
-                <div className="input-box">
-                    <Input value={infoCon.mdp} onChange={e => setInfoCon({...infoCon, mdp : e.target.value})} type={isShow ? "text" : "password"} placeholder="Mot de passe" 
-                    endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton onClick={showMdp}>
-                                {isShow ? <Visibility /> : <VisibilityOff />}
-                            </IconButton>
-                        </InputAdornment>
-                    } 
-                    className="log-input"></Input>
-                </div>
-                <button onClick={connexion} className="log-btn">Connexion</button>
-            </form>
+            <img src={LoginPhoto} alt="login image"className='login_img'  />
+
+                <h1>
+                    Bienvenue
+                </h1>
+
+                <form className="login-form">
+
+                    <img src={LoginAvatar} alt="" />
+                    
+                    <div className="input-box">
+                        <Input style={{color:'white'}} value={infoCon.pseudo} required onChange={e => setInfoCon({...infoCon, pseudo : e.target.value})} type="text" placeholder="Nom d'utitilisateur....." className="log-input"/>
+                    </div>
+                    <div className="input-box">
+                        <Input style={{color:'white'}} value={infoCon.mdp} required onChange={e => setInfoCon({...infoCon, mdp : e.target.value})} type={isShow ? "text" : "password"} placeholder="Mot de passe......." 
+                        endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton onClick={showMdp}>
+                                    {isShow ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </InputAdornment>
+                        } 
+                        className="log-input"></Input>
+                    </div>
+                    <button onClick={connexion} className="btn btn-primary mt-5">Connexion</button>
+                </form>
         </div>
     )
 }

@@ -17,6 +17,8 @@ import TestModal from "./TestModal";
 import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../utils/ConfirmationDialog";
 import DeleteIcon from '@mui/icons-material/Delete';
+import Breadcrumb from "../../utils/Breadcrumb";
+import Swal from 'sweetalert2'
   
   const StyledTable = styled(Table)(() => ({
     whiteSpace: "pre",
@@ -60,7 +62,24 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
   const handleDeleteUser = (user) => {
     setUser(user);
-    setShouldOpenConfirmationDialog(true);
+    Swal.fire({
+      title: 'Confirmation',
+      text: "Etes vous dur de supprimer cet utilisateur ?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Supprimer'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteUser(user)
+        Swal.fire(
+          'Supprimé!',
+          'Utilisateur supprimeé.',
+          'success'
+        )
+      }
+    })
   };
 
   const handleConfirmationResponse = () => {
@@ -104,6 +123,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
     console.log(adminList)
     return (
     <div className="containerBG">
+      <div className="breadcrumb">
+            <Breadcrumb routeSegments={[{ name: "Liste des Utilisateur" }]} />
+        </div>
         <div className="container mt-5 p-5 card shadow">
           <Box width="100%" overflow="auto">
           <StyledTable>
@@ -123,7 +145,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
                 .map((List) => (
 
                   <TableRow key={List.MATRICULE}>
-                    <TableCell align="left">{List.MATRICULE}</TableCell>
+                    <TableCell align="left">{List.PHOTO && (
+                      <img
+                        src={require(`../../../uploads/${List.PHOTO}`)} // Serve the photo from the "uploads" directory on the server
+                        alt={List.NOM_AG}
+                        style={{width: "40px", height: "40px"}} className="rounded-pill" // Adjust the image size as needed
+                      />
+                    )}{List.MATRICULE}</TableCell>
                     <TableCell align="center">{List.NOM_UTIL_AG}</TableCell>
                     <TableCell align="center">{List.FONCTION_AG}</TableCell>
                     <TableCell align="center">{List.TEL_AG}</TableCell>

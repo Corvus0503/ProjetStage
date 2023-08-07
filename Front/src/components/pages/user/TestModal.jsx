@@ -4,6 +4,7 @@ import { DatePicker } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import {
+  Autocomplete,
   Button,
   Checkbox,
   FormControlLabel,
@@ -16,7 +17,7 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
@@ -55,6 +56,11 @@ const TextField = styled(TextValidator)(() => ({
   marginBottom: "13px",
 }));
 
+const AutoComplete = styled(Autocomplete)(() => ({
+  width: "80%",
+  marginBottom: "13px",
+}));
+
 const TestModal = ({List, chargerListAdmin}) => {
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -73,6 +79,12 @@ const TestModal = ({List, chargerListAdmin}) => {
     setIsOpen(false);
   }
 
+  const suggestions = [
+    {label : "Admin"},
+    {label : "AG"},
+    {label : "User"}
+  ]
+
   const [state, setState] = useState({ date: new Date() });
   const [confirmMdp, setConfirmMdp] = useState("")
   const [modUser, setModUser] = useState({
@@ -86,7 +98,7 @@ const TestModal = ({List, chargerListAdmin}) => {
     ADRESSE_AG: "",
     TEL_AG: "",
     PASSWORD: "",
-    PHOTO: "",
+    PHOTO: null,
     GENRE: "",
     ACTIVATION: "",
     CODE_DIVISION: ""
@@ -94,7 +106,15 @@ const TestModal = ({List, chargerListAdmin}) => {
 
 
 const updateUser = id => {
-  axios.put(`http://localhost:8080/admin/${id}`, modUser).then(response => {
+  const formDataToSend = new FormData();
+    for (const key in modUser) {
+      formDataToSend.append(key, modUser[key]);
+    }
+  axios.put(`http://localhost:8080/admin/${id}`, formDataToSend, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }).then(response => {
     setModUser({
       MATRICULE: "",
       FONCTION_AG: "",
@@ -106,7 +126,7 @@ const updateUser = id => {
       ADRESSE_AG: "",
       TEL_AG: "",
       PASSWORD: "",
-      PHOTO: "",
+      PHOTO: null,
       GENRE: "",
       ACTIVATION: "",
       CODE_DIVISION: ""
@@ -131,6 +151,11 @@ const updateUser = id => {
     setModUser({ ...modUser, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setModUser({ ...modUser, PHOTO: file })
+  };
+
   return (
     <div>
       <IconButton onClick={openModal}>
@@ -144,6 +169,20 @@ const updateUser = id => {
         <ValidatorForm onError={() => null}>
         <Grid container spacing={6}>
           <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+          <input
+            accept="image/*"
+            style={{ display: 'none' }}
+            id="raised-button-file"
+            multiple
+            type="file"
+            name='PHOTO'
+            onChange={handleFileChange}
+          />
+          <label htmlFor="raised-button-file">
+            <Button variant="raised" component="span">
+              Upload
+            </Button>
+          </label> 
           <TextField
               type="text"
               name="MATRICULE"
@@ -174,6 +213,16 @@ const updateUser = id => {
               label="Fonction"
               validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
             />
+
+            <AutoComplete
+                options={suggestions}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField {...params} value={modUser.TYPE_AG}
+                  onChange={handleChange} name="TYPE_AG" label="Type" variant="outlined" fullWidth />
+                )}
+              />
+
 
             <TextField
               type="text"

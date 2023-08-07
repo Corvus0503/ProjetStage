@@ -9,8 +9,11 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "./pages/login/authProvider";
 import './styles/sidebar.css'
 import ArticleIcone from "./images/ArticleIcone";
+import Topnav from "./Topnav";
+import { useNavigate } from "react-router-dom";
 
 const SideNav = ({IsOpen, togleSidebar, deconexion, user}) =>{
+    const navigate = useNavigate();
     const { setToken } = useAuth();
   const [lien] = useState([
     {name : 'Dashboard', icon: <SideDash/>, lien: "/Dashboard"},
@@ -34,7 +37,7 @@ const lienPerm = () =>{
         return(
             lien.map((i)=><NavLink to={i.lien} className="nav-item" activeClassName="active"><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
         )
-    } else if(user[0].TYPE_AG.includes("admin")){
+    } else if(user[0].TYPE_AG.includes("Admin")){
         return(
             lienAdmin.map((i)=><NavLink to={i.lien} className="nav-item" activeClassName="active"><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
         )
@@ -44,11 +47,14 @@ const lienPerm = () =>{
 const logout = () => {
     deconexion()
     setToken();
+    navigate("/");
     localStorage.removeItem("token")
+    window.location.reload()
 }
 
 return(
     <>
+        <Topnav user={user} IsOpen={IsOpen}/>
         <aside className={`sidebar ${IsOpen ? "open" : ""}`}>
             <nav>
                 <button onClick={togleSidebar} className="sidebar-toogle">
