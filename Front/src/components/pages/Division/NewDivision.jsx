@@ -61,11 +61,9 @@ const NewDivision = ({ isOpen, onClose }) => {
     console.log(division)
     addNewDivision();
     setDivision({
-
       CODE_DIVISION:"",
       CODE_SER:"",
       LABEL_DIVISION:""      
-      
     })
   };
 
@@ -85,12 +83,6 @@ const NewDivision = ({ isOpen, onClose }) => {
   const handleCloseModal = () => {
     onClose();
   };
-
-  const loading = ()=> {
-    return(<div class="spinner-border text-warning"></div>)
-  }
-  
-
 
   return (
 

@@ -1,11 +1,16 @@
 const { response } = require("express")
 const express = require("express")
+const multer = require('multer')
 const cors = require("cors")
+const bodyParser = require('body-parser')
+const path = require('path');
+const OracleDB = require("oracledb");
+const getConnection = require("./app/utils/db.js");
 const { 
     getAdmin, addAdmin, updateAdmin, deleteAdmin, getAdminList,
     getCompte, addCompte, updateCompte, deleteCompte,
-    getCategorie, addCategorie, updateCategorie, deleteCategorie,
-    getService, addService, updateService, deleteService,
+    addBesoin, getCategorie, addCategorie, updateCategorie, deleteCategorie,
+    getService, addService, updateService, deleteService,getSelectedArticle,
     getDivision, addDivision, updateDivision, deleteDivision, getArticle, addArticle, updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinAtt, getBesoinRef
 } = require("./app/utils/querryHelpers")
 const app = express()
@@ -13,6 +18,19 @@ const app = express()
 const err = "Il y a une erreur quelque part"
 
 app.use(express.json())
+
+app.use(bodyParser.json());
+// Multer configuration for file upload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '../Front/src/uploads/'); // Set the destination folder for file uploads
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // Use original filename with timestamp
+    },
+  });
+  
+  const upload = multer({ storage });
 
 const whitelist = ["http://localhost:3001"]
 
@@ -42,17 +60,19 @@ app.get('/user', function (req,res){
     getUser(req,res)
 })
 
-app.post('/admin/newUser', function (req, res) {
-    let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION} = req.body
+app.post('/admin/newUser', upload.single('PHOTO'), function (req, res) {
+    let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, GENRE, ACTIVATION, CODE_DIVISION} = req.body
+    const PHOTO = req.file ? req.file.filename : null;
     addAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION);
 })
-app.put('/admin/:id', function (req, res) {
-    let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION} = req.body
+app.put('/admin/:id', upload.single('PHOTO'),function (req, res) {
+    let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, GENRE, ACTIVATION, CODE_DIVISION} = req.body
+    const PHOTO = req.file ? req.file.filename : null;
     let {id} = req.params
     updateAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id);
 })
 
-app.delete('/user/:id', function (req, res) {
+app.delete('/admin/:id', function (req, res) {
     let {id} = req.params
     deleteAdmin(req, res, id);
 })
@@ -179,6 +199,11 @@ app.get('/besoinAtt', function(req, res){
 app.get('/besoinRef', function(req, res){
     getBesoinRef(req,res);
 })
+app.get('/articleSelected/:id', async (req, res) => {
+    const{id} = req.params;
+    getSelectedArticle(req,res,id)
+  });
+  
     //delete
 app.delete('/besoin/:id', function(req,res){
     let{id} = req.params;
@@ -187,18 +212,15 @@ app.delete('/besoin/:id', function(req,res){
 
     //setter
 app.put('/besoin/:id', function(req, res){
-    let{NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE}=req.body
+    let{NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN}=req.body
     let{id}=req.params
-    updateBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
+    updateBesoin(req, res,NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN,id);
 })
     //Creator
 app.post('/besoin', function(req, res){
-    const {NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE}=req.body
-    addBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
+    const {MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN}=req.body
+    addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN);
 })
-
-
-
 
 app.listen(8080)
 console.log("It s running at: http://localhost:8080");

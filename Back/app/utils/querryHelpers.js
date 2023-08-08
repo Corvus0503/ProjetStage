@@ -48,15 +48,27 @@ const getAdminList = async (req, res) => {
   }
 };
 
-const addAdmin = async (req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION) => {
+const addAdmin = async (req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, photoPath) => {
+  console.log(PHOTO)
   try {
-    const connection = await getConnection();
+    // PHOTO.mv(photoPath, async (error) =>{
+    //   if (error) {
+    //     console.error('Error while moving photo:', error.message);
+    //     return res.status(500).json({ message: 'Failed to upload photo' });
+    //   }
+      
+    // })
+    const connection = await getConnection()
     const result = await connection.execute(
-      'INSERT INTO AGENT values (:MATRICULE, :FONCTION_AG, :MAIL_AG, :NOM_AG, :NOM_UTIL_AG, :TYPE_AG, :PRENOM_AG, :ADRESSE_AG, :TEL_AG, :PASSWORD, :PHOTO, :GENRE, :ACTIVATION, :CODE_DIVISION)',
-      [MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION]
-    );
+      'INSERT INTO AGENT (MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION) values (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14)', 
+      [MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION]).catch((error) => {
+        console.error(error);
+        throw error; // Re-throw the error to be caught by the global error handler
+      });;
+    console.log(PHOTO)
     res.json(result.rows);
-    connection.commit()
+    connection.commit();
+    console.log("donnée ajoutée")
     await connection.close();
   } catch (error) {
     console.error(error);
@@ -65,14 +77,14 @@ const addAdmin = async (req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_U
 };
 
 const updateAdmin = async (req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id) => {
+  console.log("id = "+PHOTO)
   try {
-    const connection = await getConnection();
-    const result = await connection.execute(
-      'UPDATE AGENT SET MATRICULE=:MATRICULE, FONCTION_AG=:FONCTION_AG, MAIL_AG=:MAIL_AG, NOM_AG=:NOM_AG, NOM_UTIL_AG=:NOM_UTIL_AG, TYPE_AG=:TYPE_AG, PRENOM_AG=:PRENOM_AG, ADRESSE_AG=:ADRESSE_AG, TEL_AG=:TEL_AG, PASSWORD=:PASSWORD, PHOTO=:PHOTO, GENRE=:GENRE, ACTIVATION=:ACTIVATION, CODE_DIVISION=:CODE_DIVISION where MATRICULE=:id',
-      [MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id]
-    );
+    console.log("id = "+id)
+    const connection = await getConnection()
+    const result = await connection.execute('UPDATE AGENT SET MATRICULE=:1, FONCTION_AG=:2, MAIL_AG=:3, NOM_AG=:4, NOM_UTIL_AG=:5, TYPE_AG=:6, PRENOM_AG=:7, ADRESSE_AG=:8, TEL_AG=:9, PASSWORD=:10, PHOTO=:11, GENRE=:12, ACTIVATION=:13, CODE_DIVISION=:14 where MATRICULE=:15', 
+      [MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION, id]);
     res.json(result.rows);
-    connection.commit()
+    connection.commit();
     await connection.close();
   } catch (error) {
     console.error(error);
@@ -80,10 +92,11 @@ const updateAdmin = async (req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NO
   }
 };
 
+
 const deleteAdmin = async (req, res, id) => {
   try {
     const connection = await getConnection();
-    const result = await connection.execute('DELETE FROM AGENT where NUM_CMPT=:id', [id]);
+    const result = await connection.execute('DELETE FROM AGENT where MATRICULE=:id', [id]);
     res.json(result.rows);
     connection.commit()
     await connection.close();
@@ -298,36 +311,34 @@ const deleteDivision = async (req,res,id) => {
 
 //requete Besoin
 
-
-const addBesoin = async (req, res,NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, QUANTITE_ACC, UNITE, ETAT_DEMANDE) => {
+const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN) => {
   const query = `
-    INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, QUANTITE_ACC, UNITE, ETAT_DEMANDE)
-    VALUES (:NUM_BESOIN, :MATRICULE, :FORMULE, :DATE_BESOIN, :DATE_CONFIRM, :TIME_CONFIRM, :QUANTITE, :QUANTITE_ACC, :UNITE, :ETAT_DEMANDE)
+    INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN)
+    VALUES (NUM_BESOIN.nextval, :MATRICULE, :FORMULE, TO_DATE(:DATE_BESOIN, 'YYYY-MM-DD'), :DATE_CONFIRM, :TIME_CONFIRM, :QUANTITE, :UNITE, :ETAT_BESOIN)
   `;
-
-
   try {
     const connection = await getConnection();
-    const result = await connection.execute(query, [NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE], 
-      { autoCommit: true });
+    const result = await connection.execute(query, [MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN]);
     res.json(result.rows);
     console.log('Besoin ajouté :', result.rowsAffected);
+    connection.commit();
     connection.release();
   } catch (err) {
     console.error('Erreur lors de l\'ajout du besoin :', err);
   }
 };
 
-const updateBesoin = async (NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id) => {
+
+const updateBesoin = async (NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN,id) => {
   const query = `
     UPDATE BESOIN SET MATRICULE = :MATRICULE, FORMULE = :FORMULE, DATE_BESOIN = :DATE_BESOIN, DATE_CONFIRM = :DATE_CONFIRM,
-    TIME_CONFIRM = :TIME_CONFIRM, QUANTITE = :QUANTITE, QUANTITE_ACC = :QUANTITE_ACC, UNITE = :UNITE, ETAT_DEMANDE = :ETAT_DEMANDE
+    TIME_CONFIRM = :TIME_CONFIRM, QUANTITE = :QUANTITE, QUANTITE_ACC = : UNITE = :UNITE, ETAT_BESOIN = :ETAT_BESOIN
     WHERE NUM_BESOIN = :NUM_BESOIN
   `;
 
   try {
     const connection = await getConnection();
-    const result = await connection.execute(query, [NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id], { autoCommit: true });
+    const result = await connection.execute(query, [NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN,id],);
     console.log('Besoin mis à jour :', result.rowsAffected);
     res.json(result.rows);
     connection.release();
@@ -357,6 +368,20 @@ const getBesoin= async (req, res)=> {
   }
 }
 
+const getSelectedArticle = async (req,res,id) => {
+    const query = 'SELECT * FROM ARTICLE WHERE ID_CAT = :id';
+    
+    try {
+      const connection = await getConnection();
+      const result = await connection.execute(query, [id]);
+      res.json(result.rows);      
+      connection.commit();
+      await connection.close();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+  };
 
 const deleteBesoin = async (req, res, id) => {
   try {
@@ -569,5 +594,6 @@ const deleteArticle = async (req, res, id) => {
    deleteBesoin,
    getBesoinRef,
    getBesoinAtt,
+   getSelectedArticle,
  
   };
