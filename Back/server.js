@@ -4,8 +4,7 @@ const multer = require('multer')
 const cors = require("cors")
 const bodyParser = require('body-parser')
 const path = require('path');
-const OracleDB = require("oracledb");
-const getConnection = require("./app/utils/db.js");
+const http = require('http')
 const { 
     getAdmin, addAdmin, updateAdmin, deleteAdmin, getAdminList,
     getCompte, addCompte, updateCompte, deleteCompte,
@@ -13,13 +12,39 @@ const {
     getService, addService, updateService, deleteService,getSelectedArticle,
     getDivision, addDivision, updateDivision, deleteDivision, getArticle, addArticle, updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinAtt, getBesoinRef
 } = require("./app/utils/querryHelpers")
+const socketIO = require("socket.io");
 const app = express()
+app.use(cors())
 
 const err = "Il y a une erreur quelque part"
 
 app.use(express.json())
 
 app.use(bodyParser.json());
+
+//server io
+
+const server = http.createServer(app)
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+});
+
+io.on("connection", (socket) => {
+
+    socket.on("userLoggedIn", (data) => {
+        console.log(`${data.username} s'est connecté`);
+        // Perform any desired actions when a user logs in
+        socket.on("disconnect", () => {
+            console.log(`${data.username} s'est deconnecté`);
+        });
+    });
+
+    
+});
+
 // Multer configuration for file upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -31,21 +56,6 @@ const storage = multer.diskStorage({
   });
   
   const upload = multer({ storage });
-
-const whitelist = ["http://localhost:3001"]
-
-// const corsOptions = {
-//     origin: function (origin, callback){
-//         if (!origin || whitelist.indexOf(origin) !=1){
-//             callback(null, true)
-//         } else {
-//             callback(new Error("Not alowed by CORS"))
-//         }
-//     },
-//     Credential: true,
-// }
-
-app.use(cors())
 
 app.get('/admin/userList', function (req, res) {
     getAdminList(req, res);
@@ -222,5 +232,6 @@ app.post('/besoin', function(req, res){
     addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN);
 })
 
-app.listen(8080)
-console.log("It s running at: http://localhost:8080");
+server.listen(8080, () =>{
+    console.log("Server is running")
+})
