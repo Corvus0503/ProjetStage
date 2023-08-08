@@ -29,23 +29,17 @@ const io = require('socket.io')(server, {
   }
 });
 
-// ... your existing routes ...
-
-// Listen for socket connections
 io.on("connection", (socket) => {
-  console.log("A user connected");
 
-  // Handle events when a user disconnects
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
+    socket.on("userLoggedIn", (data) => {
+        console.log(`${data.username} s'est connecté`);
+        // Perform any desired actions when a user logs in
+        socket.on("disconnect", () => {
+            console.log(`${data.username} s'est deconnecté`);
+        });
+    });
 
-  // Example: Sending a message to connected clients
-  socket.on("chat message", (msg) => {
-    console.log("Message received:", msg);
-    // Broadcast the message to all connected clients
-    io.emit("chat message", msg);
-  });
+    
 });
 
 // Multer configuration for file upload

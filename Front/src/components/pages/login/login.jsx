@@ -48,6 +48,7 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
         e.preventDefault()
         await loadUser()
             if(user[0].NOM_UTIL_AG===infoCon.pseudo && user[0].PASSWORD===infoCon.mdp){
+                socket.emit("userLoggedIn", { username: infoCon.pseudo });
                 setToken(JSON.stringify(user));
                 setIsConn(true)
                 saveCon()
@@ -67,21 +68,19 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
             }  
     }
 
+    // Initialize a Socket.IO client instance
+    const socket = io("http://localhost:8080");
+
     useEffect(() => {
-        // Initialize a Socket.IO client instance
-        const socket = io("http://localhost:8080");
-    
-        // Listen for custom events from the server
-        socket.on("chat message", (msg) => {
-          console.log("Message received from server:", msg);
-          // Handle the message from the server
-        });
-    
+        // Connect to the server
+        socket.connect();
+
         // Clean up the socket connection when the component unmounts
         return () => {
-          socket.disconnect();
+            socket.disconnect();
         };
-      }, []);
+    }, []);
+
 
     return(
         <div className="login">

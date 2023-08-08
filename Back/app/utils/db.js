@@ -8,8 +8,6 @@ async function getConnection(){
             password: 'fride0503$h',
             connectString: 'localhost:1521/orcl'
         });
-
-        console.log("Successfully connected");
         return connection
     } catch(err){
         console.log("NOT connected");
