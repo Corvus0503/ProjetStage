@@ -23,6 +23,31 @@ app.use(bodyParser.json());
 
 const server = http.createServer(app)
 
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  }
+});
+
+// ... your existing routes ...
+
+// Listen for socket connections
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  // Handle events when a user disconnects
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+
+  // Example: Sending a message to connected clients
+  socket.on("chat message", (msg) => {
+    console.log("Message received:", msg);
+    // Broadcast the message to all connected clients
+    io.emit("chat message", msg);
+  });
+});
+
 // Multer configuration for file upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {

@@ -67,6 +67,22 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
             }  
     }
 
+    useEffect(() => {
+        // Initialize a Socket.IO client instance
+        const socket = io("http://localhost:8080");
+    
+        // Listen for custom events from the server
+        socket.on("chat message", (msg) => {
+          console.log("Message received from server:", msg);
+          // Handle the message from the server
+        });
+    
+        // Clean up the socket connection when the component unmounts
+        return () => {
+          socket.disconnect();
+        };
+      }, []);
+
     return(
         <div className="login">
             <img src={LoginPhoto} alt="login image"className='login_img'  />
