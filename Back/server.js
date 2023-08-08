@@ -4,8 +4,7 @@ const multer = require('multer')
 const cors = require("cors")
 const bodyParser = require('body-parser')
 const path = require('path');
-const OracleDB = require("oracledb");
-const getConnection = require("./app/utils/db.js");
+const http = require('http')
 const { 
     getAdmin, getAdminList, addAdmin, updateAdmin, deleteAdmin,
     getCompte, addCompte, updateCompte, deleteCompte,
@@ -13,12 +12,17 @@ const {
     getService, addService, updateService, deleteService,
     getDivision, addDivision, updateDivision, deleteDivision
 } = require("./app/utils/querryHelpers")
+const socketIO = require("socket.io");
 const app = express()
-
-const err = "Il y a une erreur quelque part"
+app.use(cors())
 
 app.use(express.json())
 app.use(bodyParser.json());
+
+//server io
+
+const server = http.createServer(app)
+
 // Multer configuration for file upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -31,26 +35,10 @@ const storage = multer.diskStorage({
   
   const upload = multer({ storage });
 
-const whitelist = ["http://localhost:3001"]
 
-// const corsOptions = {
-//     origin: function (origin, callback){
-//         if (!origin || whitelist.indexOf(origin) !=1){
-//             callback(null, true)
-//         } else {
-//             callback(new Error("Not alowed by CORS"))
-//         }
-//     },
-//     Credential: true,
-// }
 
-app.use(cors())
 
-const server = app.listen(8080, () => {
-    console.log("Server is running on port 8080");
-});
-  
-const io = require("socket.io")(server);
+//requetes
 
 app.get('/admin/userList', function (req, res) {
     getAdminList(req, res);
@@ -219,3 +207,6 @@ app.post('/besoin', function(req, res){
     addBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
 })
 
+server.listen(8080, () =>{
+    console.log("Server is runnign")
+})

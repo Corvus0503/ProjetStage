@@ -18,6 +18,7 @@ import {
   MenuItem,
   InputLabel,
   IconButton,
+  Switch
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
@@ -291,7 +292,7 @@ const updateUser = id => {
 
             <TextField
               name="PASSWORD"
-              type="password"
+              type="text"
               label="Password"
               value={modUser.PASSWORD}
               onChange={handleChange}
@@ -299,7 +300,7 @@ const updateUser = id => {
               errorMessages={["this field is required"]}
             />
             <TextField
-              type="password"
+              type="text"
               name="confirmPassword"
               label="Confirm Password"
               onChange={(e) => setConfirmMdp(e.target.value)}
@@ -329,28 +330,19 @@ const updateUser = id => {
               />
 
             </RadioGroup>
-            <RadioGroup
-              row
-              name="ACTIVATION"
-              sx={{ mb: 2 }}
-              value={modUser.ACTIVATION}
-              onChange={handleChange}
-            >
-              <FormControlLabel
-                value="Activé"
-                label="Activé"
-                labelPlacement="end"
-                control={<Radio color="secondary" />}
+            <FormControlLabel
+            control={
+              <Switch
+                color="secondary"
+                checked={modUser.ACTIVATION === 'Activé'}
+                onChange={handleChange}
+                name="ACTIVATION"
+                value={modUser.ACTIVATION === 'Activé' ? 'Desactivé' : 'Activé'}
               />
-
-              <FormControlLabel
-                value="Desactivé"
-                label="Desactivé"
-                labelPlacement="end"
-                control={<Radio color="secondary" />}
-              />
-
-            </RadioGroup>
+            }
+            label={modUser.ACTIVATION === 'Activé' ? 'Activé' : 'Desactivé'}
+            labelPlacement="end"
+          />
           </Grid>
         </Grid>
 

@@ -5,7 +5,7 @@ export const ProtectedRoute = ({children, perm, user}) => {
     const { token } = useAuth();
   
     // Check if the user is authenticated
-    if (!token && !user[0].TYPE_AG.includes(perm)) {
+    if (!token && !user[0].TYPE_AG.includes(perm) && !user[0].ACTIVATION.includes("Activé")) {
       console.log("permission"+user[0].TYPE_AG.includes(perm))
       
       return <Navigate to="/" replace/>;

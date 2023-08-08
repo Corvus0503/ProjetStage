@@ -11,7 +11,9 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Input from "@material-ui/core/Input";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "./authProvider";
+import io from "socket.io-client";
 import axios from "axios"
+import Swal from 'sweetalert2'
 
 
 const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
@@ -34,14 +36,12 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
           setUser(response.data);
         } catch (error) {
           console.error(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Pseudo ou mot de passer incorrect',
+        })
         }
-        /*axios.post('http://localhost:8080/admin', infoCon).then((response) => {
-            if (!response.data.message) {
-                setUser(response.data);
-            } else {
-                console.log (response.data[0].message);
-            }
-        });*/
       };
 
     const connexion = async (e) => {
@@ -52,10 +52,19 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
                 setIsConn(true)
                 saveCon()
                 navigate("/Dashboard", { replace: true });
+            }else if(user[0].ACTIVATION.includes("Desactivé")){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ce compte est desactvé',
+                })
             } else {
-                alert("Pseudo ou mot de passer incorrect")
-            }
-          
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Pseudo ou mot de passer incorrect',
+                })
+            }  
     }
 
     return(
