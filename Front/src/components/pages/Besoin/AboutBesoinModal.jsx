@@ -1,34 +1,38 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Dialog, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, DialogTitle, DialogContent, DialogActions, Button, IconButton } from "@mui/material";
-import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
+import { Dialog, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, DialogTitle, DialogContent, DialogActions, Button, } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 // Composant pour afficher la liste des articles dans une modal
-const ArticleListModal = ({isModalOpen, closeModal,user}) => {
+const AboutBesoinModal = ({isModalOpen, closeModal,user}) => {
   // Utilisation de useState pour gérer la pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [besoinList, setBesoinList] = useState([]);
   const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
-  const matricule=user.user.user.user[0].MATRICULE;
+
+  console.log(user)
 
   // Utilisation de useEffect pour charger la liste des articles lorsque l'idCat change
   useEffect(() => {
     const fetchArticleList = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/besoinDetail/${idCat}`);
-        setBesoinList(response.data);
+        // Vérifiez que user existe et a les propriétés nécessaires
+        if (user) {
+          const matricule = user;
+  
+          const response = await axios.get(`http://localhost:8080/besoinDetail/${matricule}`);
+          setBesoinList(response.data);
+        }
       } catch (error) {
         console.error(error);
       }
     };
-
-    if (matricule) {
-      fetchArticleList();
-    }
-  }, [matricule]);
+  
+    fetchArticleList();
+  }, [user]);
+  
 
   // Fonction pour gérer le changement de page
   const handleChangePage = (_, newPage) => {
@@ -56,7 +60,6 @@ const ArticleListModal = ({isModalOpen, closeModal,user}) => {
               <TableCell align="center"> Quantité </TableCell>
               <TableCell align="center"> Unité </TableCell>
               <TableCell align="center"> Date </TableCell>
-              <TableCell align="center"> Etat </TableCell>
               <TableCell align="center">Opération</TableCell>
             </TableRow>
           </TableHead>
@@ -73,7 +76,6 @@ const ArticleListModal = ({isModalOpen, closeModal,user}) => {
                 <TableCell align="center">{besoinList.UNITE}</TableCell>
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
                 <TableCell align="center">
-                                <Button> <InfoIcon color="warning"/> </Button>
                                 <Button> <CheckCircleOutlineIcon color="success"/> </Button>
                                 <Button> <CancelIcon color="danger"/> </Button>
                             </TableCell>
@@ -100,4 +102,4 @@ const ArticleListModal = ({isModalOpen, closeModal,user}) => {
   );
 };
 
-export default ArticleListModal;
+export default AboutBesoinModal;

@@ -216,10 +216,10 @@ app.get('/articleSelected/:id', async (req, res) => {
     const{id} = req.params;
     getSelectedArticle(req,res,id)
   });
-app.get('./besoinDetail/:id',(req,res)=>{
-    let{id} = req.params;
-    getBesoinDetail(req,res,id) ;
-})
+  app.get('/besoinDetail/:id', async (req, res) => {
+    const { id } = req.params;
+    getBesoinDetail(req, res, id);
+  });
     //delete
 app.delete('/besoin/:id', function(req,res){
     let{id} = req.params;

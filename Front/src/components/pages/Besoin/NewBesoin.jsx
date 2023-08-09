@@ -92,6 +92,7 @@ const NewBesoin = (user) => {
     setIsModalOpen(true);
   };
 
+
   const handelModalCatOpen =()=>{
     setIsModalCatOpen(true);
   }

@@ -367,28 +367,6 @@ const getBesoin= async (req, res,id)=> {
   }
 }
 
-const getBesoinDetail= async (req, res,id)=> {
-  const query = `SELECT BESOIN.* , ARTICLE.*, AGENT.*, CATEGORIE.*,DIVISION.* FROM ((((BESOIN
-    INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
-    INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
-    INNER JOIN CATEGORIE ON ARTICLE.ID_CAT=CATEGORIE.ID_CAT)
-    INNER JOIN DIVISION ON AGENT.CODE_DIVISION=DIVISION.CODE_DIVISION)
-    WHERE BESOIN.ETAT_BESOIN = 'En Attente' AND BESOIN.MATRICULE = :id 
-  `;
-
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute(query,[id]);
-    res.json(result.rows)
-    connection.commit();
-    connection.release();
-  } catch (error) {
-    console.error("Erreur lors de l'affichage du besoin :", error);
-  }
-}
-
-
-
 const getBesoinListe = async(req,res)=>{
     const query = `SELECT BESOIN.MATRICULE,BESOIN.DATE_BESOIN, BESOIN.ETAT_BESOIN, AGENT.MATRICULE AS AGENT_MATRICULE, AGENT.NOM_AG AS AGENT_NOM, AGENT.PRENOM_AG AS AGENT_PRENOM, DIVISION.LABEL_DIVISION, 
       COUNT(BESOIN.NUM_BESOIN) AS BESOIN_COUNT FROM BESOIN 
@@ -409,6 +387,28 @@ const getBesoinListe = async(req,res)=>{
       res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+const getBesoinDetail = async (req, res, id) => {
+  const query = `SELECT BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*
+                 FROM (((((BESOIN
+                 INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+                 INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+                 INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
+                 INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION))
+                 WHERE BESOIN.ETAT_BESOIN = 'En Attente' AND BESOIN.MATRICULE = :id`;
+
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query, [id]);
+    await connection.commit();
+    await connection.close();
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 
 const getSelectedArticle = async (req,res,id) => {
     const query = 'SELECT * FROM ARTICLE WHERE ID_CAT = :id';

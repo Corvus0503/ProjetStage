@@ -75,7 +75,6 @@ function App() {
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />
               <Route path="/Besoin" element={<Besoin user={user} />} />
-              <Route path="/Besoin" element={<Besoin user={user} />} />
               <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />  
 
             </Route>
@@ -84,8 +83,7 @@ function App() {
               <Route path="/Prevision" element={<Previsions />} />
               <Route path="/Signup" element={<Signup />} />
               <Route path="/Article" element={<Article />} />
-              <Route path="/ArticleList" element={<ArticleList />} />
-              <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />              
+              <Route path="/ArticleList" element={<ArticleList />} />             
             </Route>
           <Route path="/*" element={<p>There's nothing here: 404!</p>} />
           </Routes>

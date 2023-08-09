@@ -14,7 +14,7 @@ const ToggleablePills = (user) => {
       <ul className="nav nav-pills">
         <li>
           <button
-            className={`btn btn-primary ms-5 m-2 mt-2 ${activePill === "pill1" ? "active" : ""}`}
+            className={`btn btn-primary ms-5 m-2 mt-2 ps-5 pe-5 ${activePill === "pill1" ? "active" : ""}`}
             onClick={() => handlePillClick("pill1")}
           >
             Nouveau

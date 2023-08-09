@@ -11,6 +11,8 @@ import { Span } from "../../Typography";
 import InfoIcon from '@mui/icons-material/Info';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
+import AboutBesoinModal from "./AboutBesoinModal";
+
 
   const Container = styled("div")(({ theme }) => ({
     margin: "30px",
@@ -44,6 +46,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
     const [besoin, setBesoin] = useState(null);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [besoinList, setBesoinList] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
 
     const handleDialogClose = () => {
@@ -98,6 +101,13 @@ import CancelIcon from '@mui/icons-material/Cancel';
       };
       console.log(besoinList);
 
+      const handleModalOpen = () => {
+        setIsModalOpen(true);
+      };
+      const handleModalClose = () => {
+        setIsModalOpen(false);
+      };
+
     
 
 
@@ -137,9 +147,16 @@ import CancelIcon from '@mui/icons-material/Cancel';
                             <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
                             <TableCell align="center">{renderStatus(besoinList.BESOIN_COUNT)}</TableCell>
                             <TableCell align="center">
-                                <Button> <InfoIcon color="warning"/> </Button>
+                            <Button onClick={handleModalOpen}>
+                              <InfoIcon color="warning" />
+                              </Button>
+                              <AboutBesoinModal
+                                user={besoinList.AGENT_MATRICULE}
+                                isModalOpen={isModalOpen}
+                                closeModal={handleModalClose}
+                            />
                                 <Button> <CheckCircleOutlineIcon color="success"/> </Button>
-                                <Button> <CancelIcon color="danger"/> </Button>
+                                <Button> <CancelIcon color="error"/> </Button>
                             </TableCell>
 
                             {/* <TableCell align="left"  >                               

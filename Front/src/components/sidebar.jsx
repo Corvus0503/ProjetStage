@@ -33,7 +33,7 @@ const [lienAdmin] = useState([
 ])
 
 const lienPerm = () =>{
-    if(user[0].TYPE_AG.includes("user")){
+    if(user[0].TYPE_AG.includes("User")){
         return(
             lien.map((i)=><NavLink to={i.lien} className="nav-item" activeClassName="active"><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
         )
