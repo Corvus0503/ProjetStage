@@ -76,9 +76,9 @@ const AboutBesoinModal = ({isModalOpen, closeModal,user}) => {
                 <TableCell align="center">{besoinList.UNITE}</TableCell>
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
                 <TableCell align="center">
-                                <Button> <CheckCircleOutlineIcon color="success"/> </Button>
-                                <Button> <CancelIcon color="danger"/> </Button>
-                            </TableCell>
+                    <Button> <CheckCircleOutlineIcon color="success"/> </Button>
+                    <Button> <CancelIcon color="error"/> </Button>
+                </TableCell>
                 </TableRow>
               ))}
           </TableBody>

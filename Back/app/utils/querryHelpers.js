@@ -311,23 +311,6 @@ const deleteDivision = async (req,res,id) => {
 
 //requete Besoin
 
-const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN) => {
-  const query = `
-    INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN)
-    VALUES (NUM_BESOIN.nextval, :MATRICULE, :FORMULE, TO_DATE(:DATE_BESOIN, 'YYYY-MM-DD'), :DATE_CONFIRM, :TIME_CONFIRM, :QUANTITE, :UNITE, :ETAT_BESOIN)
-  `;
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute(query, [MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN]);
-    res.json(result.rows);
-    console.log('Besoin ajouté :', result.rowsAffected);
-    connection.commit();
-    connection.release();
-  } catch (err) {
-    console.error('Erreur lors de l\'ajout du besoin :', err);
-  }
-};
-
 
 const updateBesoin = async (NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN,id) => {
   const query = `
@@ -476,7 +459,68 @@ const getBesoinRef = async (req,res) =>{
   }
 }
 
-////////////////////////////////////////////////////////////////////////
+const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN) => {
+    const query = `
+      INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN)
+      VALUES (NUM_BESOIN.nextval, :MATRICULE, :FORMULE, TO_DATE(:DATE_BESOIN, 'YYYY-MM-DD'), :DATE_CONFIRM, :TIME_CONFIRM, :QUANTITE, :UNITE, :ETAT_BESOIN)
+    `;
+    try {
+      const connection = await getConnection();
+      const result = await connection.execute(query, [MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN]);
+      res.json(result.rows);
+      console.log('Besoin ajouté :', result.rowsAffected);
+      connection.commit();
+      connection.release();
+    } catch (err) {
+      console.error('Erreur lors de l\'ajout du besoin :', err);
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//requete Validation
+
+const getValidation = async (req,res) =>{
+    const query=`SELECT VALIDATION.*,BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*,SERVICE.* 
+            FROM ((((((VALIDATION 
+                INNER JOIN BESOIN ON VALIDATION.NUM_BESOIN = BESOIN.NUM_BESOIN)
+                INNER JOIN ARTICLE ON BESOIN.FORMULE=ARTICLE.FORMULE)
+                INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+                INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
+                INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION)
+                INNER JOIN SERVICE ON DIVISION.CODE_SER = DIVISION.CODE_SER)
+                `;
+    try {
+        const connection = await getConnection();
+        const result = await connection.execute(query);
+        res.json(result.rows)
+        connection.commit();
+        await connection.close();
+    } catch (error) {
+        console.error("Erreur lors de l'affichage du besoin :", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+const addValidation = async(req,res,NUM_BESOIN) => {
+    const query = `
+        INSERT INTO VALIDATION (NUM_VALIDATION,NUM_BESOIN) 
+        VALUES (NUM_VALIDATION.nextval, :NUM_BESOIN)`;
+    try {
+        const connection = await getConnection();
+        const result = await connection.execute(query,[NUM_BESOIN])
+        res.json(result.rows)
+        connection.commit();
+        await connection.close();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // Requete Categorie
@@ -638,4 +682,6 @@ const deleteArticle = async (req, res, id) => {
    getBesoinDetail,
    getSelectedArticle,
    getBesoinListe,
+   addValidation,
+   getValidation,
   };

@@ -17,6 +17,8 @@ import Article from './components/pages/Article/Article';
 import ArticleList from './components/pages/Article/ArticleList';
 import Besoin from './components/pages/Besoin/Besoin';
 import BesoinListBag from './components/pages/Besoin/BesoinListeBAG';
+import Division from './components/pages/Division/Division';
+
 
 
 
@@ -75,7 +77,8 @@ function App() {
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />
               <Route path="/Besoin" element={<Besoin user={user} />} />
-              <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />  
+              <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />
+              <Route path="/Division" element={<Division user={user} />} /> 
 
             </Route>
             <Route element={<ProtectedRoute user={user} perm={'User'}/>}>

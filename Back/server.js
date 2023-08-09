@@ -12,7 +12,7 @@ const {
     getService, addService, updateService, deleteService,getSelectedArticle,
     getDivision, addDivision, updateDivision, deleteDivision, getArticle, addArticle,
     updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,
-    getBesoinListe,
+    getBesoinListe, addValidation, getValidation,
 } = require("./app/utils/querryHelpers")
 const socketIO = require("socket.io");
 const app = express()
@@ -237,6 +237,18 @@ app.post('/besoin', function(req, res){
     const {MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN}=req.body
     addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN);
 })
+
+//Validation des besoins Controller
+    //getter :
+
+    //setter :
+
+    //Creator :
+app.post('/validation/:id', function(req,res){
+    let{id}=req.params;
+    
+})
+
 
 server.listen(8080, () =>{
     console.log("Server is running")

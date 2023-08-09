@@ -149,12 +149,12 @@ import AboutBesoinModal from "./AboutBesoinModal";
                             <TableCell align="center">
                             <Button onClick={handleModalOpen}>
                               <InfoIcon color="warning" />
-                              </Button>
+                            </Button>
                               <AboutBesoinModal
                                 user={besoinList.AGENT_MATRICULE}
                                 isModalOpen={isModalOpen}
                                 closeModal={handleModalClose}
-                            />
+                              />
                                 <Button> <CheckCircleOutlineIcon color="success"/> </Button>
                                 <Button> <CancelIcon color="error"/> </Button>
                             </TableCell>
