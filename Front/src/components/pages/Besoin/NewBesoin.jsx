@@ -71,21 +71,6 @@ const NewBesoin = (user) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [articleList, setArticleList] = useState([]);
-  // const [user, setUser] = useState({
-  //   MATRICULE: "",
-  //   FONCTION_AG: "",
-  //   MAIL_AG: "",
-  //   NOM_AG: "",
-  //   NOM_UTIL_AG: "",
-  //   TYPE_AG: "user",
-  //   PRENOM_AG: "",
-  //   ADRESSE_AG: "",
-  //   TEL_AG: "",
-  //   PASSWORD: "",
-  //   GENRE: "",
-  //   ACTIVATION: "",
-  //   CODE_DIVISION: "",
-  // });
   console.log(user.user.user.user[0].MATRICULE)
   // Fonction pour ouvrir la modal de liste d'articles et de catégories
   const handleModalOpen = () => {
@@ -97,7 +82,6 @@ const NewBesoin = (user) => {
     setIsModalCatOpen(true);
   }
 
-  // ... (autres fonctions et logique du composant)
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
