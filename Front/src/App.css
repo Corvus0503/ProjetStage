@@ -11,6 +11,22 @@
 .App.open{
   margin-left: 200px;
 }
+
+@media screen and (max-width: 600px) {
+  .App {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    transition: 0.4s;
+    margin-left: 70px;
+    margin-top: 100px;
+    background-color: rgba(248, 248, 248, 0.683);
+    display: block;
+    overflow: hidden;
+  }
+  .App.open{
+    margin-left: 200px;
+  }
+}
 .containerBG{
   top: 0;
   left: 0;

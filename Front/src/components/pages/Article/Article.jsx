@@ -10,7 +10,7 @@ import {
 import React, { useState } from "react";
 import axios from 'axios'
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import Breadcrumb from "../../utils/Breadcrumb";
+import Breadcrumb from "../../Utils/Breadcrumb";
 
 const TextField = styled(TextValidator)(() => ({
   width: "100%",

@@ -16,9 +16,9 @@ import axios from "axios"
 import { React, useEffect } from "react";
 import TestModal from "./TestModal";
 import { useNavigate } from "react-router-dom";
-import ConfirmationDialog from "../../utils/ConfirmationDialog";
+import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import DeleteIcon from '@mui/icons-material/Delete';
-import Breadcrumb from "../../utils/Breadcrumb";
+import Breadcrumb from "../../Utils/Breadcrumb";
 import Swal from 'sweetalert2'
 import { Span } from "../../Typography";
   

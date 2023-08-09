@@ -48,7 +48,7 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
         e.preventDefault()
         await loadUser()
             if(user[0].NOM_UTIL_AG===infoCon.pseudo && user[0].PASSWORD===infoCon.mdp){
-                socket.emit("userLoggedIn", { username: infoCon.pseudo });
+                socket.emit("userLoggedIn", { username: user[0].NOM_UTIL_AG, socketId: user[0].MATRICULE });
                 setToken(JSON.stringify(user));
                 setIsConn(true)
                 saveCon()

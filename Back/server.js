@@ -10,7 +10,11 @@ const {
     getCompte, addCompte, updateCompte, deleteCompte,
     getCategorie, addCategorie, updateCategorie, deleteCategorie,
     getService, addService, updateService, deleteService,
-    getDivision, addDivision, updateDivision, deleteDivision
+    getDivision, addDivision, updateDivision, deleteDivision,
+    getArticle, addArticle,
+    updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,
+    getBesoinListe, getSelectedArticle,
+    getNotification, addNotification, deleteNotification
 } = require("./app/utils/querryHelpers")
 const socketIO = require("socket.io");
 const app = express()
@@ -23,6 +27,19 @@ app.use(bodyParser.json());
 
 const server = http.createServer(app)
 
+let onlineUser = []
+
+const addNewUser = (username, socketId) =>{
+    !onlineUser.some((user) => user.username === username) && onlineUser.push({username, socketId})
+}
+
+const removeUser = (socketId) =>{
+    onlineUser = onlineUser.filter((user) => user.socketId !== socketId)
+}
+const getUser = (username) =>{
+    return onlineUser.find((user) => user.username === username)
+}
+
 const io = require('socket.io')(server, {
   cors: {
     origin: '*',
@@ -31,11 +48,14 @@ const io = require('socket.io')(server, {
 
 io.on("connection", (socket) => {
 
-    socket.on("userLoggedIn", (data) => {
-        console.log(`${data.username} s'est connecté`);
+    socket.on("userLoggedIn", (user) => {
+        console.log(`${user.username} s'est connecté`);
+        addNewUser(user.username, user.socketId)
         // Perform any desired actions when a user logs in
+        console.log("utilidateur connecté ", onlineUser)
         socket.on("disconnect", () => {
-            console.log(`${data.username} s'est deconnecté`);
+            console.log(`${user.username} s'est deconnecté`);
+            removeUser(user.username)
         });
     });
 
@@ -74,7 +94,6 @@ app.post('/admin/newUser', upload.single('PHOTO'), function (req, res) {
     addAdmin(req, res, MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, PHOTO, GENRE, ACTIVATION, CODE_DIVISION);
 })
 
-
 app.put('/admin/:id', upload.single('PHOTO'),function (req, res) {
     let {MATRICULE, FONCTION_AG, MAIL_AG, NOM_AG, NOM_UTIL_AG, TYPE_AG, PRENOM_AG, ADRESSE_AG, TEL_AG, PASSWORD, GENRE, ACTIVATION, CODE_DIVISION} = req.body
     const PHOTO = req.file ? req.file.filename : null;
@@ -85,6 +104,21 @@ app.put('/admin/:id', upload.single('PHOTO'),function (req, res) {
 app.delete('/admin/:id', function (req, res) {
     let {id} = req.params
     deleteAdmin(req, res, id);
+})
+
+//notification controiller
+app.get('/compte', function (req, res) {
+    getNotification(req, res);
+  })
+
+app.post('/compte', function (req, res) {
+    let {BODY_NOT, MATRICULE, DATE_NOT} = req.body
+    addNotification(req, res, BODY_NOT, MATRICULE, DATE_NOT);
+})
+
+app.delete('/compte/:id', function (req, res) {
+    let {id} = req.params
+    deleteNotification(req, res, id);
 })
 
 //compte controller
@@ -199,14 +233,23 @@ app.delete('/article/:id', function (req, res) {
 
 //Besoin controller 
     //getter
-app.get('/besoin', (req,res)=>{
-    getBesoin(req, res)
+app.get('/besoin/:id', (req,res)=>{
+    const{id} = req.params;
+    getBesoin(req, res,id)
 })
 app.get('/besoinAtt', function(req, res){
     getBesoinAtt(req,res);
 })
-app.get('/besoinRef', function(req, res){
-    getBesoinRef(req,res);
+app.get('/besoinBag', function(req, res){
+    getBesoinListe(req,res);
+})
+app.get('/articleSelected/:id', async (req, res) => {
+    const{id} = req.params;
+    getSelectedArticle(req,res,id)
+  });
+app.get('./besoinDetail/:id',(req,res)=>{
+    let{id} = req.params;
+    getBesoinDetail(req,res,id) ;
 })
     //delete
 app.delete('/besoin/:id', function(req,res){
@@ -216,16 +259,16 @@ app.delete('/besoin/:id', function(req,res){
 
     //setter
 app.put('/besoin/:id', function(req, res){
-    let{NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE}=req.body
+    let{NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN}=req.body
     let{id}=req.params
-    updateBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
+    updateBesoin(req, res,NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN,id);
 })
     //Creator
 app.post('/besoin', function(req, res){
-    const {NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE}=req.body
-    addBesoin(NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,QUANTITE_ACC,UNITE,ETAT_DEMANDE,id);
+    const {MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN}=req.body
+    addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN);
 })
 
 server.listen(8080, () =>{
-    console.log("Server is runnign")
+    console.log("Server is running")
 })

@@ -6,7 +6,7 @@ import axios from "axios"
 import { React, useEffect } from "react";
 //import ModificationArticle from "./ModificationArticle";
 import DeleteIcon from '@mui/icons-material/Delete';
-import ConfirmationDialog from "../../utils/ConfirmationDialog";
+import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 
 const Container = styled("div")(({ theme }) => ({
   margin: "30px",

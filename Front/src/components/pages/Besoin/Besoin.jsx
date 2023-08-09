@@ -3,9 +3,9 @@ import {
   styled,
 } from "@mui/material";
 import React from "react";
-import Breadcrumb from "../../utils/Breadcrumb";
-import ToggleablePills from '../../utils/ToggleablePills';
-import BesoinList from "./BesoinList";
+import Breadcrumb from "../../Utils/Breadcrumb";
+import ToggleablePills from '../../Utils/ToggleablePills';
+
 
 
 
@@ -18,7 +18,8 @@ const Container = styled("div")(({ theme }) => ({
     },
   }));
 
-const Besoin = () => {
+const Besoin = (user) => {
+
   return (
     <Container >
         <div className="breadcrumb">
@@ -26,12 +27,10 @@ const Besoin = () => {
         </div>
         <Card className="shadow" >
             <div className="mt-5">
-              <ToggleablePills/>   
+              <ToggleablePills user={user}/>   
             </div>
 
-            <div>
-              <BesoinList/>
-            </div>
+            
         </Card>        
     </Container>
   )
