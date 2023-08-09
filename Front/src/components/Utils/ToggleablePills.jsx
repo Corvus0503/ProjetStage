@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import NewBesoin from "../pages/Besoin/NewBesoin";
-import BesoinEnAttent from "../pages/Besoin/BesoinEnAttent";
-import BesoinRefuse from "../pages/Besoin/BesoinRefuse";
 import BesoinList from "../pages/Besoin/BesoinList";
 
 const ToggleablePills = (user) => {
@@ -24,18 +22,10 @@ const ToggleablePills = (user) => {
         </li>
         <li>
           <button
-            className={`btn btn-warning m-2 ${activePill === "pill2" ? "active" : ""}`}
+            className={`btn btn-danger m-2 ${activePill === "pill2" ? "active" : ""}`}
             onClick={() => handlePillClick("pill2")}
           >
-            En Attente
-          </button>
-        </li>
-        <li>
-          <button
-            className={`btn btn-danger m-2 ${activePill === "pill3" ? "active" : ""}`}
-            onClick={() => handlePillClick("pill3")}
-          >
-            Refusé
+            Suivi des Besoins
           </button>
         </li>
       </ul>
@@ -44,13 +34,9 @@ const ToggleablePills = (user) => {
         <hr className="m-3 mt-2 mb-2"/>
       
         {/* Contenu conditionnel en fonction de l'onglet actif */}
-        {activePill === "pill1" && <div > <NewBesoin user={user}/> <div>
-              <BesoinList/>
-            </div></div>}
+        {activePill === "pill1" && <div > <NewBesoin user={user}/></div>}
 
-        {activePill === "pill2" && <div> <BesoinEnAttent/> </div>}
-
-        {activePill === "pill3" && <div> <BesoinRefuse /> </div>}
+        {activePill === "pill2" && <div> <BesoinList user={user}/> </div>}
       </div>
     </div>
   );

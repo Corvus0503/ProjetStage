@@ -1,14 +1,16 @@
-import {
-    IconButton, Card, styled, Table, TableBody, TableCell, TableHead, TablePagination, TableRow,useTheme,
-  } from "@mui/material";
-  import { useState } from "react";
-  import axios from "axios"
-  import { React, useEffect } from "react";
-  //import ModificationArticle from "./ModificationArticle";
-  import DeleteIcon from '@mui/icons-material/Delete';
+import { IconButton, Card, styled, Table, TableBody, TableCell, TableHead, TablePagination, TableRow,useTheme, Button,
+} from "@mui/material";
+import { useState } from "react";
+import axios from "axios"
+import React,{ useEffect } from "react";
+//import ModificationArticle from "./ModificationArticle";
+// import DeleteIcon from '@mui/icons-material/Delete';
+import Breadcrumb from "../../Utils/Breadcrumb";
 import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import { Span } from "../../Typography";
-import { format } from 'date-fns';
+import InfoIcon from '@mui/icons-material/Info';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CancelIcon from '@mui/icons-material/Cancel';
 
   const Container = styled("div")(({ theme }) => ({
     margin: "30px",
@@ -36,14 +38,13 @@ import { format } from 'date-fns';
     textTransform: "capitalize",
   }));
 
-  const BesoinList= (user)=>{
+  const BesoinListBag= ()=>{
 
     const [page, setPage] = useState(0);
     const [besoin, setBesoin] = useState(null);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [besoinList, setBesoinList] = useState([]);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
-    const matricule=user.user.user.user[0].MATRICULE;
 
     const handleDialogClose = () => {
         setShouldOpenConfirmationDialog(false);
@@ -62,7 +63,7 @@ import { format } from 'date-fns';
 
       const chargerListBesoin = async () => {
         try {
-          const response = await axios.get(`http://localhost:8080/besoin/${matricule}`);
+          const response = await axios.get('http://localhost:8080/besoinBag');
           setBesoinList(response.data);
           console.log("data loaded", response.data);
         } catch (error) {
@@ -78,18 +79,13 @@ import { format } from 'date-fns';
     }
 
     useEffect(() => {
-        if(matricule) chargerListBesoin();
-      }, [matricule]);
+        chargerListBesoin();
+      }, []);
 
       const { palette } = useTheme();
-      const bgGreen = "rgba(9, 182, 109, 1)";
       const bgError = palette.error.main;
-      const bgwarning = palette.warning.main;
-
-      const renderStatus = (ETAT_BESOIN) => {
-        if (ETAT_BESOIN === "Validé") return <StyledSpan bgColor={bgGreen}>{ETAT_BESOIN}</StyledSpan>;
-        if (ETAT_BESOIN === "refusé") return <StyledSpan bgColor={bgError}>{ETAT_BESOIN}</StyledSpan>;
-        if (ETAT_BESOIN === "En Attente") return <StyledSpan bgColor={bgwarning}>{ETAT_BESOIN}</StyledSpan>;
+      const renderStatus = (BESOIN_COUNT) => {
+        return <StyledSpan bgColor={bgError}>{BESOIN_COUNT}</StyledSpan>;
       };
 
       const handleChangePage = (_, newPage) => {
@@ -108,37 +104,43 @@ import { format } from 'date-fns';
     return (
 
         <Container className="mt-5">
-            <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
+          <div className="breadcrumb">
+              <Breadcrumb routeSegments={[{ name: " Liste des Besoins " }]} />
+          </div>
+            <Card sx={{ width: "100%", overflow: "auto" }} elevation={6} className="mt-5">
             <div className="m-5 mt-3 mb-3">
-              <h1 align="left"> Liste des Besoins</h1>
+              <h1 align="left"> Liste de tous les Besoins </h1>
                 <hr />
                 
-                    <StyledTable>
+                    <StyledTable >
                     <TableHead>
                     <TableRow>
-                        <TableCell align="center"> Matricule </TableCell>
-                        <TableCell align="center"> Nom   </TableCell>
-                        <TableCell align="center"> Division </TableCell>
-                        <TableCell align="center"> Article </TableCell>
-                        <TableCell align="center"> Quantité </TableCell>
-                        <TableCell align="center"> Unité </TableCell>
-                        <TableCell align="center"> Date </TableCell>
-                        <TableCell align="center"> Etat </TableCell>
-                    </TableRow>
+                          <TableCell align="center"> Matricule </TableCell>
+                          <TableCell align="center"> Nom   </TableCell>
+                          <TableCell align="center"> Prénom</TableCell>
+                          <TableCell align="center"> Division </TableCell>
+                          <TableCell align="center"> Date de Besoin </TableCell>
+                          <TableCell align="center"> Nombre des Besoins </TableCell>
+                          <TableCell align="center"> Opération </TableCell>
+
+                          </TableRow>
                       </TableHead>
                     <TableBody>
                         {besoinList
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((besoinList) => (
                             <TableRow key={besoinList.NUM_BESOIN}>
-                            <TableCell align="center">{besoinList.MATRICULE}</TableCell>
-                            <TableCell align="center">{besoinList.NOM_AG + besoinList.PRENOM_AG}</TableCell>
+                            <TableCell align="center">{besoinList.AGENT_MATRICULE}</TableCell>
+                            <TableCell align="center">{besoinList.AGENT_NOM}</TableCell>
+                            <TableCell align="center">{besoinList.AGENT_PRENOM}</TableCell>
                             <TableCell align="center">{besoinList.LABEL_DIVISION}</TableCell>
-                            <TableCell align="center">{besoinList.DESIGNATION_ART}</TableCell>
-                            <TableCell align="center">{besoinList.QUANTITE}</TableCell>
-                            <TableCell align="center">{besoinList.UNITE}</TableCell>
                             <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
-                            <TableCell align="center">{renderStatus(besoinList.ETAT_BESOIN)}</TableCell>
+                            <TableCell align="center">{renderStatus(besoinList.BESOIN_COUNT)}</TableCell>
+                            <TableCell align="center">
+                                <Button> <InfoIcon color="warning"/> </Button>
+                                <Button> <CheckCircleOutlineIcon color="success"/> </Button>
+                                <Button> <CancelIcon color="danger"/> </Button>
+                            </TableCell>
 
                             {/* <TableCell align="left"  >                               
                                 
@@ -190,4 +192,4 @@ import { format } from 'date-fns';
 
   }
 
-  export default BesoinList;
+  export default BesoinListBag;

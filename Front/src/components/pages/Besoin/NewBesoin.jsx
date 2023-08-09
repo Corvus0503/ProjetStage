@@ -178,6 +178,12 @@ const handleValidation = async () => {
         ETAT_BESOIN,
       });
 
+      Swal.fire({
+        icon: 'success',
+        title: 'Demande soumise',
+        text: 'Votre demande a été soumise avec succès !',
+      });
+
       console.log('Besoin ajouté avec succès:', response.data);
     }
 

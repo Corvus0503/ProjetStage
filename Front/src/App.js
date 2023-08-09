@@ -16,6 +16,9 @@ import ModUser from './components/pages/user/modUser';
 import Article from './components/pages/Article/Article';
 import ArticleList from './components/pages/Article/ArticleList';
 import Besoin from './components/pages/Besoin/Besoin';
+import BesoinListBag from './components/pages/Besoin/BesoinListeBAG';
+
+
 
 function App() {
   const [IsOpen, setIsOpen] = useState (false)
@@ -72,6 +75,9 @@ function App() {
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />
               <Route path="/Besoin" element={<Besoin user={user} />} />
+              <Route path="/Besoin" element={<Besoin user={user} />} />
+              <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />  
+
             </Route>
             <Route element={<ProtectedRoute user={user} perm={'User'}/>}>
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
@@ -79,7 +85,7 @@ function App() {
               <Route path="/Signup" element={<Signup />} />
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />
-              <Route path="/Besoin" element={<Besoin user={user} />} />
+              <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />              
             </Route>
           <Route path="/*" element={<p>There's nothing here: 404!</p>} />
           </Routes>

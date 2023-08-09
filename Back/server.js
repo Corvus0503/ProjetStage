@@ -10,7 +10,9 @@ const {
     getCompte, addCompte, updateCompte, deleteCompte,
     addBesoin, getCategorie, addCategorie, updateCategorie, deleteCategorie,
     getService, addService, updateService, deleteService,getSelectedArticle,
-    getDivision, addDivision, updateDivision, deleteDivision, getArticle, addArticle, updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinAtt, getBesoinRef
+    getDivision, addDivision, updateDivision, deleteDivision, getArticle, addArticle,
+    updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,
+    getBesoinListe,
 } = require("./app/utils/querryHelpers")
 const socketIO = require("socket.io");
 const app = express()
@@ -200,20 +202,24 @@ app.delete('/article/:id', function (req, res) {
 
 //Besoin controller 
     //getter
-app.get('/besoin', (req,res)=>{
-    getBesoin(req, res)
+app.get('/besoin/:id', (req,res)=>{
+    const{id} = req.params;
+    getBesoin(req, res,id)
 })
 app.get('/besoinAtt', function(req, res){
     getBesoinAtt(req,res);
 })
-app.get('/besoinRef', function(req, res){
-    getBesoinRef(req,res);
+app.get('/besoinBag', function(req, res){
+    getBesoinListe(req,res);
 })
 app.get('/articleSelected/:id', async (req, res) => {
     const{id} = req.params;
     getSelectedArticle(req,res,id)
   });
-  
+app.get('./besoinDetail/:id',(req,res)=>{
+    let{id} = req.params;
+    getBesoinDetail(req,res,id) ;
+})
     //delete
 app.delete('/besoin/:id', function(req,res){
     let{id} = req.params;

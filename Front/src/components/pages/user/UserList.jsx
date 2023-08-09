@@ -9,6 +9,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  useTheme,
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios"
@@ -19,6 +20,7 @@ import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Breadcrumb from "../../Utils/Breadcrumb";
 import Swal from 'sweetalert2'
+import { Span } from "../../Typography";
 
 const StyledTable = styled(Table)(() => ({
   whiteSpace: "pre",
@@ -28,6 +30,13 @@ const StyledTable = styled(Table)(() => ({
   "& tbody": {
     "& tr": { "& td": { paddingLeft: 0, textTransform: "capitalize" } },
   },
+}));
+const StyledSpan = styled(Span)(({ bgColor }) => ({
+  color: "#fff",
+  padding: "2px 8px",
+  borderRadius: "4px",
+  background: bgColor,
+  textTransform: "capitalize",
 }));
 
 //A ne pas toucher
@@ -59,6 +68,16 @@ const deleteUser = id => {
 useEffect(() => {
   chargerListAdmin();
 }, []);
+
+const { palette } = useTheme();
+const bgGreen = "rgba(9, 182, 109, 1)";
+const bgError = palette.error.main;
+const bgSecondary = palette.secondary.main;
+
+const renderStatus = (status) => {
+  if (status === "Activé") return <StyledSpan bgColor={bgGreen}>{status}</StyledSpan>;
+  if (status === "Desactivé") return <StyledSpan bgColor={bgError}>{status}</StyledSpan>;
+};
 
 const handleDeleteUser = (user) => {
   setUser(user);
@@ -122,21 +141,22 @@ const handleDialogClose = () => {
 
   console.log(adminList)
   return (
-  <div className="containerBG">
+  <div>
     <div className="breadcrumb">
           <Breadcrumb routeSegments={[{ name: "Liste des Utilisateur" }]} />
       </div>
-      <div className="container mt-5 p-5 card shadow">
+      <div className="mt-5 p-5 card shadow">
         <Box width="100%" overflow="auto">
         <StyledTable>
           <TableHead>
             <TableRow>
-              <TableCell align="left">Matricule</TableCell>
+              <TableCell align="center"></TableCell>
               <TableCell align="center">Nom d'utilisateur</TableCell>
+              <TableCell align="center">Matricule</TableCell>
               <TableCell align="center">Fonction</TableCell>
               <TableCell align="center">Contact</TableCell>
               <TableCell align="center">Activation</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell align="center">Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -145,18 +165,19 @@ const handleDialogClose = () => {
               .map((List) => (
 
                 <TableRow key={List.MATRICULE}>
-                  <TableCell align="left">{List.PHOTO && (
+                  <TableCell>{List.PHOTO && (
                     <img
                       src={require(`../../../uploads/${List.PHOTO}`)} // Serve the photo from the "uploads" directory on the server
                       alt={List.NOM_AG}
                       style={{width: "40px", height: "40px"}} className="rounded-pill" // Adjust the image size as needed
                     />
-                  )}{List.MATRICULE}</TableCell>
+                  )}</TableCell>
                   <TableCell align="center">{List.NOM_UTIL_AG}</TableCell>
+                  <TableCell align="center">{List.MATRICULE}</TableCell>
                   <TableCell align="center">{List.FONCTION_AG}</TableCell>
                   <TableCell align="center">{List.TEL_AG}</TableCell>
-                  <TableCell align="center">{List.ACTIVATION}</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">{renderStatus(List.ACTIVATION)}</TableCell>
+                  <TableCell align="center">
                     <IconButton>
                       <TestModal List={List} adminList={adminList} chargerListAdmin={chargerListAdmin}/>
                     </IconButton>

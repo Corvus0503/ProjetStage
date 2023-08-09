@@ -347,19 +347,18 @@ const updateBesoin = async (NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIR
   }
 };
 
-const getBesoin= async (req, res)=> {
+const getBesoin= async (req, res,id)=> {
   const query = `SELECT BESOIN.* , ARTICLE.*, AGENT.*, CATEGORIE.*,DIVISION.* FROM ((((BESOIN
     INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
     INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
     INNER JOIN CATEGORIE ON ARTICLE.ID_CAT=CATEGORIE.ID_CAT)
-    INNER JOIN DIVISION ON AGENT.CODE_DIVISION=DIVISION.CODE_DIVISION) 
-
-    
+    INNER JOIN DIVISION ON AGENT.CODE_DIVISION=DIVISION.CODE_DIVISION)
+    WHERE BESOIN.MATRICULE = :id 
   `;
 
   try {
     const connection = await getConnection();
-    const result = await connection.execute(query);
+    const result = await connection.execute(query,[id]);
     res.json(result.rows)
     connection.commit();
     connection.release();
@@ -368,15 +367,58 @@ const getBesoin= async (req, res)=> {
   }
 }
 
+const getBesoinDetail= async (req, res,id)=> {
+  const query = `SELECT BESOIN.* , ARTICLE.*, AGENT.*, CATEGORIE.*,DIVISION.* FROM ((((BESOIN
+    INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+    INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+    INNER JOIN CATEGORIE ON ARTICLE.ID_CAT=CATEGORIE.ID_CAT)
+    INNER JOIN DIVISION ON AGENT.CODE_DIVISION=DIVISION.CODE_DIVISION)
+    WHERE BESOIN.ETAT_BESOIN = 'En Attente' AND BESOIN.MATRICULE = :id 
+  `;
+
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query,[id]);
+    res.json(result.rows)
+    connection.commit();
+    connection.release();
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+
+
+
+const getBesoinListe = async(req,res)=>{
+    const query = `SELECT BESOIN.MATRICULE,BESOIN.DATE_BESOIN, BESOIN.ETAT_BESOIN, AGENT.MATRICULE AS AGENT_MATRICULE, AGENT.NOM_AG AS AGENT_NOM, AGENT.PRENOM_AG AS AGENT_PRENOM, DIVISION.LABEL_DIVISION, 
+      COUNT(BESOIN.NUM_BESOIN) AS BESOIN_COUNT FROM BESOIN 
+        INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE
+        INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE
+        INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION
+        WHERE BESOIN.ETAT_BESOIN = 'En Attente'
+      GROUP BY BESOIN.MATRICULE, BESOIN.DATE_BESOIN, BESOIN.ETAT_BESOIN, AGENT.MATRICULE, AGENT.NOM_AG, AGENT.PRENOM_AG, DIVISION.LABEL_DIVISION    
+      `
+    try {
+      const connection = await getConnection();
+      const result= await connection.execute(query);
+      res.json(result.rows)
+      connection.commit();
+      connection.release();
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 const getSelectedArticle = async (req,res,id) => {
     const query = 'SELECT * FROM ARTICLE WHERE ID_CAT = :id';
     
     try {
-      const connection = await getConnection();
-      const result = await connection.execute(query, [id]);
-      res.json(result.rows);      
-      connection.commit();
-      await connection.close();
+        const connection = await getConnection();
+        const result = await connection.execute(query, [id]);
+        res.json(result.rows);      
+        connection.commit();
+        await connection.close();
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
@@ -384,45 +426,45 @@ const getSelectedArticle = async (req,res,id) => {
   };
 
 const deleteBesoin = async (req, res, id) => {
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute('DELETE FROM BESOIN WHERE NUM_BESOIN=:id', [id]);
-    res.json(result.rows);
-    connection.commit()
-    await connection.close();
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
+    try {
+        const connection = await getConnection();
+        const result = await connection.execute('DELETE FROM BESOIN WHERE NUM_BESOIN=:id', [id]);
+        res.json(result.rows);
+        connection.commit()
+        await connection.close();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 };
 
 
 const getBesoinAtt = async (req,res) =>{
-  const query = `
-  SELECT BESOIN.*, ARTICLE.*, AGENT.*
-  FROM ((BESOIN
-  INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
-  INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
-  WHERE BESOIN.ETAT_BESOIN = 'En attente'
-`;
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute(query);
-    res.json(result.rows)
-    connection.commit();
-    connection.release();
-  } catch (error) {
-    console.error("Erreur lors de l'affichage du besoin :", error);
-  }
+    const query = `
+    SELECT BESOIN.*, ARTICLE.*, AGENT.*
+    FROM ((BESOIN
+    INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+    INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+    WHERE BESOIN.ETAT_BESOIN = 'En attente'
+    `;
+    try {
+        const connection = await getConnection();
+        const result = await connection.execute(query);
+        res.json(result.rows)
+        connection.commit();
+        connection.release();
+    } catch (error) {
+        console.error("Erreur lors de l'affichage du besoin :", error);
+    }
 }
 const getBesoinRef = async (req,res) =>{
-  const query = `
-  SELECT BESOIN.*, ARTICLE.*, AGENT.*
-  FROM ((BESOIN
-  INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
-  INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
-  WHERE BESOIN.ETAT_BESOIN = 'refusé'
-`;
+    const query = `
+    SELECT BESOIN.*, ARTICLE.*, AGENT.*
+    FROM ((BESOIN
+    INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+    INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+    WHERE BESOIN.ETAT_BESOIN = 'refusé'
+    `;
   try {
     const connection = await getConnection();
     const result = await connection.execute(query);
@@ -593,7 +635,7 @@ const deleteArticle = async (req, res, id) => {
    getBesoin,
    deleteBesoin,
    getBesoinRef,
-   getBesoinAtt,
+   getBesoinDetail,
    getSelectedArticle,
- 
+   getBesoinListe,
   };

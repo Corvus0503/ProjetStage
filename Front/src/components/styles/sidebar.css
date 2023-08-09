@@ -16,12 +16,15 @@
     flex-direction: column;
     width: 200px;
     height: 100%;
+    color: black;
     background: #0f1118;
+    box-shadow: 7px 10px 10px rgb(120, 120, 120);
   }
   .sidebar.open{
     width: 70px;
     background: #0f1118;
     color: rgba(255, 255, 255, 0);
+    
   }
   .sidebar h1{
     padding-bottom: 20px;
@@ -41,7 +44,7 @@
     padding: 8px 8px 8px 20px;
     text-decoration: none;
     font-size: 18px;
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
     display: flex;
   }
   .nav-item:hover{
@@ -161,6 +164,7 @@
       border-style: none;
       width: 100%;
       display: flex;
+      translate: -300px;
     }
     .dec-item:hover{
       background-color: #1d20ca;
