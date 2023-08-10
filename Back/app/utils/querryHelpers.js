@@ -371,26 +371,27 @@ const getBesoinListe = async(req,res)=>{
     }
 }
 
-const getBesoinDetail = async (req, res, id) => {
-  const query = `SELECT BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*
-                 FROM (((((BESOIN
-                 INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
-                 INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
-                 INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
-                 INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION))
-                 WHERE BESOIN.ETAT_BESOIN = 'En Attente' AND BESOIN.MATRICULE = :id`;
-
-  try {
-    const connection = await getConnection();
-    const result = await connection.execute(query, [id]);
-    await connection.commit();
-    await connection.close();
-    res.json(result.rows);
-  } catch (error) {
-    console.error("Erreur lors de l'affichage du besoin :", error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
+const getBesoinDetail = async (req, res, id) => { // Utilisation dans l'ordre correct
+    const query = `
+      SELECT BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*
+      FROM (((((BESOIN
+      INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+      INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+      INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
+      INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION))
+      WHERE BESOIN.ETAT_BESOIN = 'En Attente' AND BESOIN.MATRICULE = :id`;
+  
+    try {
+      const connection = await getConnection();
+      const result = await connection.execute(query, [id]);
+      await connection.commit();
+      await connection.close();
+      res.json(result.rows);
+    } catch (error) {
+      console.error("Erreur lors de l'affichage du besoin :", error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 
 
 const getSelectedArticle = async (req,res,id) => {

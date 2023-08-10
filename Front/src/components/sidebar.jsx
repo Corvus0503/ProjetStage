@@ -54,21 +54,15 @@ const logout = () => {
 
 return(
     <>
-        <Topnav user={user} IsOpen={IsOpen}/>
+        <Topnav togleSidebar={togleSidebar} user={user} IsOpen={IsOpen} logout={logout}/>
         <aside className={`sidebar ${IsOpen ? "open" : ""}`}>
             <nav>
-                <button onClick={togleSidebar} className="sidebar-toogle">
-                    <div className="burger"></div>
-                    <div className="burger"></div>
-                    <div className="burger"></div>
-                </button><br/><br/>
+                <br/><br/><br/><br/><br/>
                 {lienPerm()}
-                <div className="dec-cont"><button className="dec-item" onClick={logout}><div style={{paddingRight: "22px"}}><SideLougout/></div>Deconexion</button></div>
             </nav>
         </aside>
     </>
 )
 }
-
 
 export default SideNav

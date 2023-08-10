@@ -5,22 +5,20 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 // Composant pour afficher la liste des articles dans une modal
-const AboutBesoinModal = ({isModalOpen, closeModal,user}) => {
+const AboutBesoinModal = ({ matricule,isModalOpen, closeModal }) => {
   // Utilisation de useState pour gérer la pagination
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [besoinList, setBesoinList] = useState([]);
-  const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
 
-  console.log(user)
+  console.log(matricule)
 
   // Utilisation de useEffect pour charger la liste des articles lorsque l'idCat change
   useEffect(() => {
     const fetchArticleList = async () => {
       try {
         // Vérifiez que user existe et a les propriétés nécessaires
-        if (user) {
-          const matricule = user;
+        if (matricule) {
   
           const response = await axios.get(`http://localhost:8080/besoinDetail/${matricule}`);
           setBesoinList(response.data);
@@ -31,7 +29,11 @@ const AboutBesoinModal = ({isModalOpen, closeModal,user}) => {
     };
   
     fetchArticleList();
-  }, [user]);
+  }, [matricule]);
+
+const handleValidation=()=>{
+   
+}
   
 
   // Fonction pour gérer le changement de page
@@ -75,8 +77,8 @@ const AboutBesoinModal = ({isModalOpen, closeModal,user}) => {
                 <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                 <TableCell align="center">{besoinList.UNITE}</TableCell>
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
-                <TableCell align="center">
-                    <Button> <CheckCircleOutlineIcon color="success"/> </Button>
+                <TableCell align="center" className="d-flex inline">
+                    <Button > <CheckCircleOutlineIcon color="success"/> </Button>
                     <Button> <CancelIcon color="error"/> </Button>
                 </TableCell>
                 </TableRow>
@@ -90,7 +92,7 @@ const AboutBesoinModal = ({isModalOpen, closeModal,user}) => {
           count={besoinList.length}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 15, 25]}
         />
       </DialogContent>
       <DialogActions>

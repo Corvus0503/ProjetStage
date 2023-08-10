@@ -7,7 +7,7 @@ import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) => {
   // Utilisation de useState pour gérer la pagination
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [categorieList, setCategorieList] = useState([]);
 
   // Utilisation de useEffect pour effectuer une requête au chargement de la modal

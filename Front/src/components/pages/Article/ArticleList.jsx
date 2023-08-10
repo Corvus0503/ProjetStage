@@ -41,7 +41,7 @@ const StyledTable = styled(Table)(() => ({
 const ArticleList = () => {
   const [page, setPage] = useState(0);
   const [user, setUser] = useState(null);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [ArticleListe, setArticleListe] = useState([]);
   const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
 

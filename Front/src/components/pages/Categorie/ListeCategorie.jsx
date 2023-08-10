@@ -43,7 +43,7 @@ import {
   const Division = () => {
     const [page, setPage] = useState(0);
     const [division, setDivision] = useState(null);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(15);
     const [DivisionListe, setDivisionList] = useState([]);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
   

@@ -218,7 +218,7 @@ app.get('/articleSelected/:id', async (req, res) => {
   });
   app.get('/besoinDetail/:id', async (req, res) => {
     const { id } = req.params;
-    getBesoinDetail(req, res, id);
+    getBesoinDetail(req, res, id );
   });
     //delete
 app.delete('/besoin/:id', function(req,res){

@@ -44,7 +44,7 @@ const UserList = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [user, setUser] = useState(null);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [adminList, setAdminList] = useState([]);
   const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
 
