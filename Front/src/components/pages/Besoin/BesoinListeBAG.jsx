@@ -52,6 +52,7 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
     const [selectedMatricule, setSelectedMatricule] = useState(null);
     const [selectedBesoin, setSelectedBesoin] = useState(null);
     const [formattedDate, setFormattedDate] = useState("");
+    
 
     const handleDialogClose = () => {
         setShouldOpenConfirmationDialog(false);
@@ -162,6 +163,7 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
                               matricule={selectedMatricule}                           
                               isModalOpen={isModalOpen}
                               closeModal={handleModalClose}
+                              chargerBag={chargerListBesoin}
                             />
                                 <Button> <CheckCircleOutlineIcon color="success"/> </Button>
                                 <Button> <CancelIcon color="error"/> </Button>

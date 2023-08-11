@@ -312,24 +312,37 @@ const deleteDivision = async (req,res,id) => {
 //requete Besoin
 
 
-const updateBesoin = async (NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN,id) => {
+const updateBesoin = async (MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UNITE, ETAT_BESOIN, NUM_BESOIN) => {
   const query = `
-    UPDATE BESOIN SET MATRICULE = :MATRICULE, FORMULE = :FORMULE, DATE_BESOIN = :DATE_BESOIN, DATE_CONFIRM = :DATE_CONFIRM,
-    TIME_CONFIRM = :TIME_CONFIRM, QUANTITE = :QUANTITE, QUANTITE_ACC = : UNITE = :UNITE, ETAT_BESOIN = :ETAT_BESOIN
+    UPDATE BESOIN
+    SET MATRICULE = :MATRICULE,
+        FORMULE = :FORMULE,
+        DATE_BESOIN = :DATE_BESOIN,
+        QUANTITE = :QUANTITE,
+        UNITE = :UNITE,
+        ETAT_BESOIN = :ETAT_BESOIN
     WHERE NUM_BESOIN = :NUM_BESOIN
   `;
 
   try {
     const connection = await getConnection();
-    const result = await connection.execute(query, [NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN,id],);
+    const result = await connection.execute(query, {
+      MATRICULE,
+      FORMULE,
+      DATE_BESOIN,
+      QUANTITE,
+      UNITE,
+      ETAT_BESOIN,
+      NUM_BESOIN,  // Utiliser le même nom que dans la requête SQL
+    });
     console.log('Besoin mis à jour :', result.rowsAffected);
-    res.json(result.rows);
+    connection.commit();
     connection.release();
   } catch (err) {
     console.error('Erreur lors de la mise à jour du besoin :', err);
+    throw err;
   }
 };
-
 const getBesoin= async (req, res,id)=> {
   const query = `SELECT BESOIN.* , ARTICLE.*, AGENT.*, CATEGORIE.*,DIVISION.* FROM ((((BESOIN
     INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
@@ -460,14 +473,14 @@ const getBesoinRef = async (req,res) =>{
   }
 }
 
-const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN) => {
+const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UNITE, ETAT_BESOIN) => {
     const query = `
-      INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN)
-      VALUES (NUM_BESOIN.nextval, :MATRICULE, :FORMULE, TO_DATE(:DATE_BESOIN, 'YYYY-MM-DD'), :DATE_CONFIRM, :TIME_CONFIRM, :QUANTITE, :UNITE, :ETAT_BESOIN)
+      INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UNITE, ETAT_BESOIN)
+      VALUES (NUM_BESOIN.nextval, :MATRICULE, :FORMULE, TO_DATE(:DATE_BESOIN, 'YYYY-MM-DD'), :QUANTITE, :UNITE, :ETAT_BESOIN)
     `;
     try {
       const connection = await getConnection();
-      const result = await connection.execute(query, [MATRICULE, FORMULE, DATE_BESOIN, DATE_CONFIRM, TIME_CONFIRM, QUANTITE, UNITE, ETAT_BESOIN]);
+      const result = await connection.execute(query, [MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UNITE, ETAT_BESOIN]);
       res.json(result.rows);
       console.log('Besoin ajouté :', result.rowsAffected);
       connection.commit();

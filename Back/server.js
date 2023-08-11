@@ -227,15 +227,37 @@ app.delete('/besoin/:id', function(req,res){
 })
 
     //setter
-app.put('/besoin/:id', function(req, res){
-    let{NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN}=req.body
-    let{id}=req.params
-    updateBesoin(req, res,NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN,id);
-})
+app.put('/besoins/:id', async (req, res) => {
+  const { id } = req.params;
+  const {
+    MATRICULE,
+    FORMULE,
+    DATE_BESOIN,
+    QUANTITE,
+    UNITE,
+    ETAT_BESOIN
+  } = req.body;
+    
+  try {
+    await updateBesoin(
+      MATRICULE,
+      FORMULE,
+      DATE_BESOIN,
+      QUANTITE,
+      UNITE,
+      ETAT_BESOIN,
+      id,
+    );
+    res.json({ message: 'Besoin mis à jour avec succès' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur lors de la mise à jour du besoin' });
+  }
+});
     //Creator
 app.post('/besoin', function(req, res){
-    const {MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN}=req.body
-    addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN);
+    const {MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,UNITE,ETAT_BESOIN}=req.body
+    addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,UNITE,ETAT_BESOIN);
 })
 
 //Validation des besoins Controller
