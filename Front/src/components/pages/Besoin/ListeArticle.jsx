@@ -7,7 +7,7 @@ import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 const ArticleListModal = ({ isModalOpen, closeModal, onRowSelect, idCat }) => {
   // Utilisation de useState pour gérer la pagination
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [articleList, setArticleList] = useState([]);
 
   // Utilisation de useEffect pour charger la liste des articles lorsque l'idCat change

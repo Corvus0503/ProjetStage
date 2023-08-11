@@ -3,35 +3,164 @@ import axios from "axios";
 import { Dialog, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, DialogTitle, DialogContent, DialogActions, Button, } from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
+import Swal from 'sweetalert2';
 
 // Composant pour afficher la liste des articles dans une modal
-const AboutBesoinModal = ({isModalOpen, closeModal,user}) => {
+
+
+
+const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
   // Utilisation de useState pour gérer la pagination
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [besoinList, setBesoinList] = useState([]);
-  const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
+  const [selectedBesoins, setSelectedBesoins] = useState([]);
+  const [quantiteToUpdate, setQuantiteToUpdate] = useState('');
 
-  console.log(user)
+  const fetchArticleList = async () => {
+    try {
+      // Vérifiez que user existe et a les propriétés nécessaires
+      if (matricule) {
+
+        const response = await axios.get(`http://localhost:8080/besoinDetail/${matricule}`);
+        setBesoinList(response.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //console.log(matricule)
 
   // Utilisation de useEffect pour charger la liste des articles lorsque l'idCat change
-  useEffect(() => {
-    const fetchArticleList = async () => {
-      try {
-        // Vérifiez que user existe et a les propriétés nécessaires
-        if (user) {
-          const matricule = user;
-  
-          const response = await axios.get(`http://localhost:8080/besoinDetail/${matricule}`);
-          setBesoinList(response.data);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  
+  useEffect(() => {  
     fetchArticleList();
-  }, [user]);
+  }, [matricule]);
+
+  console.log(besoinList)
+
+  const handleValidation = async (besoinId) => {
+    const besoinToUpdate = besoinList.find(besoin => besoin.NUM_BESOIN === besoinId);
+    
+    try {
+      const formattedDateBesoin = besoinToUpdate.DATE_BESOIN instanceof Date
+        ? besoinToUpdate.DATE_BESOIN.toISOString()
+        : new Date(besoinToUpdate.DATE_BESOIN).toISOString();
+  
+      // Créez un nouvel objet de mise à jour en incluant tous les champs nécessaires
+      const updatedBesoin = {
+        MATRICULE: besoinToUpdate.MATRICULE,
+        FORMULE: besoinToUpdate.FORMULE,
+        DATE_BESOIN: formattedDateBesoin,
+        QUANTITE: besoinToUpdate.QUANTITE,
+        UNITE: besoinToUpdate.UNITE,
+        ETAT_BESOIN: 'Validé', // Nouvel état
+      };
+
+      closeModal();
+  
+      // Demande de confirmation avec SweetAlert2
+      const result = await Swal.fire({
+        title: 'Êtes-vous sûr de vouloir valider ce besoin ?',
+        text: "Cette action ne peut pas être annulée !",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, valider',
+        cancelButtonText: 'Annuler'
+      });
+      
+      if (result.isConfirmed) {
+        // Envoyez une requête au serveur pour mettre à jour le besoin avec les nouvelles données
+        await axios.put(`http://localhost:8080/besoins/${besoinId}`, updatedBesoin);
+  
+        // Mettez à jour la liste des besoins avec le nouvel état
+        setBesoinList(prevList =>
+          prevList.map(besoin => {
+            if (besoin.NUM_BESOIN === besoinId) {
+              return { ...besoin, ETAT_BESOIN: 'Valider' };
+            }
+            return besoin;
+          })
+        );
+
+        Swal.fire(
+          'Validé !',
+          'Le besoin a été validé avec succès.',
+          'success'
+        );
+        fetchArticleList();
+        chargerBag();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+////////////////////////////////////////////////////////////////////////////////////
+
+
+  const handleUpdate = async (besoinId, newEtat) => {
+    const besoinToUpdate = besoinList.find(besoin => besoin.NUM_BESOIN === besoinId);
+  
+    try {
+      const formattedDateBesoin = besoinToUpdate.DATE_BESOIN instanceof Date
+        ? besoinToUpdate.DATE_BESOIN.toISOString()
+        : new Date(besoinToUpdate.DATE_BESOIN).toISOString();
+  
+      // Créez un nouvel objet de mise à jour en incluant tous les champs nécessaires
+      const updatedBesoin = {
+        MATRICULE: besoinToUpdate.MATRICULE,
+        FORMULE: besoinToUpdate.FORMULE,
+        DATE_BESOIN: formattedDateBesoin,
+        QUANTITE: besoinToUpdate.QUANTITE,
+        UNITE: besoinToUpdate.UNITE,
+        ETAT_BESOIN: newEtat, // Nouvel état
+      };
+
+      closeModal();
+  
+      // Demande de confirmation avec SweetAlert2
+      const result = await Swal.fire({
+        title: 'Êtes-vous sûr de vouloir refuser ce besoin ?',
+        text: "Cette action ne peut pas être annulée !",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, refuser',
+        cancelButtonText: 'Annuler'
+      });
+      
+      if (result.isConfirmed) {
+        // Envoyez une requête au serveur pour mettre à jour le besoin avec les nouvelles données
+        await axios.put(`http://localhost:8080/besoins/${besoinId}`, updatedBesoin);
+  
+        // Mettez à jour la liste des besoins avec le nouvel état
+        setBesoinList(prevList =>
+          prevList.map(besoin => {
+            if (besoin.NUM_BESOIN === besoinId) {
+              return { ...besoin, ETAT_BESOIN: newEtat };
+            }
+            return besoin;
+          })
+        );
+
+        Swal.fire(
+          'Refusé !',
+          'Le besoin a été refusé avec succès.',
+          'success'
+        );
+        fetchArticleList();
+        chargerBag();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+/////////////////////////////////////////////////////////////////////////////////////////
+  
   
 
   // Fonction pour gérer le changement de page
@@ -75,10 +204,15 @@ const AboutBesoinModal = ({isModalOpen, closeModal,user}) => {
                 <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                 <TableCell align="center">{besoinList.UNITE}</TableCell>
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
-                <TableCell align="center">
-                                <Button> <CheckCircleOutlineIcon color="success"/> </Button>
-                                <Button> <CancelIcon color="danger"/> </Button>
-                            </TableCell>
+                <TableCell align="center" className="d-flex inline">
+                <Button onClick={() => handleValidation(besoinList.NUM_BESOIN)}>
+                  <CheckCircleOutlineIcon color="success" />
+                </Button>
+                <Button onClick={() => handleUpdate(besoinList.NUM_BESOIN, 'refusé')}>
+                  <CancelIcon color="error" />
+                </Button>
+
+                </TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -90,7 +224,7 @@ const AboutBesoinModal = ({isModalOpen, closeModal,user}) => {
           count={besoinList.length}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[10, 15, 25]}
         />
       </DialogContent>
       <DialogActions>

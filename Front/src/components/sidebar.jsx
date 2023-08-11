@@ -12,7 +12,7 @@ import ArticleIcone from "./images/ArticleIcone";
 import Topnav from "./Topnav";
 import { useNavigate } from "react-router-dom";
 
-const SideNav = ({IsOpen, togleSidebar, deconexion, user}) =>{
+const SideNav = ({IsOpen, togleSidebar, deconexion, user, comments, togleNot}) =>{
     const navigate = useNavigate();
     const { setToken } = useAuth();
   const [lien] = useState([
@@ -35,11 +35,11 @@ const [lienAdmin] = useState([
 const lienPerm = () =>{
     if(user[0].TYPE_AG.includes("User")){
         return(
-            lien.map((i)=><NavLink to={i.lien} className="nav-item" activeClassName="active"><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
+            lien.map((i)=><NavLink to={i.lien} className={`nav-item ${IsOpen ? "open" : ""}`} activeClassName={`active ${IsOpen ? "open" : ""}`}><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
         )
     } else if(user[0].TYPE_AG.includes("Admin")){
         return(
-            lienAdmin.map((i)=><NavLink to={i.lien} className="nav-item" activeClassName="active"><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
+            lienAdmin.map((i)=><NavLink to={i.lien} className={`nav-item ${IsOpen ? "open" : ""}`} activeClassName={`active ${IsOpen ? "open" : ""}`}><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
         )
     }
 }
@@ -54,7 +54,7 @@ const logout = () => {
 
 return(
     <>
-        <Topnav togleSidebar={togleSidebar} user={user} IsOpen={IsOpen} logout={logout}/>
+        <Topnav togleSidebar={togleSidebar} user={user} IsOpen={IsOpen} logout={logout} comments={comments} togleNot={togleNot}/>
         <aside className={`sidebar ${IsOpen ? "open" : ""}`}>
             <nav>
                 <br/><br/><br/><br/><br/>

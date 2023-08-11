@@ -3,24 +3,27 @@ import axios from "axios";
 import { Dialog, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, DialogTitle, DialogContent, DialogActions, Button, IconButton } from "@mui/material";
 import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 
-// Composant de la modal pour afficher la liste des catégories
-const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) => {
+
+// Composant pour afficher la liste des articles dans une modal
+const CompteListModal = ({ isModalOpen, closeModal, onRowSelect, idCat }) => {
   // Utilisation de useState pour gérer la pagination
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(15);
-  const [categorieList, setCategorieList] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [compteList, setCompteList] = useState([]);
 
-  // Utilisation de useEffect pour effectuer une requête au chargement de la modal
+  // Utilisation de useEffect pour charger la liste des articles lorsque l'idCat change
+  const chargerListAdmin = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/compte');
+      setCompteList(response.data);
+      console.log("data loaded");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchCategorieList = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/categorie");
-        setCategorieList(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchCategorieList();
+    chargerListAdmin();
   }, []);
 
   // Fonction pour gérer le changement de page
@@ -36,27 +39,30 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
 
   // Rendu du composant de la modal
   return (
-    <Dialog open={isModalCatOpen} onClose={closeCatModal} fullWidth maxWidth="md">
-      <DialogTitle>Liste des Catégories</DialogTitle>
+    <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="md">
+      <DialogTitle>Liste des Articles</DialogTitle>
       <DialogContent>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell align="center">Catégorie</TableCell>
-              <TableCell align="center">Opération</TableCell>
+              <TableCell align="center">Num compte</TableCell>
+              <TableCell align="center">Designation</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {categorieList
+            {compteList
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(cat => (
-                <TableRow key={cat.ID_CAT}>
-                  <TableCell align="center">{cat.LABEL_CAT}</TableCell>
+              .map(article => (
+                <TableRow key={article.NUM_CMPT}>
+                  <TableCell align="center">{article.NUM_CMPT}</TableCell>
+                  <TableCell align="center">{article.DESIGNATION_CMPT}</TableCell>
                   <TableCell align="center">
-                    <IconButton onClick={() => {
-                      onRowCatSelect(cat);
-                      closeCatModal();
-                    }}>
+                    <IconButton
+                      onClick={() => {
+                        onRowSelect(article); // Appel de la fonction lorsqu'un article est sélectionné
+                        closeModal(); // Fermeture de la modal
+                      }}
+                    >
                       <DriveFileMoveIcon color="primary" />
                     </IconButton>
                   </TableCell>
@@ -68,14 +74,14 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
           page={page}
           component="div"
           rowsPerPage={rowsPerPage}
-          count={categorieList.length}
+          count={compteList.length}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeCatModal} color="warning">
+        <Button onClick={closeModal} color="warning">
           Fermer
         </Button>
       </DialogActions>
@@ -83,4 +89,4 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
   );
 };
 
-export default CategorieListModal;
+export default CompteListModal;

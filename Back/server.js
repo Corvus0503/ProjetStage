@@ -12,10 +12,11 @@ const {
     getService, addService, updateService, deleteService,
     getDivision, addDivision, updateDivision, deleteDivision,
     getArticle, addArticle,
-    updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,
-    getBesoinListe, getSelectedArticle,
+    updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail, getSelectedArticle, addBesoin,
+    getBesoinListe, addValidation, getValidation,
     getNotification, addNotification, deleteNotification
 } = require("./app/utils/querryHelpers")
+const getConnection = require("./app/utils/db.js");
 const socketIO = require("socket.io");
 const app = express()
 app.use(cors())
@@ -75,8 +76,6 @@ const storage = multer.diskStorage({
   const upload = multer({ storage });
 
 
-
-
 //requetes
 
 app.get('/admin/userList', function (req, res) {
@@ -107,16 +106,28 @@ app.delete('/admin/:id', function (req, res) {
 })
 
 //notification controiller
-app.get('/compte', function (req, res) {
+app.get('/notification', function (req, res) {
     getNotification(req, res);
   })
 
-app.post('/compte', function (req, res) {
+app.post('/notification', async function (req, res) {
     let {BODY_NOT, MATRICULE, DATE_NOT} = req.body
-    addNotification(req, res, BODY_NOT, MATRICULE, DATE_NOT);
+    try {
+        const connection = await getConnection();
+        const result = await connection.execute('INSERT INTO NOTIFICATION(ID_NOT, BODY_NOT, MATRICULE, DATE_NOT) VALUES (SEQ_NOTIFICATION.nextval, :1, :2, :3)', 
+        [BODY_NOT, MATRICULE, DATE_NOT]
+        );
+        await connection.commit();
+        await connection.close();
+        io.emit("new-comment", result.rows );
+        res.json(result.rows);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
 })
 
-app.delete('/compte/:id', function (req, res) {
+app.delete('/notification/:id', function (req, res) {
     let {id} = req.params
     deleteNotification(req, res, id);
 })
@@ -233,41 +244,74 @@ app.delete('/article/:id', function (req, res) {
 
 //Besoin controller 
     //getter
-app.get('/besoin/:id', (req,res)=>{
-    const{id} = req.params;
-    getBesoin(req, res,id)
-})
-app.get('/besoinAtt', function(req, res){
-    getBesoinAtt(req,res);
-})
-app.get('/besoinBag', function(req, res){
-    getBesoinListe(req,res);
-})
-app.get('/articleSelected/:id', async (req, res) => {
-    const{id} = req.params;
-    getSelectedArticle(req,res,id)
-  });
-app.get('./besoinDetail/:id',(req,res)=>{
-    let{id} = req.params;
-    getBesoinDetail(req,res,id) ;
-})
-    //delete
-app.delete('/besoin/:id', function(req,res){
-    let{id} = req.params;
-    deleteBesoin(req, res, id);
-})
-
-    //setter
-app.put('/besoin/:id', function(req, res){
-    let{NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN}=req.body
-    let{id}=req.params
-    updateBesoin(req, res,NUM_BESOIN,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN,id);
-})
-    //Creator
-app.post('/besoin', function(req, res){
-    const {MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN}=req.body
-    addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,DATE_CONFIRM,TIME_CONFIRM,QUANTITE,UNITE,ETAT_BESOIN);
-})
+    app.get('/besoin/:id', (req,res)=>{
+        const{id} = req.params;
+        getBesoin(req, res,id)
+    })
+    app.get('/besoinAtt', function(req, res){
+        getBesoinAtt(req,res);
+    })
+    app.get('/besoinBag', function(req, res){
+        getBesoinListe(req,res);
+    })
+    app.get('/articleSelected/:id', async (req, res) => {
+        const{id} = req.params;
+        getSelectedArticle(req,res,id)
+      });
+      app.get('/besoinDetail/:id', async (req, res) => {
+        const { id } = req.params;
+        getBesoinDetail(req, res, id );
+      });
+        //delete
+    app.delete('/besoin/:id', function(req,res){
+        let{id} = req.params;
+        deleteBesoin(req, res, id);
+    })
+    
+        //setter
+    app.put('/besoins/:id', async (req, res) => {
+      const { id } = req.params;
+      const {
+        MATRICULE,
+        FORMULE,
+        DATE_BESOIN,
+        QUANTITE,
+        UNITE,
+        ETAT_BESOIN
+      } = req.body;
+        
+      try {
+        await updateBesoin(
+          MATRICULE,
+          FORMULE,
+          DATE_BESOIN,
+          QUANTITE,
+          UNITE,
+          ETAT_BESOIN,
+          id,
+        );
+        res.json({ message: 'Besoin mis à jour avec succès' });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur lors de la mise à jour du besoin' });
+      }
+    });
+        //Creator
+    app.post('/besoin', function(req, res){
+        const {MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,UNITE,ETAT_BESOIN}=req.body
+        addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,UNITE,ETAT_BESOIN);
+    })
+    
+    //Validation des besoins Controller
+        //getter :
+    
+        //setter :
+    
+        //Creator :
+    app.post('/validation/:id', function(req,res){
+        let{id}=req.params;
+        
+    })
 
 server.listen(8080, () =>{
     console.log("Server is running")

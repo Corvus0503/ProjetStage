@@ -12,6 +12,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AboutBesoinModal from "./AboutBesoinModal";
+import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
 
 
   const Container = styled("div")(({ theme }) => ({
@@ -44,10 +45,14 @@ import AboutBesoinModal from "./AboutBesoinModal";
 
     const [page, setPage] = useState(0);
     const [besoin, setBesoin] = useState(null);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(15);
     const [besoinList, setBesoinList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
+    const [selectedMatricule, setSelectedMatricule] = useState(null);
+    const [selectedBesoin, setSelectedBesoin] = useState(null);
+    const [formattedDate, setFormattedDate] = useState("");
+    
 
     const handleDialogClose = () => {
         setShouldOpenConfirmationDialog(false);
@@ -101,14 +106,18 @@ import AboutBesoinModal from "./AboutBesoinModal";
       };
       console.log(besoinList);
 
-      const handleModalOpen = () => {
-        setIsModalOpen(true);
-      };
-      const handleModalClose = () => {
-        setIsModalOpen(false);
-      };
+    const handleModalOpen = (matricule) => {
+    setSelectedMatricule(matricule);    
+    // Utilisez la fonction de formatage de date ici
 
-    
+    setIsModalOpen(true);
+    console.log("Matricule sélectionné :", matricule);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+ 
 
 
     return (
@@ -147,13 +156,14 @@ import AboutBesoinModal from "./AboutBesoinModal";
                             <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
                             <TableCell align="center">{renderStatus(besoinList.BESOIN_COUNT)}</TableCell>
                             <TableCell align="center">
-                            <Button onClick={handleModalOpen}>
+                            <Button onClick={() => handleModalOpen(besoinList.AGENT_MATRICULE)}>
                               <InfoIcon color="warning" />
-                              </Button>
-                              <AboutBesoinModal
-                                user={besoinList.AGENT_MATRICULE}
-                                isModalOpen={isModalOpen}
-                                closeModal={handleModalClose}
+                            </Button>
+                            <AboutBesoinModal
+                              matricule={selectedMatricule}                           
+                              isModalOpen={isModalOpen}
+                              closeModal={handleModalClose}
+                              chargerBag={chargerListBesoin}
                             />
                                 <Button> <CheckCircleOutlineIcon color="success"/> </Button>
                                 <Button> <CancelIcon color="error"/> </Button>

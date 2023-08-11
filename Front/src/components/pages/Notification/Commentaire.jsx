@@ -1,29 +1,31 @@
 import React from 'react'
-import parseISO from "date-fns/parseISO";
-import formatDistance from "date-fns/formatDistance";
+import '../../styles/notification.css'
 
-function formatDate(dateStr) {
-  const date = parseISO(dateStr);
-  return formatDistance(date, new Date(), { addSuffix: true });
+const bDtyle = {
+  backgroundColor : "rgba(255, 255, 255, 0",
+  borderColor : "rgba(255, 255, 255, 0",
+  borderStyle : "solid",
+  color : "white"
 }
 
+const Comment = ({ comment, isYou, deleteNot }) => {
 
-const Commentaire = (comment) => {
   return (
     <div className="Comment">
     <div className="Comment-header">
       <div className="Comment-avatar">
-        <img src={comment.MATRICULE} alt={comment.author.name} />
+        <img src={require(`../../../uploads/${comment.PHOTO}`)} alt={comment.NOM_UTIL_AG} />
       </div>
       <span className="Comment-author">
-        {isYou ? "You" : comment.author.name}
+        {comment.NOM_UTIL_AG}
       </span>
-      <span className="Comment-time">{formatDate(comment.insertedAt)}</span>
+      <span className="Comment-time" >{comment.DATE_NOT}<button style={bDtyle} onClick={() => deleteNot(comment.ID_NOT)} className="Comment-body">X</button></span>
     </div>
 
-    <div className="Comment-body">{comment.body}</div>
+    <div className="Comment-body">{comment.BODY_NOT} </div>
+    
   </div>
   )
 }
 
-export default Commentaire
+export default Comment

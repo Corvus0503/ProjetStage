@@ -51,8 +51,6 @@ const NewBesoin = (user) => {
     MATRICULE: '',
     FORMULE: '',
     DATE_BESOIN:"",
-    TIME_CONFIRM:"",
-    DATE_CONFIRM:'',
     QUANTITE: '',
     UNITE: '',
     ETAT_BESOIN: '',
@@ -141,8 +139,6 @@ const handleValidation = async () => {
       const UNITE=item.unite;
       const MATRICULE = user.user.user.user[0].MATRICULE;
       const DATE_BESOIN = format(new Date(), 'yyyy-MM-dd');
-      const DATE_CONFIRM = null;
-      const TIME_CONFIRM = null;
       const ETAT_BESOIN = 'En Attente';
 
       // Vérification des valeurs extraites
@@ -156,8 +152,6 @@ const handleValidation = async () => {
         MATRICULE,
         FORMULE,
         DATE_BESOIN,
-        DATE_CONFIRM,
-        TIME_CONFIRM,
         QUANTITE,
         UNITE, // Assurez-vous que la propriété est correcte
         ETAT_BESOIN,

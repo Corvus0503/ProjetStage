@@ -58,7 +58,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Topnav = ({user, IsOpen, togleSidebar, logout}) => {
+const Topnav = ({user, IsOpen, togleSidebar, logout, comments, togleNot}) => {
   const [topDropdown, setTopDropdown] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -136,7 +136,7 @@ const Topnav = ({user, IsOpen, togleSidebar, logout}) => {
           aria-label="show 17 new notifications"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
+          <Badge badgeContent={comments.length} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -213,17 +213,14 @@ const Topnav = ({user, IsOpen, togleSidebar, logout}) => {
 </Search>*/}
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="error">
-                <MailIcon />
-              </Badge>
-            </IconButton>
+            
             <IconButton
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
+              onClick={togleNot}
             >
-              <Badge badgeContent={17} color="error">
+              <Badge badgeContent={comments.length} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>

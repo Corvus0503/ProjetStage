@@ -45,10 +45,9 @@
     display: flex;
   }
   .nav-item:hover{
-    background-color: #1d20ca;
+    background-color: #4143c4;
     transition-duration: 400ms;
     color: white;
-    border-left: solid 2px wheat;
     border-top-left-radius: 25px;
     border-bottom-left-radius: 25px;
 
@@ -56,10 +55,23 @@
   .active{
     background-color: #1d20ca;
     color: white;
-    border-left: solid 2px wheat;
     border-top-left-radius: 25px;
     border-bottom-left-radius: 25px;
   }
+
+  .nav-item.open:hover{
+    background-color: #1d20ca;
+    transition-duration: 400ms;
+    color: white;
+    border-radius: 30px;
+
+  }
+  .active.open{
+    background-color: #1d20ca;
+    color: white;
+    border-radius: 30px;
+  }
+
   .dec-cont{
     padding-top: 420px;
   }
