@@ -15,10 +15,10 @@ import {
   import ConfirmationDialog from "../../Utils/ConfirmationDialog";
   import DeleteIcon from '@mui/icons-material/Delete';
   import Breadcrumb from "../../Utils/Breadcrumb";
-  import UpdateDivision from "./UpdateDivision";
-  import NewDivision from "./NewDivision";
+  import UpdateCategorie from "./UpdateCategorie";
+  import NewCategorie from "./NewCategorie";
   import AddCircleIcon from '@mui/icons-material/AddCircle';
-  
+  import Swal from 'sweetalert2'
   
   const Container = styled("div")(({ theme }) => ({
     margin: "30px",
@@ -40,11 +40,11 @@ import {
   }));
   
   //A ne pas toucher
-  const Division = () => {
+  const Categorie = () => {
     const [page, setPage] = useState(0);
-    const [division, setDivision] = useState(null);
-    const [rowsPerPage, setRowsPerPage] = useState(15);
-    const [DivisionListe, setDivisionList] = useState([]);
+    const [categorie, setCategorie] = useState(null);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [CategorieListe, setCategorieList] = useState([]);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
   
     const [isModalOuverte, setIsModalOuverte] = useState(false);
@@ -63,13 +63,31 @@ import {
       chargerListAdmin();
     };
   
-    const handleDeleteUser = (division) => {
-      setDivision(division);
-      setShouldOpenConfirmationDialog(true);
+    const handleDeleteUser = (categorie) => {
+      setCategorie(categorie);
+       Swal.fire({
+        title: 'Confirmation',
+        text: "Etes vous sur de supprimer cette Categorie ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Annuler',
+        confirmButtonText: 'Supprimer'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          handleDelete(categorie)
+          Swal.fire(
+            'Supprimé!',
+            'Catégorie supprimeé.',
+            'success'
+          )
+        }
+      })
     };
   
     const handleConfirmationResponse = () => {
-      handleDelete(division)
+      handleDelete(categorie)
       handleDialogClose()
     };
   
@@ -77,8 +95,8 @@ import {
   
   const chargerListAdmin = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/division');
-      setDivisionList(response.data);
+      const response = await axios.get('http://localhost:8080/categorie');
+      setCategorieList(response.data);
       console.log("data loaded");
     } catch (error) {
       console.error(error);
@@ -86,7 +104,7 @@ import {
   };
   
   const handleDelete = id=>{
-      axios.delete(`http://localhost:8080/division/${id}`).then(reponse=>{
+      axios.delete(`http://localhost:8080/categorie/${id}`).then(reponse=>{
         chargerListAdmin()}).catch (error =>{
         console.error(`Erreur: ${error}`)
   }) 
@@ -104,7 +122,7 @@ import {
       setRowsPerPage(+event.target.value);
       setPage(0);
     };
-    console.log(DivisionListe)
+    console.log(CategorieListe)
   
     return (
       <Container>
@@ -112,45 +130,38 @@ import {
               <Breadcrumb routeSegments={[{ name: "Liste des Division" }]} />
           </div>
           <div className=" text-start mb-3">
-            <button className="btn btn-primary " onClick={ouvrirModal} > <AddCircleIcon/> Nouveau Division </button>
-            <NewDivision isOpen={isModalOuverte} onClose={fermerModal} />
+            <button className="btn btn-primary " onClick={ouvrirModal} > <AddCircleIcon/> Nouvelle Categorie </button>
+            <NewCategorie chargerListAdmin={chargerListAdmin} isOpen={isModalOuverte} onClose={fermerModal} />
           </div>
               <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
               <div className="m-5 mt-3 mb-3">
-                <h1 align="left"> Liste des Division </h1>
+                <h1 align="left"> Liste des Categories </h1>
                   <hr />
                   
                       <StyledTable>
                           <TableHead>
                               <TableRow>
-                              <TableCell align="left"> Code Division </TableCell>
-                              <TableCell align="center"> Label de Division  </TableCell>
-                              <TableCell align="center"> Libellé de Service </TableCell>
-                              <TableCell align="center"> Ville de Service </TableCell>
-                              <TableCell align="center"> Adresse de Service</TableCell>
-                              <TableCell align="center"> contact de Service</TableCell>
+                              <TableCell align="left"> ID categorie </TableCell>
+                              <TableCell align="center"> Label de Categorie </TableCell>
+                              <TableCell align="center"> Num Compte </TableCell>
                               <TableCell align="center"> Opération </TableCell>
                               </TableRow>
                           </TableHead>
                           <TableBody>
-                              {DivisionListe
+                              {CategorieListe
                               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                               .map((List) => (
-                                  <TableRow key={DivisionListe.CODE_DIVISION}>
-                                      <TableCell align="left">{List.CODE_DIVISION}</TableCell>
-                                      <TableCell align="center">{List.LABEL_DIVISION}</TableCell>
-                                      <TableCell align="center">{List.LIBELLE}</TableCell>
-                                      <TableCell align="center">{List.VILLE}</TableCell>
-                                      <TableCell align="center">{List.ADRESSE}</TableCell>
-                                      <TableCell align="center">{List.CONTACT}</TableCell>
+                                  <TableRow key={CategorieListe.ID_CAT}>
+                                      <TableCell align="left">{List.ID_CAT}</TableCell>
+                                      <TableCell align="center">{List.LABEL_CAT}</TableCell>
+                                      <TableCell align="center">{List.NUM_CMPT}</TableCell>
                                       <TableCell align="center"  >
   
-                                          
                                       <IconButton >
-                                          <UpdateDivision  List={List} DivisionListe={DivisionListe}  chargerListAdmin={chargerListAdmin} />
+                                          <UpdateCategorie  List={List} DivisionListe={CategorieListe}  chargerListAdmin={chargerListAdmin} />
                                       </IconButton>
   
-                                      <IconButton onClick={()=>handleDeleteUser(List.CODE_DIVISION)}>
+                                      <IconButton onClick={()=>handleDeleteUser(List.ID_CAT)}>
                                           <DeleteIcon color="error"/>
                                       </IconButton>
                                       </TableCell>
@@ -164,7 +175,7 @@ import {
                       page={page}
                       component="div"
                       rowsPerPage={rowsPerPage}
-                      count={DivisionListe.length}
+                      count={CategorieListe.length}
                       onPageChange={handleChangePage}
                       rowsPerPageOptions={[5, 10, 25]}
                       onRowsPerPageChange={handleChangeRowsPerPage}
@@ -189,4 +200,4 @@ import {
     );
   };
   
-  export default Division;
+  export default Categorie;

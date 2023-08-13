@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import NewBesoin from "../pages/Besoin/NewBesoin";
-import BesoinList from "../pages/Besoin/BesoinList";
+import Article from "../pages/Article/NewArticle";
+import ArticleList from "../pages/Article/ArticleList";
 
-const ToggleablePills = (user) => {
+const TooglepillArticle = (user) => {
   const [activePill, setActivePill] = useState("pill1");
 
   const handlePillClick = (pillId) => {
@@ -27,7 +27,7 @@ const ToggleablePills = (user) => {
             className={`btn btn-danger m-2 ${activePill === "pill2" ? "active" : ""}`}
             onClick={() => handlePillClick("pill2")}
           >
-            Suivi des Besoins
+            Liste des Articles
           </button>
         </li>
       </ul>
@@ -36,12 +36,12 @@ const ToggleablePills = (user) => {
         <hr className="m-3 mt-2 mb-2"/>
       
         {/* Contenu conditionnel en fonction de l'onglet actif */}
-        {activePill === "pill1" && <div > <NewBesoin user={user}/></div>}
+        {activePill === "pill1" && <div > <Article/></div>}
 
-        {activePill === "pill2" && <div> <BesoinList user={user}/> </div>}
+        {activePill === "pill2" && <div> <ArticleList/> </div>}
       </div>
     </div>
   );
 };
 
-export default ToggleablePills;
+export default TooglepillArticle;

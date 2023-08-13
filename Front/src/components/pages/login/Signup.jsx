@@ -172,9 +172,6 @@ useEffect(() => {
     }
   };
 
-  const handleDateChange = (date) => setState({ ...state, date });
-
-
   return (
     <div className="container mt-5 p-5 card shadow">
       <ValidatorForm onSubmit={handleSubmit} onError={() => null}>

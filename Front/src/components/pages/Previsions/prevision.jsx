@@ -1,7 +1,13 @@
 import React from "react";
 
 const Previsions = () =>{
-    return <h1>Prevision</h1>
+    return(
+        <div className="container">
+
+            Bonjour!
+
+        </div>
+    )
 }
 
 export default Previsions

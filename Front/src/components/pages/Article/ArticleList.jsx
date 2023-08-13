@@ -17,7 +17,6 @@ import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Breadcrumb from "../../Utils/Breadcrumb";
 
-
 const Container = styled("div")(({ theme }) => ({
   margin: "30px",
   [theme.breakpoints.down("sm")]: { margin: "16px" },
@@ -60,8 +59,6 @@ const ArticleList = () => {
     handleDialogClose()
   };
 
-
-
 const chargerListAdmin = async () => {
   try {
     const response = await axios.get('http://localhost:8080/article');
@@ -93,6 +90,8 @@ useEffect(() => {
   };
   console.log(ArticleListe)
 
+
+
   return (
     <Container>
         <div className="breadcrumb">
@@ -100,7 +99,7 @@ useEffect(() => {
         </div>
             <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
             <div className="m-5 mt-3 mb-3">
-              <h1 align="left"> Ajout d'un nouveau Article </h1>
+              <h1 align="left"> Article </h1>
                 <hr />
                 
                     <StyledTable>
@@ -110,7 +109,7 @@ useEffect(() => {
                         <TableCell align="center"> Categorie  </TableCell>
                         <TableCell align="center"> Designation </TableCell>
                         <TableCell align="center"> Spécification </TableCell>
-                        <TableCell align="center"> Effectif </TableCell>
+                        <TableCell align="center"> Prix d'article </TableCell>
                         <TableCell align="center"> Unité </TableCell>
                         <TableCell align="center"> Opération </TableCell>
                         </TableRow>
@@ -124,19 +123,12 @@ useEffect(() => {
                             <TableCell align="center">{List.LABEL_CAT}</TableCell>
                             <TableCell align="center">{List.DESIGNATION_ART}</TableCell>
                             <TableCell align="center">{List.SPECIFICITE_ART}</TableCell>
-                            <TableCell align="center">{List.EFFECTIF_ART}</TableCell>
+                            <TableCell align="center">{List.PRIX_ART}</TableCell>
                             <TableCell align="center">{List.UNITE_ART}</TableCell>
-
                             <TableCell align="center"  >
-                                
-                                
-                                
-                                
                                 <IconButton >
                                 <ModificationArticle  List={List} ArticleList={ArticleList}  chargerListAdmin={chargerListAdmin} />
                                 </IconButton>
-                                
-
                                 <IconButton onClick={()=>handleDeleteUser(List.FORMULE)}>
                                 <DeleteIcon color="error"/>
                                 </IconButton>

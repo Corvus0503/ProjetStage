@@ -1,6 +1,5 @@
 import {
-  Box,
-  Icon,
+  Card,
   IconButton,
   styled,
   Table,
@@ -31,6 +30,14 @@ const StyledTable = styled(Table)(() => ({
     "& tr": { "& td": { paddingLeft: 0, textTransform: "capitalize" } },
   },
 }));
+const Container = styled("div")(({ theme }) => ({
+  margin: "30px",
+  [theme.breakpoints.down("sm")]: { margin: "16px" },
+  "& .breadcrumb": {
+    marginBottom: "30px",
+    [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
+  },
+}));
 const StyledSpan = styled(Span)(({ bgColor }) => ({
   color: "#fff",
   padding: "2px 8px",
@@ -44,7 +51,7 @@ const UserList = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [user, setUser] = useState(null);
-  const [rowsPerPage, setRowsPerPage] = useState(15);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [adminList, setAdminList] = useState([]);
   const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
 
@@ -141,12 +148,12 @@ const handleDialogClose = () => {
 
   console.log(adminList)
   return (
-  <div>
+  <Container className="containerBG">
     <div className="breadcrumb">
           <Breadcrumb routeSegments={[{ name: "Liste des Utilisateur" }]} />
       </div>
       <div className="mt-5 p-5 card shadow">
-        <Box width="100%" overflow="auto">
+        <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
         <StyledTable>
           <TableHead>
             <TableRow>
@@ -211,10 +218,10 @@ const handleDialogClose = () => {
               onYesClick={handleConfirmationResponse}
             />
           )}
-        </Box>
+        </Card>
       </div>
     
-  </div>
+  </Container>
     
   );
 };

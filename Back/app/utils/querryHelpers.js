@@ -13,6 +13,8 @@ function replacer(key, value) {
   return value;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const getAdmin = async (req, res, pseudo, mdp) => {
     
       try {
@@ -108,13 +110,14 @@ const deleteAdmin = async (req, res, id) => {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-const getCompte = async () => {
+//Requete compte
+const getCompte = async (req, res) => {
   try {
     const connection = await getConnection();
     const result = await connection.execute('SELECT * FROM COMPTE');
+    res.json(result.rows)
+    connection.commit()
     await connection.close();
-    return result.rows;
   } catch (error) {
     console.error(error);
     throw new Error('Internal server error');
@@ -517,13 +520,13 @@ const getValidation = async (req,res) =>{
     }
 }
 
-const addValidation = async(req,res,NUM_BESOIN) => {
+const addValidation = async(req,res,NUM_BESOIN, DATE_VALIDATION, QUANTITE_ACC) => {
     const query = `
-        INSERT INTO VALIDATION (NUM_VALIDATION,NUM_BESOIN) 
-        VALUES (NUM_VALIDATION.nextval, :NUM_BESOIN)`;
+        INSERT INTO VALIDATION (NUM_VALIDATION,NUM_BESOIN, DATE_VALIDATION, QUANTITE_ACC) 
+        VALUES (NUM_VALIDATION.nextval, :NUM_BESOIN, :DATE_VALIDATION, :QUANTITE_ACC)`;
     try {
         const connection = await getConnection();
-        const result = await connection.execute(query,[NUM_BESOIN])
+        const result = await connection.execute(query,[NUM_BESOIN,DATE_VALIDATION, QUANTITE_ACC])
         res.json(result.rows)
         connection.commit();
         await connection.close();
@@ -554,7 +557,7 @@ const getCategorie = async (req,res) => {
 const addCategorie = async (req, res, LABEL_CAT, NUM_CMPT) => {
   try {
     const connection = await getConnection();
-    const result = await connection.execute('INSERT INTO CATEGORIE(ID_CAT, LABEL_CAT, NUM_CMPT) VALUES (:LABEL_CAT, :NUM_CMPT)', {
+    const result = await connection.execute('INSERT INTO CATEGORIE(ID_CAT, LABEL_CAT, NUM_CMPT) VALUES (ID_CAT.nextval,:LABEL_CAT, :NUM_CMPT)', {
       LABEL_CAT: LABEL_CAT,
       NUM_CMPT: NUM_CMPT,
       
@@ -599,6 +602,9 @@ const deleteCategorie = async (req, res,id) => {
 };
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 // Requetes article
 
 const getArticle = async (req, res) => {
@@ -614,12 +620,12 @@ const getArticle = async (req, res) => {
 };
 
 
-const addArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT) => {
+const addArticle = async (req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT) => {
   try {
     const connection = await getConnection();
     const result = await connection.execute(
-      'INSERT INTO ARTICLE(FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT) VALUES (:1, :2, :3, :4, :5, :6)',
-      [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT]
+      'INSERT INTO ARTICLE(FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT) VALUES (FORMULE.nextval, :DESIGNATION_ART, :SPECIFICITE_ART, :UNITE_ART, :PRIX_ART,:ID_CAT)',
+      [DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT]
     );
     res.json(result.rows);
     connection.commit()
@@ -629,14 +635,14 @@ const addArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, U
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-const updateArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id) => {
+const updateArticle = async (req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT, id) => {
   try {
     // Convertir les champs numériques en nombres entiers
 
     const connection = await getConnection();
     const result = await connection.execute(
-      'UPDATE ARTICLE SET FORMULE=:1, DESIGNATION_ART=:2, SPECIFICITE_ART=:3, UNITE_ART=:4, EFFECTIF_ART=:5, ID_CAT=:6 WHERE FORMULE=:7',
-      [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id]
+      'UPDATE ARTICLE SET FORMULE=:1, DESIGNATION_ART=:2, SPECIFICITE_ART=:3, UNITE_ART=:4, PRIX_ART=:5, ID_CAT=:6 WHERE FORMULE=:7',
+      [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT, id]
     );
     res.json(result.rows);
     connection.commit();
@@ -646,8 +652,6 @@ const updateArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART
     res.status(500).json({ error: error.message });
   }
 };
-
-
 
 const deleteArticle = async (req, res, id) => {
   try {

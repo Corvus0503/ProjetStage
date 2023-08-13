@@ -9,7 +9,7 @@ import Visibility from "@material-ui/icons/Visibility";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Input from "@material-ui/core/Input";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "./authProvider";
 import io from "socket.io-client";
 import axios from "axios"
@@ -48,7 +48,7 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
         e.preventDefault()
         await loadUser()
             if(user[0].NOM_UTIL_AG===infoCon.pseudo && user[0].PASSWORD===infoCon.mdp){
-                socket.emit("userLoggedIn", { username: infoCon.pseudo });
+                socket.emit("userLoggedIn", { username: user[0].NOM_UTIL_AG, socketId: user[0].MATRICULE });
                 setToken(JSON.stringify(user));
                 setIsConn(true)
                 saveCon()
@@ -84,7 +84,7 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
 
     return(
         <div className="login">
-            <img src={LoginPhoto} alt="login image"className='login_img'  />
+            <img src={LoginPhoto} alt="login image"className='login_img'/>
 
                 <h1>
                     Bienvenue

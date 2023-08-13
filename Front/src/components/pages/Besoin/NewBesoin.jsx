@@ -1,5 +1,4 @@
-import { format } from 'date-fns';
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useState } from "react";
 import axios from 'axios';
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { Grid, styled } from "@mui/material";
@@ -11,6 +10,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import CategorieListModal from "./ListeCategorieModale.jsx";
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import Swal from 'sweetalert2';
+import { format } from 'date-fns';
+
 // Création d'un composant TextField stylisé avec Styled-components
 const TextField = styled(TextValidator)(() => ({
   width: "100%",
@@ -157,17 +158,15 @@ const handleValidation = async () => {
         ETAT_BESOIN,
       });
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Demande soumise',
-        text: 'Votre demande a été soumise avec succès !',
-      });
-
       console.log('Besoin ajouté avec succès:', response.data);
     }
-
     // Réinitialiser la liste des articles ajoutés
     setAddedItems([]);
+    Swal.fire({
+      icon: 'success',
+      title: 'Demande soumise',
+      text: 'Votre demande a été soumise avec succès !',
+    });
 
   } catch (error) {
     console.error("Erreur lors de l'ajout des besoins :", error);
@@ -265,7 +264,7 @@ const handleModalCatClose = () => {
                 }}
               />
             </Grid>
-            <div className="text-start mt-3">
+            <div className='text-start mt-2' >
               <button className="btn btn-primary" onClick={handleAddItem}>
                 <AddCircleIcon color="white" /> Ajouter
               </button>

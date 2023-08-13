@@ -1,21 +1,11 @@
 import React from 'react'
-//import Modal from 'react-modal';
-import { DatePicker } from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import {
   Button,
-  Checkbox,
   FormControlLabel,
-  FormControl,
   Grid,
-  Icon,
   Radio,
   RadioGroup,
   styled,
-  Select,
-  MenuItem,
-  InputLabel,
   IconButton
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -23,30 +13,6 @@ import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { Modal } from 'react-bootstrap';
 import axios from "axios"
 import CreateIcon from '@mui/icons-material/Create';
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '55%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    height: '80%',
-    width: '70%'
-  },
-};
 
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 //Modal.setAppElement(document.getElementById('root'));
@@ -62,11 +28,6 @@ const TestModal = ({List, chargerListAdmin}) => {
   function openModal() {
     setIsOpen(true);
     setModUser(List)
-  }
-
-  function afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    subtitle.style.color = '#f00';
   }
 
   function closeModal() {

@@ -184,14 +184,14 @@ app.get('/article', function (req, res) {
   })
 
 app.post('/article', function (req, res) {
-    const {FORMULE, DESIGNATION_ART, SPECIFICITE_ART,UNITE_ART, EFFECTIF_ART, ID_CAT } = req.body;
-    addArticle(req, res,  FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT );
+    const { DESIGNATION_ART, SPECIFICITE_ART,UNITE_ART, PRIX_ART, ID_CAT } = req.body;
+    addArticle(req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT );
 })
 
 app.put('/article/:id', function (req, res) {
-    let { FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT} = req.body
+    let { FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT} = req.body
     let {id} = req.params
-    updateArticle(req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id);
+    updateArticle(req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT, id);
 })
 
 app.delete('/article/:id', function (req, res) {
@@ -266,9 +266,11 @@ app.post('/besoin', function(req, res){
     //setter :
 
     //Creator :
-app.post('/validation/:id', function(req,res){
-    let{id}=req.params;
-    
+app.post('/validation', function(req,res){
+    // let{id}=req.params;
+    // addValidation(req, res, id)
+    const {NUM_BESOIN,DATE_VALIDATION, QUANTITE_ACC}=req.body;
+    addValidation(req, res, NUM_BESOIN,DATE_VALIDATION, QUANTITE_ACC)
 })
 
 

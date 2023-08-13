@@ -11,16 +11,6 @@ import { useState } from "react";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import axios from "axios"
 
-// const ITEM_HEIGHT = 48;
-// const ITEM_PADDING_TOP = 8;
-// // const MenuProps = {
-// //   PaperProps: {
-// //     style: {
-// //       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-// //       width: 250,
-// //     },
-// //   },
-// // };
 
 const customStyles = {
     content: {
@@ -43,8 +33,6 @@ const customStyles = {
     },
   };
 
-
-// Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 Modal.setAppElement(document.getElementById('root'));
 
 const TextField = styled(TextValidator)(() => ({
@@ -52,12 +40,12 @@ const TextField = styled(TextValidator)(() => ({
   marginBottom: "13px",
 }));
 
-const UpdateDivision = ({List, chargerListAdmin}) => {
+const UpdateCategorie = ({List, chargerListAdmin}) => {
   const [modalIsOpen, setIsOpen] = useState(false);
 
   function openModal() {
     setIsOpen(true);
-    setDivision(List)
+    setCategorie(List)
   }
 
   function afterOpenModal() {
@@ -69,20 +57,20 @@ const UpdateDivision = ({List, chargerListAdmin}) => {
     setIsOpen(false);
   }
 
-  const [division,setDivision] = useState({
-    CODE_DIVISION:"",
-    CODE_SER:"",
-    LABEL_DIVISION:""
+  const [categorie,setCategorie] = useState({
+        ID_CAT: "",
+        LABEL_CAT: "",
+        NUM_CMPT: "" 
   })
 
 
 
-const updatedivision = id => {
-  axios.put(`http://localhost:8080/division/${id}`,division).then(response => {
-    setDivision({
-        CODE_DIVISION:"",
-        CODE_SER:"",
-        LABEL_DIVISION:""
+const updateCategorie = id => {
+  axios.put(`http://localhost:8080/categorie/${id}`, categorie).then(response => {
+    setCategorie({
+        ID_CAT: "",
+        LABEL_CAT: "",
+        NUM_CMPT: "" 
     });
     chargerListAdmin()
     closeModal()
@@ -92,7 +80,7 @@ const updatedivision = id => {
 
 
   const handleChange = (e) => {
-    setDivision({ ...division, [e.target.name]: e.target.value });
+    setCategorie({ ...categorie, [e.target.name]: e.target.value });
   };
 
   return (
@@ -121,44 +109,45 @@ const updatedivision = id => {
                 validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
               /> */}
 
-              <TextField
-                type="text"
-                name="CODE_DIVISION"
-                id="standard-basic"
-                value={division.CODE_DIVISION}
-                onChange={handleChange}
-                errorMessages={["this field is required"]}
-                label="Code De Division "
-                placeholder='Saisir le Code De Division...... '
-                validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
-              />
+        <TextField
+            type="text"
+            name="ID_CAT"
+            label="Code Division"
+            placeholder="Saisir ici le code de division...."
+            onChange={handleChange}
+            value={categorie.ID_CAT}
+            validators={["required","minStringLength: 1", "maxStringLength: 9"]}
+            errorMessages={["this field is required"]}
+        />              
 
-              <TextField
-                type="text"
-                name="CODE_SER"
-                id="standard-basic"
-                value={division.CODE_SER }
-                onChange={handleChange}
-                errorMessages={["this field is required"]}
-                label="Code De Service"
-                placeholder='Saisir le Code De Service...... '
-                validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
-              />
-              <TextField
-                type="text"
-                name="LABEL_DIVISION"
-                label="Label de division"
-                onChange={handleChange}
-                value={division.LABEL_DIVISION}
-                placeholder='Saisir le Libellé De Division...... '
-                validators={["required","minStringLength: 1", "maxStringLength: 9"]}
-                errorMessages={["this field is required"]}
-              />
+        <TextField
+            type="text"
+            name="LABEL_CAT"
+            id="standard-basic"
+            placeholder="Saisir ici le code de Service...."
+            value={categorie.LABEL_CAT}
+            onChange={handleChange}
+            errorMessages={["this field is required"]}
+            label="Code Service"
+            validators={["required", "minStringLength: 1", "maxStringLength: 9"]}
+        />
+
+        <TextField
+            type="text"
+            name="NUM_CMPT"
+            id="standard-basic"
+            value={categorie.NUM_CMPT }
+            onChange={handleChange}
+            errorMessages={["this field is required"]}
+            placeholder="Saisir ici le nom de Division...."
+            label="Libellé"
+            validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
+        />
 
               <div className="text-center" >
               <Button onClick={() => {
-                    updatedivision(division.CODE_DIVISION)
-                    console.log(division)
+                    updateCategorie(categorie.ID_CAT)
+                    console.log(categorie)
                     }} 	color="success" variant="outlined" className='me-2 '>
                     {/*<Icon>send</Icon>*/}
                     Modifier
@@ -176,4 +165,4 @@ const updatedivision = id => {
   );
 }
 
-export default UpdateDivision;
+export default UpdateCategorie;

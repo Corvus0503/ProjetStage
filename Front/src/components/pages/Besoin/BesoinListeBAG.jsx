@@ -1,4 +1,4 @@
-import { IconButton, Card, styled, Table, TableBody, TableCell, TableHead, TablePagination, TableRow,useTheme, Button,
+import { Card, styled, Table, TableBody, TableCell, TableHead, TablePagination, TableRow,useTheme, Button,
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios"
@@ -9,10 +9,8 @@ import Breadcrumb from "../../Utils/Breadcrumb";
 import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import { Span } from "../../Typography";
 import InfoIcon from '@mui/icons-material/Info';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import CancelIcon from '@mui/icons-material/Cancel';
 import AboutBesoinModal from "./AboutBesoinModal";
-import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
+
 
 
   const Container = styled("div")(({ theme }) => ({
@@ -50,8 +48,6 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
     const [selectedMatricule, setSelectedMatricule] = useState(null);
-    const [selectedBesoin, setSelectedBesoin] = useState(null);
-    const [formattedDate, setFormattedDate] = useState("");
     
 
     const handleDialogClose = () => {
@@ -59,15 +55,18 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
         chargerListBesoin();
       };
 
-      const handleDeleteUser = (besoin) => {
-        setBesoin(besoin);
-        setShouldOpenConfirmationDialog(true);
-      };
+      // const handleDeleteUser = (besoin) => {
+      //   setBesoin(besoin);
+      //   setShouldOpenConfirmationDialog(true);
+      // };
 
       const handleConfirmationResponse = () => {
         handleDelete(besoin)
         handleDialogClose()
       };
+      const AddValidation = async ()=>{
+
+      }
 
       const chargerListBesoin = async () => {
         try {
@@ -165,8 +164,6 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
                               closeModal={handleModalClose}
                               chargerBag={chargerListBesoin}
                             />
-                                <Button> <CheckCircleOutlineIcon color="success"/> </Button>
-                                <Button> <CancelIcon color="error"/> </Button>
                             </TableCell>
 
                             {/* <TableCell align="left"  >                               

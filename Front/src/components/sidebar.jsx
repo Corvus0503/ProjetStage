@@ -3,7 +3,6 @@ import SideDash from "./images/SideDash";
 import SideUser from "./images/SideUser";
 import SideCat from "./images/SideCat";
 import SideValid from "./images/SideValid";
-import SideLougout from "./images/SideLogout";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "./pages/login/authProvider";

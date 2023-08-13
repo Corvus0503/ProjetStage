@@ -6,11 +6,15 @@ import {
   Button,
   Grid,
   styled,
+  InputAdornment
 } from "@mui/material";
 import React, { useState } from "react";
 import axios from 'axios'
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { Modal} from '@mui/material';
+import Swal from 'sweetalert2'
+import CompteListModal from "./ListeCompte";
 
 const TextField = styled(TextValidator)(() => ({
   width: "100%",
@@ -33,23 +37,42 @@ const CustomModal = styled(Modal)(() => ({
 }));
 
 
-const NewCategorie = ({ isOpen, onClose }) => {
+const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
   const [state, setState] = useState({ date: new Date() });
 
   const [categorie,setCategorie] = useState({
-    ID_CAT:"",
-    LABEL_CAT:"",
-    NUM_CMPT:""
+      LABEL_CAT: "",
+      NUM_CMPT: "" 
   })
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCompte, setSelectedCompte] = useState({
+      NUM_CMPT: "",
+      DESIGNATION_CMPT: "",
+    });
 
+    console.log("selected : ",selectedCompte)
+  
+    const handleRowSelect = (selectedRow) => {
+      setSelectedCompte(selectedRow);
+    };
+
+    const handleModalOpen = () => {
+      setIsModalOpen(true);
+    };
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
 
   const addNewCategorie = async()=>{
+
+    let catToSend = {
+      LABEL_CAT: categorie.LABEL_CAT,
+      NUM_CMPT: selectedCompte.NUM_CMPT}
+    console.log(catToSend)
     try {
-        await axios.post(`http://localhost:8080/categorie`, categorie)
-        alert("submited")
-
-
+        await axios.post(`http://localhost:8080/categorie`, catToSend)
+        chargerListAdmin()
     } catch (error) {
         console.log(`Erreur : ${error}`)
     }
@@ -57,14 +80,42 @@ const NewCategorie = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (event) => {
 
-    console.log(categorie)
-    addNewCategorie();
-    setCategorie({
+    event.preventDefault(); // Empêcher la soumission du formulaire
 
-      ID_CAT:"",
-      LABEL_CAT:"",
-      NUM_CMPT:""      
-      
+    if (!categorie.LABEL_CAT || !selectedCompte.NUM_CMPT) {
+        onClose();
+        Swal.fire({
+        icon: 'error',
+        title: 'Champs vides',
+        text: 'Veuillez remplir tous les champs avant de continuer.',
+        });
+        return;   
+    }
+
+    onClose();
+    Swal.fire({
+      title: 'Confirmation',
+      text: "Voulez vous enregister cette categorie ?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Annuler',
+      confirmButtonText: 'Enregistrer'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        addNewCategorie();
+        Swal.fire(
+          'Confirmé!',
+          'Categorie enregistré.',
+          'success'
+        )
+      }
+    })
+    
+    setCategorie({
+      LABEL_CAT: "",
+      NUM_CMPT: ""    
     })
   };
 
@@ -72,7 +123,9 @@ const NewCategorie = ({ isOpen, onClose }) => {
 
   const handleChange = (event) => {
     event.persist();
+    setSelectedCompte({ ...selectedCompte, [event.target.name]: event.target.value });
     setCategorie({ ...categorie, [event.target.name]: event.target.value });
+    console.log(event.target.value)
   };
 
   const handleDateChange = (date) => setState({ ...state, date });
@@ -85,55 +138,58 @@ const NewCategorie = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  const loading = ()=> {
-    return(<div class="spinner-border text-warning"></div>)
-  }
-  
-
-
   return (
 
     <CustomModal open={isOpen} onClose={onClose}>
         <Container>            
-              <ValidatorForm onError={() => null} onSubmit={handleSubmit} >
+              <ValidatorForm onError={() => null} >
                   <div className=" card center shadow p-5">
-                  <h1 align="left"> Ajout d'un nouveau Categorie </h1>
+                  <h1 align="left"> Ajout d'une nouvelle categorie </h1>
                   <hr />
                       <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
-                        
-                      <TextField
-                          type="text"
-                          name="ID_CAT"
-                          label="Code Categorie"
-                          placeholder="Saisir ici le code de Categorie...."
-                          onChange={handleChange}
-                          value={categorie.ID_CAT}
-                          validators={["required","minStringLength: 1", "maxStringLength: 9"]}
-                          errorMessages={["this field is required"]}
-                        />              
+                              
 
                         <TextField
                           type="text"
                           name="LABEL_CAT"
                           id="standard-basic"
-                          placeholder="Saisir ici le Labelle de Catégorie..."
+                          placeholder="Saisir ici le label categorie...."
                           value={categorie.LABEL_CAT}
                           onChange={handleChange}
                           errorMessages={["this field is required"]}
-                          label="Labelle de Catégorie"
-                          validators={["required", "minStringLength: 1", "maxStringLength: 9"]}
+                          label="Label Categorie"
+                          validators={["required", "minStringLength: 1", "maxStringLength: 40"]}
                         />
 
-                        <TextField
+                        {/*<TextField
                           type="text"
                           name="NUM_CMPT"
                           id="standard-basic"
                           value={categorie.NUM_CMPT }
                           onChange={handleChange}
                           errorMessages={["this field is required"]}
-                          placeholder="Saisir ici le nu méro de Compte..."
-                          label="Numéro de compte"
-                          validators={["required", "minStringLength: 1", "maxStringLength: 9"]}
+                          placeholder="Saisir ici le numero de compte...."
+                          label="Num Compte"
+                          validators={["required", "minStringLength: 1", "maxStringLength: 40"]}
+  />*/}
+
+                        <TextField
+                          placeholder="Compte..."
+                          label="Compte"
+                          name="NUM_CMPT"
+                          onChange={handleChange}
+                          value={selectedCompte.NUM_CMPT}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <h1 style={{border:"none",color:'SlateBlue',backgroundColor:"white"}}>|</h1>
+                                <button style={{border:"none",color:'SlateBlue',backgroundColor:"white"}} onClick={handleModalOpen}>
+                                  <FileUploadIcon />
+                                </button>
+                                <CompteListModal  onRowSelect={handleRowSelect} isModalOpen={isModalOpen} closeModal={handleModalClose} />
+                              </InputAdornment>
+                            ),
+                          }}
                         />
 
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -153,7 +209,7 @@ const NewCategorie = ({ isOpen, onClose }) => {
 
                         <div className="text-center">
 
-                        <Button color="primary" className="me-2 "  variant="outlined" type="submit">
+                        <Button color="primary" className="me-2 "  variant="outlined" type="submit" onClick={handleSubmit}>
                             Enregister
                           </Button>
                           <Button color="secondary" className=" me-2 ms-1 ps-4 pe-4" variant="outlined" onClick={handleCloseModal}>
