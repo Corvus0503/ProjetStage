@@ -53,6 +53,7 @@ const NewBesoin = (user) => {
     FORMULE: '',
     DATE_BESOIN:"",
     QUANTITE: '',
+    QUANTITE_ACC:'',
     UNITE: '',
     ETAT_BESOIN: '',
   });
@@ -140,6 +141,7 @@ const handleValidation = async () => {
       const UNITE=item.unite;
       const MATRICULE = user.user.user.user[0].MATRICULE;
       const DATE_BESOIN = format(new Date(), 'yyyy-MM-dd');
+      const QUANTITE_ACC= 0;
       const ETAT_BESOIN = 'En Attente';
 
       // Vérification des valeurs extraites
@@ -147,6 +149,7 @@ const handleValidation = async () => {
       console.log('FORMULE:', FORMULE);
       console.log('DATE_BESOIN:', DATE_BESOIN);
       console.log('QUANTITE:', QUANTITE);
+      console.log('QUANTITE_ACC:', QUANTITE_ACC);
       console.log('UNITE:', UNITE);
 
       const response = await axios.post('http://localhost:8080/besoin', {
@@ -154,6 +157,7 @@ const handleValidation = async () => {
         FORMULE,
         DATE_BESOIN,
         QUANTITE,
+        QUANTITE_ACC,
         UNITE, // Assurez-vous que la propriété est correcte
         ETAT_BESOIN,
       });

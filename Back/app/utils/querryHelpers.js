@@ -315,13 +315,14 @@ const deleteDivision = async (req,res,id) => {
 //requete Besoin
 
 
-const updateBesoin = async (MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UNITE, ETAT_BESOIN, NUM_BESOIN) => {
+const updateBesoin = async (MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, QUANTITE_ACC,UNITE, ETAT_BESOIN, NUM_BESOIN) => {
   const query = `
     UPDATE BESOIN
     SET MATRICULE = :MATRICULE,
         FORMULE = :FORMULE,
         DATE_BESOIN = :DATE_BESOIN,
         QUANTITE = :QUANTITE,
+        QUANTITE_ACC=:QUANTITE_ACC,
         UNITE = :UNITE,
         ETAT_BESOIN = :ETAT_BESOIN
     WHERE NUM_BESOIN = :NUM_BESOIN
@@ -334,6 +335,7 @@ const updateBesoin = async (MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UNITE, ET
       FORMULE,
       DATE_BESOIN,
       QUANTITE,
+      QUANTITE_ACC,
       UNITE,
       ETAT_BESOIN,
       NUM_BESOIN,  // Utiliser le même nom que dans la requête SQL
@@ -389,12 +391,13 @@ const getBesoinListe = async(req,res)=>{
 
 const getBesoinDetail = async (req, res, id) => { // Utilisation dans l'ordre correct
     const query = `
-      SELECT BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*
+      SELECT BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*,COMPTE.*
       FROM (((((BESOIN
       INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
       INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
       INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
-      INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION))
+      INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION)
+      INNER JOIN COMPTE ON CATEGORIE.NUM_CMPT = COMPTE.NUM_CMPT)
       WHERE BESOIN.ETAT_BESOIN = 'En Attente' AND BESOIN.MATRICULE = :id`;
   
     try {
@@ -476,14 +479,14 @@ const getBesoinRef = async (req,res) =>{
   }
 }
 
-const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UNITE, ETAT_BESOIN) => {
+const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE,QUANTITE_ACC, UNITE, ETAT_BESOIN) => {
     const query = `
-      INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UNITE, ETAT_BESOIN)
-      VALUES (NUM_BESOIN.nextval, :MATRICULE, :FORMULE, TO_DATE(:DATE_BESOIN, 'YYYY-MM-DD'), :QUANTITE, :UNITE, :ETAT_BESOIN)
+      INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, QUANTITE_ACC,UNITE, ETAT_BESOIN)
+      VALUES (NUM_BESOIN.nextval, :MATRICULE, :FORMULE, TO_DATE(:DATE_BESOIN, 'YYYY-MM-DD'), :QUANTITE, :QUANTITE_ACC,:UNITE, :ETAT_BESOIN)
     `;
     try {
       const connection = await getConnection();
-      const result = await connection.execute(query, [MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UNITE, ETAT_BESOIN]);
+      const result = await connection.execute(query, [MATRICULE, FORMULE, DATE_BESOIN, QUANTITE,QUANTITE_ACC, UNITE, ETAT_BESOIN]);
       res.json(result.rows);
       console.log('Besoin ajouté :', result.rowsAffected);
       connection.commit();
@@ -499,14 +502,15 @@ const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UN
 //requete Validation
 
 const getValidation = async (req,res) =>{
-    const query=`SELECT VALIDATION.*,BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*,SERVICE.* 
-            FROM ((((((VALIDATION 
+    const query=`SELECT VALIDATION.*,BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*,SERVICE.*, COMPTE.NUM_CMPT
+            FROM (((((((VALIDATION 
                 INNER JOIN BESOIN ON VALIDATION.NUM_BESOIN = BESOIN.NUM_BESOIN)
                 INNER JOIN ARTICLE ON BESOIN.FORMULE=ARTICLE.FORMULE)
                 INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
                 INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
                 INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION)
                 INNER JOIN SERVICE ON DIVISION.CODE_SER = DIVISION.CODE_SER)
+                INNER JOIN COMPTE ON CATEGORIE.NUM_CMPT = COMPTE.NUM_CMPT)
                 `;
     try {
         const connection = await getConnection();
@@ -518,6 +522,10 @@ const getValidation = async (req,res) =>{
         console.error("Erreur lors de l'affichage du besoin :", error);
         res.status(500).json({ error: 'Internal server error' });
     }
+}
+
+const getValidationBesoin = async (req,res)=>{
+
 }
 
 const addValidation = async(req,res,NUM_BESOIN, DATE_VALIDATION, QUANTITE_ACC) => {

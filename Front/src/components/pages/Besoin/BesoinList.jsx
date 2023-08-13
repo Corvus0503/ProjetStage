@@ -70,6 +70,14 @@ import { Span } from "../../Typography";
         }
       };
 
+      const chargerQuantiteAcc = async ()=>{
+        try {
+          
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
       const handleDelete = id=>{
         axios.delete(`http://localhost:8080/besoin/${id}`).then(reponse=>{
           chargerListBesoin()}).catch (error =>{
@@ -101,7 +109,6 @@ import { Span } from "../../Typography";
         setPage(0);
       };
       console.log(besoinList);
-
     
 
 
@@ -116,13 +123,13 @@ import { Span } from "../../Typography";
                     <StyledTable>
                     <TableHead>
                     <TableRow>
-                        <TableCell align="center"> Matricule </TableCell>
                         <TableCell align="center"> Nom   </TableCell>
                         <TableCell align="center"> Division </TableCell>
                         <TableCell align="center"> Article </TableCell>
                         <TableCell align="center"> Quantité </TableCell>
                         <TableCell align="center"> Unité </TableCell>
                         <TableCell align="center"> Date </TableCell>
+                        <TableCell align="center"> Quantité Accordé </TableCell>
                         <TableCell align="center"> Etat </TableCell>
                     </TableRow>
                       </TableHead>
@@ -131,13 +138,13 @@ import { Span } from "../../Typography";
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((besoinList) => (
                             <TableRow key={besoinList.NUM_BESOIN}>
-                            <TableCell align="center">{besoinList.MATRICULE}</TableCell>
                             <TableCell align="center">{besoinList.NOM_AG + besoinList.PRENOM_AG}</TableCell>
                             <TableCell align="center">{besoinList.LABEL_DIVISION}</TableCell>
                             <TableCell align="center">{besoinList.DESIGNATION_ART}</TableCell>
                             <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                             <TableCell align="center">{besoinList.UNITE}</TableCell>
                             <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
+                            <TableCell align="center">{besoinList.QUANTITE_ACC}</TableCell>
                             <TableCell align="center">{renderStatus(besoinList.ETAT_BESOIN)}</TableCell>
 
                             {/* <TableCell align="left"  >                               

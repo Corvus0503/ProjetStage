@@ -10,6 +10,9 @@ import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import { Span } from "../../Typography";
 import InfoIcon from '@mui/icons-material/Info';
 import AboutBesoinModal from "./AboutBesoinModal";
+import MenuIcon from '@mui/icons-material/Menu';
+import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
+
 
 
 
@@ -127,7 +130,7 @@ import AboutBesoinModal from "./AboutBesoinModal";
           </div>
             <Card sx={{ width: "100%", overflow: "auto" }} elevation={6} className="mt-5">
             <div className="m-5 mt-3 mb-3">
-              <h1 align="left"> Liste de tous les Besoins </h1>
+              <h1 align="left"> Liste Des Besoins En Attentes</h1>
                 <hr />
                 
                     <StyledTable >
@@ -156,7 +159,7 @@ import AboutBesoinModal from "./AboutBesoinModal";
                             <TableCell align="center">{renderStatus(besoinList.BESOIN_COUNT)}</TableCell>
                             <TableCell align="center">
                             <Button onClick={() => handleModalOpen(besoinList.AGENT_MATRICULE)}>
-                              <InfoIcon color="warning" />
+                              <PlaylistAddCheckCircleIcon style={{fontSize:'2.5rem'}} color="secondary" />
                             </Button>
                             <AboutBesoinModal
                               matricule={selectedMatricule}                           

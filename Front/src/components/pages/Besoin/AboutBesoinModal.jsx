@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Dialog, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, DialogTitle, DialogContent, DialogActions, Button, } from "@mui/material";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Swal from 'sweetalert2';
 import { format } from 'date-fns';
@@ -47,14 +47,6 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
     try {
       
       // Créez un nouvel objet de mise à jour en incluant tous les champs nécessaires
-      const updatedBesoin = {
-        MATRICULE: besoinToUpdate.MATRICULE,
-        FORMULE: besoinToUpdate.FORMULE,
-        DATE_BESOIN: besoinToUpdate.DATE_BESOIN,
-        QUANTITE: besoinToUpdate.QUANTITE,
-        UNITE: besoinToUpdate.UNITE,
-        ETAT_BESOIN: 'Validé', // Nouvel état
-      };
 
       closeModal();
   
@@ -100,6 +92,15 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
             DATE_VALIDATION:format(new Date(), 'yyyy-MM-dd'),
             QUANTITE_ACC: parseInt(quantiteAcc),
           };
+          const updatedBesoin = {
+            MATRICULE: besoinToUpdate.MATRICULE,
+            FORMULE: besoinToUpdate.FORMULE,
+            DATE_BESOIN: besoinToUpdate.DATE_BESOIN,
+            QUANTITE: besoinToUpdate.QUANTITE,
+            UNITE: besoinToUpdate.UNITE,
+            ETAT_BESOIN: 'Validé', // Nouvel état
+            QUANTITE_ACC: parseInt(quantiteAcc),
+          };
 
           // Ajout des données à la table VALIDATION
           await axios.post(`http://localhost:8080/validation`, DataValidated);
@@ -132,17 +133,14 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
   const handleUpdate = async (besoinId, newEtat) => {
     const besoinToUpdate = besoinList.find(besoin => besoin.NUM_BESOIN === besoinId);
   
-    try {
-      const formattedDateBesoin = besoinToUpdate.DATE_BESOIN instanceof Date
-        ? besoinToUpdate.DATE_BESOIN.toISOString()
-        : new Date(besoinToUpdate.DATE_BESOIN).toISOString();
-  
+    try {  
       // Créez un nouvel objet de mise à jour en incluant tous les champs nécessaires
       const updatedBesoin = {
         MATRICULE: besoinToUpdate.MATRICULE,
         FORMULE: besoinToUpdate.FORMULE,
-        DATE_BESOIN: formattedDateBesoin,
+        DATE_BESOIN: besoinToUpdate.DATE_BESOIN,
         QUANTITE: besoinToUpdate.QUANTITE,
+        QUANTITE_ACC:0,
         UNITE: besoinToUpdate.UNITE,
         ETAT_BESOIN: newEtat, // Nouvel état
       };
@@ -168,7 +166,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
         // Mettez à jour la liste des besoins avec le nouvel état
         setBesoinList(prevList =>
           prevList.map(besoin => {
-            if (besoin.NUM_BESOIN === besoinId) {
+            if (besoin.NUM_BESOIN === besoinId ) {
               return { ...besoin, ETAT_BESOIN: newEtat };
             }
             return besoin;
@@ -213,6 +211,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
           <TableHead>
             <TableRow>
               <TableCell align="center"> Division </TableCell>
+              <TableCell align="center"> Compte </TableCell>
               <TableCell align="center"> Article </TableCell>
               <TableCell align="center"> Quantité </TableCell>
               <TableCell align="center"> Unité </TableCell>
@@ -226,16 +225,17 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
             .map((besoinList) => (
                 <TableRow key={besoinList.NUM_BESOIN}>
                 <TableCell align="center">{besoinList.LABEL_DIVISION}</TableCell>
+                <TableCell align="center">{besoinList.DESIGNATION_CMPT +besoinList.NUM_CMPT }</TableCell>
                 <TableCell align="center">{besoinList.DESIGNATION_ART}</TableCell>
                 <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                 <TableCell align="center">{besoinList.UNITE}</TableCell>
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
                 <TableCell align="center" className="d-flex inline">
                 <Button onClick={() => handleValidation(besoinList.NUM_BESOIN)}>
-                  <CheckCircleOutlineIcon color="success" />
+                  <CheckCircleIcon color="success" style={{fontSize:'2.5rem'}} />
                 </Button>
                 <Button onClick={() => handleUpdate(besoinList.NUM_BESOIN, 'refusé')}>
-                  <CancelIcon color="error" />
+                  <CancelIcon color="error" style={{fontSize:'2.5rem'}} />
                 </Button>
 
                 </TableCell>

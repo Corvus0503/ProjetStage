@@ -234,6 +234,7 @@ app.put('/besoins/:id', async (req, res) => {
     FORMULE,
     DATE_BESOIN,
     QUANTITE,
+    QUANTITE_ACC,
     UNITE,
     ETAT_BESOIN
   } = req.body;
@@ -244,6 +245,7 @@ app.put('/besoins/:id', async (req, res) => {
       FORMULE,
       DATE_BESOIN,
       QUANTITE,
+      QUANTITE_ACC,
       UNITE,
       ETAT_BESOIN,
       id,
@@ -256,8 +258,8 @@ app.put('/besoins/:id', async (req, res) => {
 });
     //Creator
 app.post('/besoin', function(req, res){
-    const {MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,UNITE,ETAT_BESOIN}=req.body
-    addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,UNITE,ETAT_BESOIN);
+    const {MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,QUANTITE_ACC,UNITE,ETAT_BESOIN}=req.body
+    addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,QUANTITE_ACC,UNITE,ETAT_BESOIN);
 })
 
 //Validation des besoins Controller
