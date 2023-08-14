@@ -110,6 +110,53 @@ const deleteAdmin = async (req, res, id) => {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//Notificzation controller
+
+const getNotification = async (req, res, id) => {
+  try {
+    const connection = await getConnection()
+    const result = await connection.execute('SELECT NOTIFICATION.*, AGENT.NOM_UTIL_AG, AGENT.PHOTO FROM NOTIFICATION INNER JOIN AGENT ON NOTIFICATION.MATRICULE = AGENT.MATRICULE WHERE NOT NOTIFICATION.MATRICULE=:1', [id]);
+    res.json(result.rows);
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const addNotification = async (req, res, BODY_NOT, MATRICULE, DATE_NOT) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('INSERT INTO NOTIFICATION(ID_NOT, BODY_NOT, MATRICULE, DATE_NOT) VALUES (SEQ_NOTIFICATION.nextval, :1, :2, :3)', 
+    [BODY_NOT, MATRICULE, DATE_NOT]
+    );
+    await connection.commit();
+    await connection.close();
+    io.emit("new-comment", result.rows );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+const deleteNotification = async (req, res, id) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('DELETE FROM NOTIFICATION WHERE ID_NOT = :id', [id]);
+    await connection.commit();
+    await connection.close();
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //Requete compte
 const getCompte = async (req, res) => {
   try {
@@ -725,4 +772,7 @@ const deleteArticle = async (req, res, id) => {
    getBesoinListe,
    addValidation,
    getValidation,
+   getNotification,
+    addNotification,
+    deleteNotification
   };

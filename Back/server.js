@@ -12,8 +12,11 @@ const {
     getService, addService, updateService, deleteService,getSelectedArticle,
     getDivision, addDivision, updateDivision, deleteDivision, getArticle, getCategorieArticle,addArticle,
     updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,
-    getBesoinListe, addValidation, getValidation,
+    getBesoinListe, addValidation, getValidation,getNotification,
+    addNotification,
+    deleteNotification
 } = require("./app/utils/querryHelpers")
+const getConnection = require("./app/utils/db.js");
 const socketIO = require("socket.io");
 const app = express()
 app.use(cors())
@@ -87,6 +90,34 @@ app.put('/admin/:id', upload.single('PHOTO'),function (req, res) {
 app.delete('/admin/:id', function (req, res) {
     let {id} = req.params
     deleteAdmin(req, res, id);
+})
+
+//notification controiller
+app.get('/notification/:id', function (req, res) {
+    let {id} = req.params
+    getNotification(req, res, id);
+  })
+
+app.post('/notification', async function (req, res) {
+    let {BODY_NOT, MATRICULE, DATE_NOT} = req.body
+    try {
+        const connection = await getConnection();
+        const result = await connection.execute('INSERT INTO NOTIFICATION(ID_NOT, BODY_NOT, MATRICULE, DATE_NOT) VALUES (SEQ_NOTIFICATION.nextval, :1, :2, :3)', 
+        [BODY_NOT, MATRICULE, DATE_NOT]
+        );
+        await connection.commit();
+        await connection.close();
+        io.emit("new-comment", result.rows );
+        res.json(result.rows);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+})
+
+app.delete('/notification/:id', function (req, res) {
+    let {id} = req.params
+    deleteNotification(req, res, id);
 })
 
 

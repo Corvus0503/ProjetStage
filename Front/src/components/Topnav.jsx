@@ -17,6 +17,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -58,10 +59,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Topnav = ({user, IsOpen, togleSidebar, logout}) => {
+const Topnav = ({user, IsOpen, togleSidebar, logout, comments, togleNot}) => {
   const [topDropdown, setTopDropdown] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const navigate = useNavigate();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -83,6 +85,8 @@ const Topnav = ({user, IsOpen, togleSidebar, logout}) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const showProfile = () => navigate("/Profile", { replace: true });
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -100,7 +104,7 @@ const Topnav = ({user, IsOpen, togleSidebar, logout}) => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={showProfile}>Profile</MenuItem>
       <MenuItem onClick={logout}>Deconnexion</MenuItem>
     </Menu>
   );
@@ -136,7 +140,7 @@ const Topnav = ({user, IsOpen, togleSidebar, logout}) => {
           aria-label="show 17 new notifications"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
+          <Badge badgeContent={comments.length} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -194,7 +198,14 @@ const Topnav = ({user, IsOpen, togleSidebar, logout}) => {
           >
             <MenuIcon />
           </IconButton>
-          
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ display: { xs: 'none', sm: 'block' } }}
+          >
+            {user[0].NOM_UTIL_AG}
+          </Typography>
           {/*<Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -206,24 +217,17 @@ const Topnav = ({user, IsOpen, togleSidebar, logout}) => {
 </Search>*/}
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+            
             <IconButton
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
+              onClick={togleNot}
             >
-              <Badge badgeContent={17} color="error">
+              <Badge badgeContent={comments.length} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <Typography
-            variant="h6"
-            className='mt-4 ms-3 me-3'
-            noWrap
-            component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            {user[0].NOM_UTIL_AG}
-          </Typography>
             <IconButton
               size="large"
               edge="end"

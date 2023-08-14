@@ -42,7 +42,7 @@ const TestModal = ({List, chargerListAdmin}) => {
     MAIL_AG: "",
     NOM_AG: "",
     NOM_UTIL_AG: "",
-    TYPE_AG: "user",
+    TYPE_AG: "User",
     PRENOM_AG: "",
     ADRESSE_AG: "",
     TEL_AG: "",

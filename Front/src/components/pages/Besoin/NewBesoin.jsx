@@ -131,6 +131,20 @@ const NewBesoin = (user) => {
 
   };
   
+  async function sendComment() {
+    try {
+        await axios.post(`http://localhost:8080/notification`, {
+          BODY_NOT : `a envoyé une demande`, 
+            MATRICULE : `${user.user.user.user[0].MATRICULE}`,  
+            DATE_NOT : format(new Date(), 'yyyy-MM-dd')
+        })
+
+    } catch (error) {
+        console.log(`Erreur : ${error}`)
+    }
+  }
+
+
   // Fonction pour envoyer les données du nouveau besoin au serveur
 // Fonction pour envoyer les données du nouveau besoin au serveur
 const handleValidation = async () => {
@@ -171,6 +185,8 @@ const handleValidation = async () => {
       title: 'Demande soumise',
       text: 'Votre demande a été soumise avec succès !',
     });
+
+    sendComment();
 
   } catch (error) {
     console.error("Erreur lors de l'ajout des besoins :", error);
