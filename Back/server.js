@@ -10,7 +10,7 @@ const {
     getCompte, addCompte, updateCompte, deleteCompte,
     addBesoin, getCategorie, addCategorie, updateCategorie, deleteCategorie,
     getService, addService, updateService, deleteService,getSelectedArticle,
-    getDivision, addDivision, updateDivision, deleteDivision, getArticle, addArticle,
+    getDivision, addDivision, updateDivision, deleteDivision, getArticle, getCategorieArticle,addArticle,
     updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,
     getBesoinListe, addValidation, getValidation,
 } = require("./app/utils/querryHelpers")
@@ -182,16 +182,19 @@ app.delete('/division/:id', function (req, res) {
 app.get('/article', function (req, res) {
     getArticle(req, res);
   })
-
+app.get('/articleCat/:id',(req,res)=>{
+    const{id}=req.params
+    getCategorieArticle(req,res,id)
+})
 app.post('/article', function (req, res) {
     const { DESIGNATION_ART, SPECIFICITE_ART,UNITE_ART, PRIX_ART, ID_CAT } = req.body;
     addArticle(req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT );
 })
 
 app.put('/article/:id', function (req, res) {
-    let { FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT} = req.body
+    let {DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT} = req.body
     let {id} = req.params
-    updateArticle(req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT, id);
+    updateArticle(req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT, id);
 })
 
 app.delete('/article/:id', function (req, res) {

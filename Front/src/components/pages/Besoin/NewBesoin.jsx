@@ -220,7 +220,7 @@ const handleModalCatClose = () => {
                     <InputAdornment position="end">
                       <h1 style={{border:"none",color:'SlateBlue',backgroundColor:"white"}}>|</h1>
                       <button style={{border:"none",color:'SlateBlue',backgroundColor:"white"}} onClick={handelModalCatOpen}>
-                        <FileUploadIcon />
+                        <FileUploadIcon style={{fontSize:'2.5rem'}} />
                       </button>
                       <CategorieListModal 
                         onRowCatSelect={handleRowCatSelect}
@@ -242,7 +242,7 @@ const handleModalCatClose = () => {
                     <InputAdornment position="end">
                       <h1 style={{border:"none",color:'SlateBlue',backgroundColor:"white"}}>|</h1>
                       <button style={{border:"none",color:'SlateBlue',backgroundColor:"white"}} onClick={handleModalOpen}>
-                        <FileUploadIcon />
+                        <FileUploadIcon style={{fontSize:'2.5rem'}} />
                       </button>
                       <ArticleListModal idCat={idCat} onRowSelect={handleRowSelect} isModalOpen={isModalOpen} closeModal={handleModalClose} />
                     </InputAdornment>

@@ -620,11 +620,25 @@ const getArticle = async (req, res) => {
     const connection = await getConnection();
     const result = await connection.execute('SELECT ARTICLE.*, CATEGORIE.LABEL_CAT FROM ARTICLE INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT');
     res.json(result.rows);
+    await connection.commit();
     await connection.close();
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
+};
+
+const getCategorieArticle = async (req,res,id) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('SELECT * FROM CATEGORIE WHERE NUM_CMPT= :id',[id]);
+    res.json(result.rows);
+    await connection.commit();
+    await connection.close();
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' }) };
 };
 
 
@@ -649,8 +663,8 @@ const updateArticle = async (req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_A
 
     const connection = await getConnection();
     const result = await connection.execute(
-      'UPDATE ARTICLE SET FORMULE=:1, DESIGNATION_ART=:2, SPECIFICITE_ART=:3, UNITE_ART=:4, PRIX_ART=:5, ID_CAT=:6 WHERE FORMULE=:7',
-      [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT, id]
+      'UPDATE ARTICLE SET  DESIGNATION_ART=:DESIGNATION_ART, SPECIFICITE_ART=:SPECIFICITE_ART, UNITE_ART=:UNITE_ART, PRIX_ART=:PRIX_ART, ID_CAT=:ID_CAT WHERE FORMULE=:id',
+      [DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT, id]
     );
     res.json(result.rows);
     connection.commit();
@@ -697,6 +711,7 @@ const deleteArticle = async (req, res, id) => {
    updateDivision,
    deleteDivision,
    getArticle,
+   getCategorieArticle,
    addArticle,
    updateArticle,
    deleteArticle,

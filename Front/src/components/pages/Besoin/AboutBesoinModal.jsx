@@ -232,10 +232,10 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
                 <TableCell align="center" className="d-flex inline">
                 <Button onClick={() => handleValidation(besoinList.NUM_BESOIN)}>
-                  <CheckCircleIcon color="success" style={{fontSize:'2.5rem'}} />
+                  <CheckCircleIcon color="success"/>
                 </Button>
                 <Button onClick={() => handleUpdate(besoinList.NUM_BESOIN, 'refusé')}>
-                  <CancelIcon color="error" style={{fontSize:'2.5rem'}} />
+                  <CancelIcon color="error"/>
                 </Button>
 
                 </TableCell>

@@ -161,18 +161,6 @@ const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
                           validators={["required", "minStringLength: 1", "maxStringLength: 40"]}
                         />
 
-                        {/*<TextField
-                          type="text"
-                          name="NUM_CMPT"
-                          id="standard-basic"
-                          value={categorie.NUM_CMPT }
-                          onChange={handleChange}
-                          errorMessages={["this field is required"]}
-                          placeholder="Saisir ici le numero de compte...."
-                          label="Num Compte"
-                          validators={["required", "minStringLength: 1", "maxStringLength: 40"]}
-  />*/}
-
                         <TextField
                           placeholder="Compte..."
                           label="Compte"
@@ -184,7 +172,7 @@ const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
                               <InputAdornment position="end">
                                 <h1 style={{border:"none",color:'SlateBlue',backgroundColor:"white"}}>|</h1>
                                 <button style={{border:"none",color:'SlateBlue',backgroundColor:"white"}} onClick={handleModalOpen}>
-                                  <FileUploadIcon />
+                                  <FileUploadIcon style={{fontSize:'2.5rem'}} />
                                 </button>
                                 <CompteListModal  onRowSelect={handleRowSelect} isModalOpen={isModalOpen} closeModal={handleModalClose} />
                               </InputAdornment>

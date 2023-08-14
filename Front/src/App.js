@@ -17,6 +17,8 @@ import Article from './components/pages/Article/Article';
 import Besoin from './components/pages/Besoin/Besoin';
 import BesoinListBag from './components/pages/Besoin/BesoinListeBAG';
 import Division from './components/pages/Division/Division';
+import PrevisionPrint from './components/pages/Printer/PrevisionPrint';
+
 
 
 
@@ -84,8 +86,9 @@ function App() {
             <Route element={<ProtectedRoute user={user} perm={'User'}/>}>
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
               <Route path="/Prevision" element={<Previsions />} />
-              <Route path="/Signup" element={<Signup />} />
+              <Route path="/Signup" element={<Signup />} /> 
               <Route path="/Article" element={<Article />} />             
+              <Route path="/PrevisionPrint" element={<PrevisionPrint />} />             
             </Route>
           <Route path="/*" element={<p>There's nothing here: 404!</p>} />
           </Routes>

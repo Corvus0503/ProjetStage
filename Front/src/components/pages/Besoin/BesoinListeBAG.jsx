@@ -159,7 +159,7 @@ import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCirc
                             <TableCell align="center">{renderStatus(besoinList.BESOIN_COUNT)}</TableCell>
                             <TableCell align="center">
                             <Button onClick={() => handleModalOpen(besoinList.AGENT_MATRICULE)}>
-                              <PlaylistAddCheckCircleIcon style={{fontSize:'2.5rem'}} color="secondary" />
+                              <PlaylistAddCheckCircleIcon color="secondary" />
                             </Button>
                             <AboutBesoinModal
                               matricule={selectedMatricule}                           

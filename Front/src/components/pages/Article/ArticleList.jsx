@@ -109,7 +109,7 @@ useEffect(() => {
                         <TableCell align="center"> Categorie  </TableCell>
                         <TableCell align="center"> Designation </TableCell>
                         <TableCell align="center"> Spécification </TableCell>
-                        <TableCell align="center"> Prix d'article </TableCell>
+                        <TableCell align="center"> Prix d'article(Ariary) </TableCell>
                         <TableCell align="center"> Unité </TableCell>
                         <TableCell align="center"> Opération </TableCell>
                         </TableRow>

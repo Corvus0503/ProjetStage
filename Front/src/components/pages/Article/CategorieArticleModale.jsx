@@ -4,7 +4,7 @@ import { Dialog, Table, TableBody, TableCell, TableHead, TablePagination, TableR
 import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 
 // Composant de la modal pour afficher la liste des catégories
-const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) => {
+const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect, idCompte }) => {
   // Utilisation de useState pour gérer la pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
@@ -14,14 +14,16 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
   useEffect(() => {
     const fetchCategorieList = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/categorie");
+        const response = await axios.get(`http://localhost:8080/articleCat/${idCompte}`);
         setCategorieList(response.data);
       } catch (error) {
         console.error(error);
       }
     };
-    fetchCategorieList();
-  }, []);
+    if (idCompte) {
+      fetchCategorieList();
+    }
+  }, [idCompte]);
 
   // Fonction pour gérer le changement de page
   const handleChangePage = (_, newPage) => {

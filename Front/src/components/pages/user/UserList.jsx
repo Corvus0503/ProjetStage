@@ -48,7 +48,7 @@ const StyledSpan = styled(Span)(({ bgColor }) => ({
 
 //A ne pas toucher
 const UserList = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [user, setUser] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -79,7 +79,7 @@ useEffect(() => {
 const { palette } = useTheme();
 const bgGreen = "rgba(9, 182, 109, 1)";
 const bgError = palette.error.main;
-const bgSecondary = palette.secondary.main;
+//const bgSecondary = palette.secondary.main;
 
 const renderStatus = (status) => {
   if (status === "Activé") return <StyledSpan bgColor={bgGreen}>{status}</StyledSpan>;
@@ -153,7 +153,6 @@ const handleDialogClose = () => {
           <Breadcrumb routeSegments={[{ name: "Liste des Utilisateur" }]} />
       </div>
       <div className="mt-5 p-5 card shadow">
-        <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
         <StyledTable>
           <TableHead>
             <TableRow>
@@ -218,7 +217,6 @@ const handleDialogClose = () => {
               onYesClick={handleConfirmationResponse}
             />
           )}
-        </Card>
       </div>
     
   </Container>

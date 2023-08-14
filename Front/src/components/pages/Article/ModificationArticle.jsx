@@ -72,7 +72,7 @@ const ModificationArticle = ({List, chargerListAdmin}) => {
     DESIGNATION_ART:" ",
     SPECIFICITE_ART:" ",
     UNITE_ART:" ",
-    EFFECTIF_ART:" ",
+    PRIX_ART:" ",
     ID_CAT:" ",
   })
 
@@ -85,8 +85,7 @@ const updateArticle = id => {
         DESIGNATION_ART:" ",
         SPECIFICITE_ART:" ",
         UNITE_ART:" ",
-        EFFECTIF_ART:" ",
-        ID_CAT:" ",
+        PRIX_ART:" ",
     });
     chargerListAdmin()
     closeModal()
@@ -160,14 +159,14 @@ const updateArticle = id => {
 
               <TextField
                 type="number"
-                name="EFFECTIF_ART"
-                label="Effectif"
+                name="PRIX_ART"
+                label="Prix d'Article"
                 onChange={handleChange}
-                value={article.EFFECTIF_ART}
+                value={article.PRIX_ART}
                 validators={["required"]}
                 errorMessages={["this field is required"]}
               />  
-
+{/* 
               <TextField
                 type="number"
                 name="ID_CAT"
@@ -176,7 +175,7 @@ const updateArticle = id => {
                 onChange={handleChange}
                 validators={["required"]}
                 errorMessages={["this field is required", "email non valide"]}
-              />
+              /> */}
 
             <div className="text-center">
               <Button onClick={() => {

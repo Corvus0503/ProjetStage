@@ -46,21 +46,20 @@ const Article = () => {
         
 
     const [selectedCompte, setSelectedCompte] = useState({
-        NUM_CMPT: "",
-        DESIGNATION_CMPT: "",
+        NUM_CMPT: " ",
+        DESIGNATION_CMPT: " ",
         });
     const handleRowCatSelect = (selectedCatRow) => {
         setSelectedCategorie(selectedCatRow);
-         // Mettre à jour idCat lorsque la catégorie est sélectionnée
-        //chargerListAdmin(selectedCatRow.ID_CAT); // Charger la liste d'articles correspondante
       };
 
-    console.log("selected : ",idCompte)
     
     const handleRowSelect = (selectedRow) => {
     setSelectedCompte(selectedRow);
-    setIdCompte(selectedCompte.NUM_CMPT);
+    setIdCompte(selectedRow.NUM_CMPT);
+
     };
+    console.log(idCompte)
 
     const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -204,6 +203,7 @@ const Article = () => {
                             onRowCatSelect={handleRowCatSelect}
                             isModalCatOpen={isModalCatOpen} 
                             closeCatModal={handleModalCatClose}
+                            idCompte={idCompte}
                         />
                         </InputAdornment>
                     ),
