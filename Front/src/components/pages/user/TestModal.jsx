@@ -62,6 +62,24 @@ const AutoComplete = styled(Autocomplete)(() => ({
   marginBottom: "13px",
 }));
 
+const PhotoUploadButton = styled('label')(({ backgroundImage }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  border: '2px solid #ccc',
+  borderRadius: '50%',
+  width: '150px',
+  height: '150px',
+  cursor: 'pointer',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+  '&:hover': {
+    backgroundColor: '#f2f2f2',
+  },
+}));
+
 const TestModal = ({List, chargerListAdmin}) => {
   let subtitle;
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -152,9 +170,15 @@ const updateUser = id => {
     setModUser({ ...modUser, [e.target.name]: e.target.value });
   };
 
+  const [imagePreview, setImagePreview] = useState(null);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setModUser({ ...modUser, PHOTO: file })
+    setModUser({ ...modUser, PHOTO: file });
+
+    // Display selected image in the button
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
   return (
@@ -171,19 +195,17 @@ const updateUser = id => {
         <Grid container spacing={6}>
           <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
           <input
-            accept="image/*"
-            style={{ display: 'none' }}
-            id="raised-button-file"
-            multiple
-            type="file"
-            name='PHOTO'
-            onChange={handleFileChange}
-          />
-          <label htmlFor="raised-button-file">
-            <Button variant="raised" component="span">
-              Upload
-            </Button>
-          </label> 
+              accept="image/*"
+              style={{ display: "none" }}
+              id="raised-button-file"
+              multiple
+              type="file"
+              name="PHOTO"
+              onChange={handleFileChange}
+            />
+            <PhotoUploadButton htmlFor="raised-button-file" backgroundImage={imagePreview}>
+              {imagePreview ? null : <Icon fontSize="large">cloud_upload</Icon>}
+            </PhotoUploadButton>
           <TextField
               type="text"
               name="MATRICULE"

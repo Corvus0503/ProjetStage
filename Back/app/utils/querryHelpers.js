@@ -103,10 +103,10 @@ const deleteAdmin = async (req, res, id) => {
 
 //Notificzation controller
 
-const getNotification = async (req, res) => {
+const getNotification = async (req, res, id) => {
   try {
     const connection = await getConnection()
-    const result = await connection.execute('SELECT NOTIFICATION.*, AGENT.NOM_UTIL_AG, AGENT.PHOTO FROM NOTIFICATION INNER JOIN AGENT ON NOTIFICATION.MATRICULE = AGENT.MATRICULE');
+    const result = await connection.execute('SELECT NOTIFICATION.*, AGENT.NOM_UTIL_AG, AGENT.PHOTO FROM NOTIFICATION INNER JOIN AGENT ON NOTIFICATION.MATRICULE = AGENT.MATRICULE WHERE NOT NOTIFICATION.MATRICULE=:1', [id]);
     res.json(result.rows);
     await connection.close();
   } catch (error) {

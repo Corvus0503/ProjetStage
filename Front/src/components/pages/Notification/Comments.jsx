@@ -3,9 +3,13 @@ import Comment from "./Commentaire";
 import axios from "axios"
 import { format } from 'date-fns';
 import '../../styles/notification.css'
+import { Navigate, useNavigate } from "react-router-dom";
+
+
 
 
 const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
+  const navigate = useNavigate();
   const matr = user[0].MATRICULE
   const [input, setInput] = useState({
     BODY_NOT : "", 
@@ -55,10 +59,26 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
+  const redirection = (id) =>{
+    navigate("/BesoinBag", { replace: true })
+    deleteNot(id)
+  }
+
   useEffect(() => {
-    fetchComments();
+    if (user[0].TYPE_AG.includes("Admin")){
+      const fetchArticleList = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/notification/${user[0].MATRICULE}`);
+          setComments(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchArticleList();
+    }
     
-  }, []);
+  }, [user[0].MATRICULE, redirection]);
+
 
   return (
     <div className={`Comments ${IsOpenNot ? "" : "open"}`}>
@@ -72,32 +92,10 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
             key={comment.ID_NOT}
             comment={comment}
             deleteNot={deleteNot}
+            redirection={redirection}
             isYou={user === comment.MATRICULE}
           />
         ))}
-      </div>
-      <div className="Comments-box">
-        <form
-          className=""
-          onSubmit={(e) => {
-            e.preventDefault();
-            sendComment();
-          }}
-        >
-          <textarea
-            value={input.BODY_NOT}
-            onChange={handleChange}
-            name="BODY_NOT"
-            className="Comments-box__input"
-          />
-          <button
-            type="submit"
-            disabled={user === ""}
-            className="Comments-box__btn"
-          >
-            Send
-          </button>
-        </form>
       </div>
     </div>
   );

@@ -106,8 +106,9 @@ app.delete('/admin/:id', function (req, res) {
 })
 
 //notification controiller
-app.get('/notification', function (req, res) {
-    getNotification(req, res);
+app.get('/notification/:id', function (req, res) {
+    let {id} = req.params
+    getNotification(req, res, id);
   })
 
 app.post('/notification', async function (req, res) {

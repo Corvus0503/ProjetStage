@@ -46,20 +46,23 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
 
     const connexion = async (e) => {
         e.preventDefault()
-        await loadUser()
-            if(user[0].NOM_UTIL_AG===infoCon.pseudo && user[0].PASSWORD===infoCon.mdp){
-                socket.emit("userLoggedIn", { username: user[0].NOM_UTIL_AG, socketId: user[0].MATRICULE });
-                setToken(JSON.stringify(user));
-                setIsConn(true)
-                saveCon()
-                navigate("/Dashboard", { replace: true });
-            }else if(user[0].ACTIVATION.includes("Desactivé")){
+        loadUser()
+            if(user[0].ACTIVATION.includes("Desactivé")){
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Ce compte est desactvé',
                 })
-            } else {
+                
+            }
+            
+            if(user[0].NOM_UTIL_AG===infoCon.pseudo && user[0].PASSWORD===infoCon.mdp && user[0].ACTIVATION.includes("Activé")){
+                socket.emit("userLoggedIn", { username: user[0].NOM_UTIL_AG, socketId: user[0].MATRICULE });
+                setToken(JSON.stringify(user));
+                setIsConn(true)
+                saveCon()
+                navigate("/Dashboard", { replace: true });
+            }else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',

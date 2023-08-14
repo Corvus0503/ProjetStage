@@ -19,6 +19,7 @@ import BesoinListBag from './components/pages/Besoin/BesoinListeBAG';
 import Division from './components/pages/Division/Division';
 import Categorie from './components/pages/Categorie/Categorie';
 import Comments from './components/pages/Notification/Comments';
+import Profile from './components/pages/login/Profile';
 import io from "socket.io-client";
 
 function App() {
@@ -58,10 +59,7 @@ const socket = io("http://localhost:8080");
 useEffect(() => {
   socket.on("new-comment", ({ comment }) => {
     console.log(comment)
-    // Only insert comments when the current user is not the author
-    if (comment[0].MATRICULE !== user[0].MATRICULE) {
-      setComments((comments) => [...comments, comment]);
-    }
+    setComments((comments) => [...comments, comment]);
   });
 
   return () => {
@@ -100,6 +98,7 @@ useEffect(() => {
               <Route path="/Besoin" element={<Besoin user={user} />} />
               <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />
               <Route path="/Categorie" element={<Categorie user={user} />} />
+              <Route path="/Profile" element={<Profile user={user} />} />
               <Route path="/Comments" element={<Comments comments={comments} setComments={setComments} user={user} IsOpenNot={IsOpenNot} />} />
             </Route>
             <Route element={<ProtectedRoute user={user} perm={'User'}/>}>
@@ -109,6 +108,7 @@ useEffect(() => {
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />
               <Route path="/Besoin" element={<Besoin/>} />
+              <Route path="/Profile" element={<Profile user={user} />} />
             </Route>
           <Route path="/*" element={<p>There's nothing here: 404!</p>} />
           </Routes>

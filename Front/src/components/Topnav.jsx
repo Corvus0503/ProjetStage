@@ -17,6 +17,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -62,6 +63,7 @@ const Topnav = ({user, IsOpen, togleSidebar, logout, comments, togleNot}) => {
   const [topDropdown, setTopDropdown] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const navigate = useNavigate();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -83,6 +85,8 @@ const Topnav = ({user, IsOpen, togleSidebar, logout, comments, togleNot}) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const showProfile = () => navigate("/Profile", { replace: true });
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -100,7 +104,7 @@ const Topnav = ({user, IsOpen, togleSidebar, logout, comments, togleNot}) => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={showProfile}>Profile</MenuItem>
       <MenuItem onClick={logout}>Deconnexion</MenuItem>
     </Menu>
   );

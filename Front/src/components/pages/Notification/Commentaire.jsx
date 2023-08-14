@@ -8,10 +8,10 @@ const bDtyle = {
   color : "white"
 }
 
-const Comment = ({ comment, isYou, deleteNot }) => {
+const Comment = ({ comment, isYou, deleteNot, redirection }) => {
 
   return (
-    <div className="Comment">
+    <div onClick={() => redirection(comment.ID_NOT)} className="Comment">
     <div className="Comment-header">
       <div className="Comment-avatar">
         <img src={require(`../../../uploads/${comment.PHOTO}`)} alt={comment.NOM_UTIL_AG} />
