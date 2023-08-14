@@ -95,7 +95,7 @@ useEffect(() => {
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />
               <Route path="/Division" element={<Division />} />
-              <Route path="/Besoin" element={<Besoin user={user} />} />
+              <Route path="/Besoin" element={<Besoin user={user} setComments={setComments}/>} />
               <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />
               <Route path="/Categorie" element={<Categorie user={user} />} />
               <Route path="/Profile" element={<Profile user={user} />} />

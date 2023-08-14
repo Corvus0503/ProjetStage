@@ -106,6 +106,19 @@ useEffect(() => {
   };
   console.log(DivisionListe)
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Filter the DivisionListe based on the search term
+  const filteredDivisionList = DivisionListe.filter(
+    (item) =>
+      item.CODE_DIVISION.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.LABEL_DIVISION.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.LIBELLE.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.VILLE.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.ADRESSE.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.CONTACT.includes(searchTerm)
+  );
+
   return (
     <Container>
         <div className="breadcrumb">

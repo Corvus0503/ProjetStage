@@ -55,13 +55,20 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
     }).catch(error =>{console.error(error);})
   }
 
-  const handleChange = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
-  };
-
   const redirection = (id) =>{
     navigate("/BesoinBag", { replace: true })
     deleteNot(id)
+    if (user[0].TYPE_AG.includes("Admin")){
+      const fetchArticleList = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/notification/${user[0].MATRICULE}`);
+          setComments(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchArticleList();
+    }
   }
 
   useEffect(() => {
@@ -77,7 +84,7 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
       fetchArticleList();
     }
     
-  }, [user[0].MATRICULE, redirection]);
+  }, [user[0].MATRICULE]);
 
 
   return (

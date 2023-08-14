@@ -82,7 +82,7 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
         return () => {
             socket.disconnect();
         };
-    }, []);
+    }, [socket]);
 
 
     return(
