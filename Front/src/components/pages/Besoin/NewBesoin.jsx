@@ -11,12 +11,65 @@ import CategorieListModal from "./ListeCategorieModale.jsx";
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import Swal from 'sweetalert2';
 import { format } from 'date-fns';
+import { useNavigate } from "react-router-dom";
+import { TextareaAutosize } from '@mui/base/TextareaAutosize';
 
 // Création d'un composant TextField stylisé avec Styled-components
 const TextField = styled(TextValidator)(() => ({
   width: "100%",
   marginBottom: "16px",
 }));
+
+const blue = {
+    100: '#DAECFF',
+    200: '#b6daff',
+    400: '#3399FF',
+    500: '#007FFF',
+    600: '#0072E5',
+    900: '#003A75',
+  };
+
+  const grey = {
+    50: '#f6f8fa',
+    100: '#eaeef2',
+    200: '#d0d7de',
+    300: '#afb8c1',
+    400: '#8c959f',
+    500: '#6e7781',
+    600: '#57606a',
+    700: '#424a53',
+    800: '#32383f',
+    900: '#24292f',
+  };
+  const StyledTextarea = styled(TextareaAutosize)(
+    ({ theme }) => `
+    width: 100%;
+    font-family: IBM Plex Sans, sans-serif;
+    font-size: 0.975rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding:15px;
+    border-radius: 8px 8px 4px 8px;
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+  
+    &:hover {
+      border-color: ${blue[400]};
+    }
+  
+    &:focus {
+      border-color: ${blue[400]};
+      box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[500] : blue[200]};
+    }
+  
+    // firefox
+    &:focus-visible {
+      outline: 0;
+    }
+  `,
+  );
 
 // Création d'un composant Container stylisé avec Styled-components
 const Container = styled("div")(({ theme }) => ({
@@ -35,6 +88,8 @@ const NewBesoin = (user) => {
     ID_CAT: "",
     LABEL_CAT: "",
   });
+
+  const navigate =useNavigate()
 
   const [idCat, setIdCat] = useState("");
   const [selectedArticle, setSelectedArticle] = useState({
@@ -56,6 +111,7 @@ const NewBesoin = (user) => {
     QUANTITE_ACC:'',
     UNITE: '',
     ETAT_BESOIN: '',
+    OBSERVATION:" ",
   });
 
   // Utilisation de useState pour gérer l'ouverture et la fermeture de la modal de liste d'articles et de catégories
@@ -120,6 +176,7 @@ const NewBesoin = (user) => {
       categorie: selectedCategorie.LABEL_CAT,
       quantite: besoin.QUANTITE,
       unite: selectedArticle.UNITE_ART,
+      observation:besoin.OBSERVATION,
     };
   
     setAddedItems(prevItems => [...prevItems, newItem]);
@@ -157,6 +214,7 @@ const handleValidation = async () => {
       const DATE_BESOIN = format(new Date(), 'yyyy-MM-dd');
       const QUANTITE_ACC= 0;
       const ETAT_BESOIN = 'En Attente';
+      const OBSERVATION =item.observation;
 
       // Vérification des valeurs extraites
       console.log('MATRICULE:', MATRICULE);
@@ -165,6 +223,7 @@ const handleValidation = async () => {
       console.log('QUANTITE:', QUANTITE);
       console.log('QUANTITE_ACC:', QUANTITE_ACC);
       console.log('UNITE:', UNITE);
+      console.log('OBSERVATION:', OBSERVATION);
 
       const response = await axios.post('http://localhost:8080/besoin', {
         MATRICULE,
@@ -174,6 +233,7 @@ const handleValidation = async () => {
         QUANTITE_ACC,
         UNITE, // Assurez-vous que la propriété est correcte
         ETAT_BESOIN,
+        OBSERVATION
       });
 
       console.log('Besoin ajouté avec succès:', response.data);
@@ -185,8 +245,9 @@ const handleValidation = async () => {
       title: 'Demande soumise',
       text: 'Votre demande a été soumise avec succès !',
     });
-
     sendComment();
+    navigate('/besoin')
+
 
   } catch (error) {
     console.error("Erreur lors de l'ajout des besoins :", error);
@@ -283,6 +344,15 @@ const handleModalCatClose = () => {
                   ),
                 }}
               />
+              <div className="text-start h5 ">
+                <label > Observation: </label>
+              </div>
+              <StyledTextarea
+                name="OBSERVATION"
+                placeholder="Saisir votre observation......"
+                value={besoin.OBSERVATION}
+                onChange={handleChange}
+              />
             </Grid>
             <div className='text-start mt-2' >
               <button className="btn btn-primary" onClick={handleAddItem}>
@@ -309,6 +379,7 @@ const handleModalCatClose = () => {
                       <td>{item.categorie}</td>
                       <td>{item.quantite}</td>
                       <td>{item.unite}</td>
+                      <td> <button> </button> </td>
                     </tr>
                   ))}
                 </tbody>

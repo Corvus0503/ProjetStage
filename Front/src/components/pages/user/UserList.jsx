@@ -14,7 +14,6 @@ import { useState } from "react";
 import axios from "axios"
 import { React, useEffect } from "react";
 import TestModal from "./TestModal";
-import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Breadcrumb from "../../Utils/Breadcrumb";
@@ -152,11 +151,15 @@ const handleDialogClose = () => {
     <div className="breadcrumb">
           <Breadcrumb routeSegments={[{ name: "Liste des Utilisateur" }]} />
       </div>
-      <div className="mt-5 p-5 card shadow">
+      <div className="mt-5 p-5 me-5 card shadow">
+          <div className="h1 text-start">
+            Utilisateur
+          </div>
+          <hr />
         <StyledTable>
           <TableHead>
             <TableRow>
-              <TableCell align="center"></TableCell>
+              <TableCell align="center">  </TableCell>
               <TableCell align="center">Nom d'utilisateur</TableCell>
               <TableCell align="center">Matricule</TableCell>
               <TableCell align="center">Fonction</TableCell>

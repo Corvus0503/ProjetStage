@@ -213,73 +213,52 @@ const deleteCompte = async (id) => {
     return result.rows;
   } catch (error) {
     console.error(error);
-    throw new Error('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
 
 //Requete Pour Service
 
-const getService = async () => {
+const getService = async (req, res) => {
   try {
     const connection = await getConnection();
-    const result = await connection.execute('SELECT * FROM SERVICE');
+    const result = await connection.execute(`SELECT SERVICE.*, DIVISION.*, AGENT.* FROM ((SERVICE 
+                                                INNER JOIN DIVISION ON DIVISION.CODE_SER = SERVICE.CODE_SER)
+                                                INNER JOIN AGENT ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION)`);
+    res.json(result.rows)
+    connection.commit()
     await connection.close();
-    return result.rows;
   } catch (error) {
     console.error(error);
-    throw new Error('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-const addService = async (CODE_SER, LIBELLE, ENTETE1, ENTETE2, ENTETE3, ENTETE4, ENTETE5, SIGLE, VILLE, ADRESSE, CONTACT) => {
+const addService = async (req, res,CODE_SER, LIBELLE, ENTETE1, ENTETE2, ENTETE3, ENTETE4, ENTETE5, SIGLE, VILLE, ADRESSE, CONTACT) => {
   try {
     const connection = await getConnection();
-    const result = await connection.execute('INSERT INTO SERVICE(CODE_SER, LIBELLE, ENTETE1, ENTETE2, ENTETE3, ENTETE4, ENTETE5, SIGLE, VILLE, ADRESSE, CONTACT) VALUES (:CODE_SER, :LIBELLE, :ENTETE1, :ENTETE2, :ENTETE3, :ENTETE4, :ENTETE5, :SIGLE, :VILLE, :ADRESSE, :CONTACT)', {
-      CODE_SER: CODE_SER,
-      LIBELLE: LIBELLE,
-      ENTETE1: ENTETE1,
-      ENTETE2: ENTETE2,
-      ENTETE3: ENTETE3,
-      ENTETE4: ENTETE4,
-      ENTETE5: ENTETE5,
-      SIGLE: SIGLE,
-      VILLE: VILLE,
-      ADRESSE: ADRESSE,
-      CONTACT: CONTACT
-    });
-    await connection.commit();
+    const result = await connection.execute('INSERT INTO SERVICE(CODE_SER, LIBELLE, ENTETE1, ENTETE2, ENTETE3, ENTETE4, ENTETE5, SIGLE, VILLE, ADRESSE, CONTACT) VALUES (:CODE_SER, :LIBELLE, :ENTETE1, :ENTETE2, :ENTETE3, :ENTETE4, :ENTETE5, :SIGLE, :VILLE, :ADRESSE, :CONTACT)',
+      [CODE_SER,LIBELLE,ENTETE1,ENTETE2,ENTETE3,ENTETE4,ENTETE5,SIGLE,VILLE,ADRESSE,CONTACT]);
+    res.json(result.rows)
+    connection.commit()
     await connection.close();
-    return result.rows;
   } catch (error) {
     console.error(error);
-    throw new Error('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
 const updateService = async (CODE_SER, LIBELLE, ENTETE1, ENTETE2, ENTETE3, ENTETE4, ENTETE5, SIGLE, VILLE, ADRESSE, CONTACT, id) => {
   try {
     const connection = await getConnection();
-    const result = await connection.execute('UPDATE SERVICE SET CODE_SER = :CODE_SER, LIBELLE = :LIBELLE, ENTETE1 = :ENTETE1, ENTETE2 = :ENTETE2, ENTETE3 = :ENTETE3, ENTETE4 = :ENTETE4, ENTETE5 = :ENTETE5, SIGLE = :SIGLE, VILLE = :VILLE, ADRESSE = :ADRESSE, CONTACT = :CONTACT WHERE CODE_SER = :id', {
-      CODE_SER: CODE_SER,
-      LIBELLE: LIBELLE,
-      ENTETE1: ENTETE1,
-      ENTETE2: ENTETE2,
-      ENTETE3: ENTETE3,
-      ENTETE4: ENTETE4,
-      ENTETE5: ENTETE5,
-      SIGLE: SIGLE,
-      VILLE: VILLE,
-      ADRESSE: ADRESSE,
-      CONTACT: CONTACT,
-      id: id
-    });
-    await connection.commit();
+    const result = await connection.execute('UPDATE SERVICE SET LIBELLE = :LIBELLE, ENTETE1 = :ENTETE1, ENTETE2 = :ENTETE2, ENTETE3 = :ENTETE3, ENTETE4 = :ENTETE4, ENTETE5 = :ENTETE5, SIGLE = :SIGLE, VILLE = :VILLE, ADRESSE = :ADRESSE, CONTACT = :CONTACT WHERE CODE_SER = :id', [CODE_SER,LIBELLE,ENTETE1,ENTETE2,ENTETE3,ENTETE4,ENTETE5,SIGLE,VILLE,ADRESSE,CONTACT]);
+    res.json(result.rows)
+    connection.commit()
     await connection.close();
-    return result.rows;
   } catch (error) {
     console.error(error);
-    throw new Error('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -287,12 +266,12 @@ const deleteService = async (id) => {
   try {
     const connection = await getConnection();
     const result = await connection.execute('DELETE FROM SERVICE WHERE CODE_SER = :id', [id]);
-    await connection.commit();
+    res.json(result.rows)
+    connection.commit()
     await connection.close();
-    return result.rows;
   } catch (error) {
     console.error(error);
-    throw new Error('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -307,7 +286,7 @@ const getDivision = async (req, res) => {
     await connection.close();
   } catch (error) {
     console.error(error);
-    throw new Error('Internal server error');
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -362,7 +341,7 @@ const deleteDivision = async (req,res,id) => {
 //requete Besoin
 
 
-const updateBesoin = async (MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, QUANTITE_ACC,UNITE, ETAT_BESOIN, NUM_BESOIN) => {
+const updateBesoin = async (MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, QUANTITE_ACC,UNITE, ETAT_BESOIN,OBSERVATION,NUM_BESOIN) => {
   const query = `
     UPDATE BESOIN
     SET MATRICULE = :MATRICULE,
@@ -371,7 +350,8 @@ const updateBesoin = async (MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, QUANTITE_
         QUANTITE = :QUANTITE,
         QUANTITE_ACC=:QUANTITE_ACC,
         UNITE = :UNITE,
-        ETAT_BESOIN = :ETAT_BESOIN
+        ETAT_BESOIN = :ETAT_BESOIN,
+        OBSERVATION= :OBSERVATION
     WHERE NUM_BESOIN = :NUM_BESOIN
   `;
 
@@ -385,6 +365,7 @@ const updateBesoin = async (MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, QUANTITE_
       QUANTITE_ACC,
       UNITE,
       ETAT_BESOIN,
+      OBSERVATION,
       NUM_BESOIN,  // Utiliser le même nom que dans la requête SQL
     });
     console.log('Besoin mis à jour :', result.rowsAffected);
@@ -526,14 +507,14 @@ const getBesoinRef = async (req,res) =>{
   }
 }
 
-const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE,QUANTITE_ACC, UNITE, ETAT_BESOIN) => {
+const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE,QUANTITE_ACC, UNITE, ETAT_BESOIN,OBSERVATION) => {
     const query = `
-      INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, QUANTITE_ACC,UNITE, ETAT_BESOIN)
-      VALUES (NUM_BESOIN.nextval, :MATRICULE, :FORMULE, TO_DATE(:DATE_BESOIN, 'YYYY-MM-DD'), :QUANTITE, :QUANTITE_ACC,:UNITE, :ETAT_BESOIN)
+      INSERT INTO BESOIN (NUM_BESOIN, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, QUANTITE_ACC,UNITE, ETAT_BESOIN,OBSERVATION)
+      VALUES (NUM_BESOIN.nextval, :MATRICULE, :FORMULE, TO_DATE(:DATE_BESOIN, 'YYYY-MM-DD'), :QUANTITE, :QUANTITE_ACC,:UNITE, :ETAT_BESOIN,:OBSERVATION)
     `;
     try {
       const connection = await getConnection();
-      const result = await connection.execute(query, [MATRICULE, FORMULE, DATE_BESOIN, QUANTITE,QUANTITE_ACC, UNITE, ETAT_BESOIN]);
+      const result = await connection.execute(query, [MATRICULE, FORMULE, DATE_BESOIN, QUANTITE,QUANTITE_ACC, UNITE, ETAT_BESOIN,OBSERVATION]);
       res.json(result.rows);
       console.log('Besoin ajouté :', result.rowsAffected);
       connection.commit();
@@ -549,7 +530,7 @@ const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE,QUA
 //requete Validation
 
 const getValidation = async (req,res) =>{
-    const query=`SELECT VALIDATION.*,BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*,SERVICE.*, COMPTE.NUM_CMPT
+    const query=`SELECT VALIDATION.*,BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*,SERVICE.*, COMPTE.*
             FROM (((((((VALIDATION 
                 INNER JOIN BESOIN ON VALIDATION.NUM_BESOIN = BESOIN.NUM_BESOIN)
                 INNER JOIN ARTICLE ON BESOIN.FORMULE=ARTICLE.FORMULE)
@@ -572,7 +553,37 @@ const getValidation = async (req,res) =>{
 }
 
 const getValidationBesoin = async (req,res)=>{
-
+    const query=`
+                SELECT
+                SERVICE.CODE_SER,
+                SERVICE.LIBELLE,
+                COMPTE.NUM_CMPT,
+                COMPTE.DESIGNATION_CMPT,
+                SUM(VALIDATION.QUANTITE_ACC * ARTICLE.PRIX_ART) AS TOTAL
+                    FROM
+                    (((((((VALIDATION
+                    INNER JOIN BESOIN ON VALIDATION.NUM_BESOIN = BESOIN.NUM_BESOIN)
+                    INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+                    INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+                    INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
+                    INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION)
+                    INNER JOIN SERVICE ON DIVISION.CODE_SER = SERVICE.CODE_SER)
+                    INNER JOIN COMPTE ON CATEGORIE.NUM_CMPT = COMPTE.NUM_CMPT)
+                        GROUP BY
+                            SERVICE.CODE_SER,
+                            SERVICE.LIBELLE,
+                            COMPTE.NUM_CMPT,
+                            COMPTE.DESIGNATION_CMPT`;
+    try {
+        const connection= await getConnection();
+        const result = await connection.execute(query);
+        res.json(result.rows);
+        connection.commit();
+        await connection.close()
+    } catch (error) {
+        console.error("Erreur lors de l'affichage du besoin :", error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 }
 
 const addValidation = async(req,res,NUM_BESOIN, DATE_VALIDATION, QUANTITE_ACC) => {
@@ -772,7 +783,9 @@ const deleteArticle = async (req, res, id) => {
    getBesoinListe,
    addValidation,
    getValidation,
+   getValidationBesoin,
    getNotification,
     addNotification,
-    deleteNotification
+    deleteNotification,
+
   };

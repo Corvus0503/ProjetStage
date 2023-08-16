@@ -4,7 +4,6 @@ import "../../styles/login.css"
 import LoginPhoto from"../../images/account-validation-bg-mob.png"
 import LoginAvatar from"../../images/blog-wp-login.png"
 import IconButton from "@material-ui/core/IconButton";
-//import InputLabel from "@material-ui/core/InputLabel";
 import Visibility from "@material-ui/icons/Visibility";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
@@ -22,9 +21,9 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
     const [isShow, setIsShow] = useState(false)
     
     const showMdp = (e) => {
-        e.preventDefault()
-        setIsShow(!isShow)
-    }
+        e.preventDefault();
+        setIsShow(!isShow);
+    };
     const [infoCon, setInfoCon] = useState({
         pseudo: "",
         mdp: ""
@@ -32,50 +31,55 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
 
     const loadUser = async () => {
         try {
-          const response = await axios.post('http://localhost:8080/admin', infoCon);
-          setUser(response.data);
+            const response = await axios.post('http://localhost:8080/admin', infoCon);
+            setUser((prevUser) => response.data.length > 0 ? response.data : prevUser);
         } catch (error) {
-          console.error(error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Pseudo ou mot de passer incorrect',
-        })
+            console.error(error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Pseudo ou mot de passe incorrect',
+            });
         }
-      };
+    };  
 
     const connexion = async (e) => {
-        e.preventDefault()
-        await loadUser()
-            if(user[0].NOM_UTIL_AG===infoCon.pseudo && user[0].PASSWORD===infoCon.mdp){
+        e.preventDefault();
+    
+        try {
+            await loadUser();
+    
+            if (user && user.length > 0 && user[0].NOM_UTIL_AG === infoCon.pseudo && user[0].PASSWORD === infoCon.mdp) {
                 socket.emit("userLoggedIn", { username: user[0].NOM_UTIL_AG, socketId: user[0].MATRICULE });
                 setToken(JSON.stringify(user));
-                setIsConn(true)
-                saveCon()
+                setIsConn(true);
+                saveCon();
                 navigate("/Dashboard", { replace: true });
-            }else if(user[0].ACTIVATION.includes("Desactivé")){
+            } else if (user && user.length > 0 && user[0].ACTIVATION.includes("Desactivé")) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Ce compte est desactvé',
-                })
+                    text: 'Ce compte est désactivé',
+                });
             } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Pseudo ou mot de passer incorrect',
-                })
-            }  
-    }
+                    text: 'Pseudo ou mot de passe incorrect',
+                });
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }; 
 
     // Initialize a Socket.IO client instance
     const socket = io("http://localhost:8080");
 
     useEffect(() => {
-        // Connect to the server
+        const socket = io("http://localhost:8080");
         socket.connect();
 
-        // Clean up the socket connection when the component unmounts
         return () => {
             socket.disconnect();
         };

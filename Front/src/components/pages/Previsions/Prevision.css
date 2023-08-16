@@ -1,0 +1,130 @@
+.styled-table th {
+    background-color: #f2f2f2;
+}
+.custom-bg {
+    background-color: white;
+}
+
+.custom-logo-container {
+    text-align: center;
+}
+
+.custom-text-container {
+    margin-left: 15px; /* Ajoutez d'autres styles de marge selon vos besoins */
+    font-family: 'times new Roman';
+    /* float: left; */
+}
+.custom-flex-column {
+    display: flex;
+    flex-direction: column; /* Définissez la direction de la flexbox en ligne (horizontale) */
+    justify-content: flex-start; /* Alignez les éléments sur la gauche */
+    align-items: center; /* Centrez les éléments verticalement si nécessaire */
+}
+.custom-flex-container {
+    display: flex;
+    flex-direction: column; /* Les éléments seront empilés verticalement */
+    align-items: flex-start; /* Alignez les éléments à gauche */
+}
+
+.custom-h5 {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.2rem; /* Ajustez la taille de police selon vos besoins */
+}
+
+.custom-uppercase {
+    text-transform: uppercase;
+    margin-left: 5px; /* Ajustez la marge selon vos besoins */
+}
+
+.custom-text {
+    text-align: left; /* Ajustez l'alignement du texte selon vos besoins */
+    margin-left: 5px; /* Ajustez la marge selon vos besoins */
+}
+
+.custom-h3 {
+    text-align: center;
+    font-size: 1.5rem; /* Ajustez la taille de police selon vos besoins */
+    margin-top: 1.5rem; /* Ajustez la marge selon vos besoins */
+}
+
+.custom-table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+.custom-table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+}
+.custom-table th {
+    background-color: #f2f2f2;
+}
+.custom-table-responsive {
+    overflow-x: auto;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table th,  .custom-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+@media print {
+    body {
+      font-size: 12pt;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .custom-h5 {
+      font-size: 1.2rem;
+      text-align: center;
+      text-transform: uppercase;
+    }
+  
+    .custom-uppercase {
+      text-transform: uppercase;
+      margin-left: 5px;
+    }
+  
+    .custom-text {
+      text-align: left;
+      margin-left: 5px;
+    }
+  
+    .custom-h3 {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-top: 1.5rem;
+    }
+  
+    .custom-bg {
+      background-color: white;
+    }
+  
+    .custom-logo-container {
+      text-align: center;
+    }
+  
+    .custom-table-responsive {
+      overflow-x: auto;
+      width: 100%;
+    }
+  
+    .custom-table {
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid #ddd;
+    }
+  
+    .custom-table th {
+      background-color: #f2f2f2;
+    }
+  }

@@ -18,6 +18,8 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [besoinList, setBesoinList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
 
   const fetchArticleList = async () => {
     try {
@@ -31,6 +33,14 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
       console.error(error);
     }
   };
+  const filteredBesoinList = besoinList.filter(besoin =>
+    besoin.DESIGNATION_CMPT.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    besoin.DESIGNATION_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    besoin.LABEL_DIVISION.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    besoin.NUM_CMPT.includes(searchQuery) ||
+    besoin.UNITE.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    besoin.DATE_BESOIN.includes(searchQuery)
+  );
 
   //console.log(matricule)
 
@@ -73,6 +83,11 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
           showCancelButton: true,
           confirmButtonText: 'Valider',
           cancelButtonText: 'Annuler',
+          html: `
+            <div class="text-center" >
+              <p class="h4">Quantité demandée : <span class="badge rounded-pill bg-danger">${besoinToUpdate.QUANTITE} </span> </p>
+            </div>
+          `,
           inputValidator: (value) => {
             if (!value) {
               return 'Vous devez saisir une quantité !';
@@ -205,8 +220,16 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
   // Rendu du composant de la modal
   return (
     <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="md">
-      <DialogTitle>Detail des Besoin</DialogTitle>
+      <DialogTitle><span className="h4">Validations des Besoin</span> <hr /></DialogTitle>
       <DialogContent>
+      <input
+        type="text"
+        placeholder="Search besoin..."
+        value={searchQuery}
+        onChange={event => setSearchQuery(event.target.value)}
+      />
+      <button onClick={() => setSearchQuery("")}>X</button>
+
         <Table>
           <TableHead>
             <TableRow>
@@ -220,7 +243,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {besoinList
+            {filteredBesoinList
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((besoinList) => (
                 <TableRow key={besoinList.NUM_BESOIN}>

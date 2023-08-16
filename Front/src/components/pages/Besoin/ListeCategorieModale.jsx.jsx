@@ -9,6 +9,7 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [categorieList, setCategorieList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Utilisation de useEffect pour effectuer une requête au chargement de la modal
   useEffect(() => {
@@ -22,6 +23,9 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
     };
     fetchCategorieList();
   }, []);
+  const filteredCategorieList = categorieList.filter(cat =>
+    cat.LABEL_CAT.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Fonction pour gérer le changement de page
   const handleChangePage = (_, newPage) => {
@@ -38,7 +42,15 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
   return (
     <Dialog open={isModalCatOpen} onClose={closeCatModal} fullWidth maxWidth="md">
       <DialogTitle>Liste des Catégories</DialogTitle>
+      
       <DialogContent>
+      <input
+          type="text"
+          placeholder="Search category..."
+          value={searchQuery}
+          onChange={event => setSearchQuery(event.target.value)}
+        />
+        <button onClick={() => setSearchQuery("")}>X</button>
         <Table>
           <TableHead>
             <TableRow>
@@ -47,7 +59,7 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
             </TableRow>
           </TableHead>
           <TableBody>
-            {categorieList
+            {filteredCategorieList
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(cat => (
                 <TableRow key={cat.ID_CAT}>

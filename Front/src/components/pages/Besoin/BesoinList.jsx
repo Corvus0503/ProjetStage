@@ -138,7 +138,7 @@ import { Span } from "../../Typography";
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((besoinList) => (
                             <TableRow key={besoinList.NUM_BESOIN}>
-                            <TableCell align="center">{besoinList.NOM_AG + besoinList.PRENOM_AG}</TableCell>
+                            <TableCell align="center">{besoinList.NOM_AG +" "+ besoinList.PRENOM_AG}</TableCell>
                             <TableCell align="center">{besoinList.LABEL_DIVISION}</TableCell>
                             <TableCell align="center">{besoinList.DESIGNATION_ART}</TableCell>
                             <TableCell align="center">{besoinList.QUANTITE}</TableCell>

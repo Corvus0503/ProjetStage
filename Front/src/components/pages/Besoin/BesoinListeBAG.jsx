@@ -8,22 +8,20 @@ import React,{ useEffect } from "react";
 import Breadcrumb from "../../Utils/Breadcrumb";
 import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import { Span } from "../../Typography";
-import InfoIcon from '@mui/icons-material/Info';
 import AboutBesoinModal from "./AboutBesoinModal";
-import MenuIcon from '@mui/icons-material/Menu';
 import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 
 
 
 
-  const Container = styled("div")(({ theme }) => ({
-    margin: "30px",
-    [theme.breakpoints.down("sm")]: { margin: "16px" },
-    "& .breadcrumb": {
-      marginBottom: "30px",
-      [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
-    },
-  }));
+const Container = styled("div")(({ theme }) => ({
+  margin: "30px",
+  [theme.breakpoints.down("sm")]: { margin: "16px" },
+  "& .breadcrumb": {
+  marginBottom: "30px",
+  [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
+  },
+}));
 
   const StyledTable = styled(Table)(() => ({
     whiteSpace: "pre",
@@ -51,7 +49,15 @@ import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCirc
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
     const [selectedMatricule, setSelectedMatricule] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
     
+    const filteredBesoinList = besoinList.filter(besoin =>
+      besoin.AGENT_MATRICULE.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.AGENT_NOM.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.AGENT_PRENOM.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.LABEL_DIVISION.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.DATE_BESOIN.includes(searchQuery)
+    );
 
     const handleDialogClose = () => {
         setShouldOpenConfirmationDialog(false);
@@ -67,9 +73,6 @@ import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCirc
         handleDelete(besoin)
         handleDialogClose()
       };
-      const AddValidation = async ()=>{
-
-      }
 
       const chargerListBesoin = async () => {
         try {
@@ -130,7 +133,18 @@ import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCirc
           </div>
             <Card sx={{ width: "100%", overflow: "auto" }} elevation={6} className="mt-5">
             <div className="m-5 mt-3 mb-3">
-              <h1 align="left"> Liste Des Besoins En Attentes</h1>
+            <div className="d-flex flex-row">
+            <h1 align="left" className="me-5"> Besoins </h1>
+                <input
+                  style={{height:'40px'}}
+                  className="mt-2 form-control"
+                  type="text"
+                  placeholder="Search article..."
+                  value={searchQuery}
+                  onChange={event => setSearchQuery(event.target.value)}
+                />
+                <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
+              </div>
                 <hr />
                 
                     <StyledTable >
@@ -147,7 +161,7 @@ import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCirc
                           </TableRow>
                       </TableHead>
                     <TableBody>
-                        {besoinList
+                        {filteredBesoinList
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((besoinList) => (
                             <TableRow key={besoinList.NUM_BESOIN}>
@@ -159,7 +173,7 @@ import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCirc
                             <TableCell align="center">{renderStatus(besoinList.BESOIN_COUNT)}</TableCell>
                             <TableCell align="center">
                             <Button onClick={() => handleModalOpen(besoinList.AGENT_MATRICULE)}>
-                              <PlaylistAddCheckCircleIcon color="secondary" />
+                              <PlaylistAddCheckCircleIcon style={{fontSize:'2rem'}} color="info" />
                             </Button>
                             <AboutBesoinModal
                               matricule={selectedMatricule}                           

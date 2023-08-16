@@ -9,6 +9,15 @@ const ArticleListModal = ({ isModalOpen, closeModal, onRowSelect, idCat }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [articleList, setArticleList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredArticleList = articleList.filter(article =>
+    article.DESIGNATION_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.SPECIFICITE_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.PRIX_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.UNITE_ART.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
 
   // Utilisation de useEffect pour charger la liste des articles lorsque l'idCat change
   useEffect(() => {
@@ -42,24 +51,31 @@ const ArticleListModal = ({ isModalOpen, closeModal, onRowSelect, idCat }) => {
     <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="md">
       <DialogTitle>Liste des Articles</DialogTitle>
       <DialogContent>
+      <input
+        type="text"
+        placeholder="Search article..."
+        value={searchQuery}
+        onChange={event => setSearchQuery(event.target.value)}
+      />
+      <button onClick={() => setSearchQuery(" ")}>X</button>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell align="center">Désignation</TableCell>
               <TableCell align="center">Spécification</TableCell>
-              <TableCell align="center">Effectif</TableCell>
+              <TableCell align="center">Prix</TableCell>
               <TableCell align="center">Unité</TableCell>
               <TableCell align="center">Opération</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {articleList
+            {filteredArticleList
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(article => (
                 <TableRow key={article.FORMULE}>
                   <TableCell align="center">{article.DESIGNATION_ART}</TableCell>
                   <TableCell align="center">{article.SPECIFICITE_ART}</TableCell>
-                  <TableCell align="center">{article.EFFECTIF_ART}</TableCell>
+                  <TableCell align="center">{article.PRIX_ART}</TableCell>
                   <TableCell align="center">{article.UNITE_ART}</TableCell>
                   <TableCell align="center">
                     <IconButton

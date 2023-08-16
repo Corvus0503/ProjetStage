@@ -3,7 +3,7 @@ import NewBesoin from "../pages/Besoin/NewBesoin";
 import BesoinList from "../pages/Besoin/BesoinList";
 
 const ToggleablePills = (user) => {
-  const [activePill, setActivePill] = useState("pill1");
+  const [activePill, setActivePill] = useState("pill2");
 
   const handlePillClick = (pillId) => {
     setActivePill(pillId);

@@ -3,7 +3,6 @@ import SideDash from "./images/SideDash";
 import SideUser from "./images/SideUser";
 import SideCat from "./images/SideCat";
 import SideValid from "./images/SideValid";
-import SideLougout from "./images/SideLogout";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "./pages/login/authProvider";
@@ -32,15 +31,31 @@ const [lienAdmin] = useState([
     {name : 'User', icon: <SideUser/>,  lien:"/UserList"}
 ])
 
-const lienPerm = () =>{
-    if(user[0].TYPE_AG.includes("User")){
-        return(
-            lien.map((i)=><NavLink to={i.lien} className={`nav-item ${IsOpen ? "open" : ""}`} activeClassName={`active ${IsOpen ? "open" : ""}`}><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
-        )
-    } else if(user[0].TYPE_AG.includes("Admin")){
-        return(
-            lienAdmin.map((i)=><NavLink to={i.lien} className={`nav-item ${IsOpen ? "open" : ""}`} activeClassName={`active ${IsOpen ? "open" : ""}`}><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
-        )
+const lienPerm = () => {
+    if (user[0].TYPE_AG.includes("User")) {
+        return (
+            lien.map((i) => (
+                <button
+                    onClick={() => navigate(i.lien)}
+                    className={`nav-button ${IsOpen ? "open" : ""}`}
+                >
+                    <div style={{ paddingRight: "22px" }}>{i.icon}</div>
+                    <span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span>
+                </button>
+            ))
+        );
+    } else if (user[0].TYPE_AG.includes("Admin")) {
+        return (
+            lienAdmin.map((i) => (
+                <button
+                    onClick={() => navigate(i.lien)}
+                    className={`nav-button ${IsOpen ? "open" : ""}`}
+                >
+                    <div style={{ paddingRight: "22px" }}>{i.icon}</div>
+                    <span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span>
+                </button>
+            ))
+        );
     }
 }
 

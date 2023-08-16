@@ -43,6 +43,15 @@ const ArticleList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [ArticleListe, setArticleListe] = useState([]);
   const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+
+  const filteredArticleListe = ArticleListe.filter(article =>
+    article.LABEL_CAT.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.DESIGNATION_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.SPECIFICITE_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.UNITE_ART.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleDialogClose = () => {
     setShouldOpenConfirmationDialog(false);
@@ -94,12 +103,21 @@ useEffect(() => {
 
   return (
     <Container>
-        <div className="breadcrumb">
-            <Breadcrumb routeSegments={[{ name: "Liste des Article" }]} />
-        </div>
             <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
             <div className="m-5 mt-3 mb-3">
-              <h1 align="left"> Article </h1>
+              <div className="d-flex flex-row">
+                <h1 align="left" className="me-5"> Article </h1>
+                <input
+                  style={{height:'40px'}}
+                  className="mt-2 form-control"
+                  type="text"
+                  placeholder="Search article..."
+                  value={searchQuery}
+                  onChange={event => setSearchQuery(event.target.value)}
+                />
+                <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
+              </div>
+              
                 <hr />
                 
                     <StyledTable>
@@ -115,9 +133,9 @@ useEffect(() => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {ArticleListe
+                        {filteredArticleListe
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((List) => (
+                        .map(List => (
                             <TableRow key={ArticleListe.FORMULE}>
                             <TableCell align="left">{List.FORMULE}</TableCell>
                             <TableCell align="center">{List.LABEL_CAT}</TableCell>

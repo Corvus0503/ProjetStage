@@ -8,13 +8,12 @@ const http = require('http')
 const { 
     getAdmin, addAdmin, updateAdmin, deleteAdmin, getAdminList,
     getCompte, addCompte, updateCompte, deleteCompte,
-    addBesoin, getCategorie, addCategorie, updateCategorie, deleteCategorie,
-    getService, addService, updateService, deleteService,getSelectedArticle,
+    getCategorie, addCategorie, updateCategorie, deleteCategorie,
+    getService, addService, updateService, deleteService,
     getDivision, addDivision, updateDivision, deleteDivision, getArticle, getCategorieArticle,addArticle,
-    updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,
-    getBesoinListe, addValidation, getValidation,getNotification,
-    addNotification,
-    deleteNotification
+    updateArticle, deleteArticle,addBesoin, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,getSelectedArticle,
+    getBesoinListe, addValidation ,getNotification, addNotification,
+    deleteNotification, getValidation,getValidationBesoin
 } = require("./app/utils/querryHelpers")
 const getConnection = require("./app/utils/db.js");
 const socketIO = require("socket.io");
@@ -270,7 +269,8 @@ app.put('/besoins/:id', async (req, res) => {
     QUANTITE,
     QUANTITE_ACC,
     UNITE,
-    ETAT_BESOIN
+    ETAT_BESOIN,
+    OBSERVATION
   } = req.body;
     
   try {
@@ -282,6 +282,7 @@ app.put('/besoins/:id', async (req, res) => {
       QUANTITE_ACC,
       UNITE,
       ETAT_BESOIN,
+      OBSERVATION,
       id,
     );
     res.json({ message: 'Besoin mis à jour avec succès' });
@@ -292,12 +293,18 @@ app.put('/besoins/:id', async (req, res) => {
 });
     //Creator
 app.post('/besoin', function(req, res){
-    const {MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,QUANTITE_ACC,UNITE,ETAT_BESOIN}=req.body
-    addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,QUANTITE_ACC,UNITE,ETAT_BESOIN);
+    const {MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,QUANTITE_ACC,UNITE,ETAT_BESOIN,OBSERVATION}=req.body
+    addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,QUANTITE_ACC,UNITE,ETAT_BESOIN,OBSERVATION);
 })
 
 //Validation des besoins Controller
     //getter :
+app.get('/validation',(req,res)=>{
+  getValidation(req,res);
+})
+app.get('/validationList',(req,res)=>{
+  getValidationBesoin(req,res);
+} )
 
     //setter :
 
