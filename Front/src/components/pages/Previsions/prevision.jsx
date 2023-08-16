@@ -24,6 +24,7 @@ const Container = styled("div")(({ theme }) => ({
 
 
 const Previsions = () =>{
+    const [isLoading, setIsLoading] = useState(true);
     const [validation, setValidation] = useState([{
         LIBELLE:"",
         ENTETE1:"",
@@ -86,38 +87,56 @@ const Previsions = () =>{
             console.error(error);
         }
     }
-    const Data = {
-         LIBELLE: validation[0].LIBELLE ,
-         ENTETE1:validation[0].ENTETE1,
-         ENTETE2:validation[0].ENTETE2,
-         ENTETE3:validation[0].ENTETE3,
-         ENTETE4:validation[0].ENTETE4,
-         ENTETE5:validation[0].ENTETE5,
-         SIGLE:validation[0].SIGLE,
-         VILLE:validation[0].VILLE,
-         ADRESSE:validation[0].ADRESSE,
-         CONTACT:validation[0].CONTACT,
-         EMAIL:validation[0].EMAIL,
-         LABEL_DIVISION:validation[0].LABEL_DIVISION,
-         PRIX_ART:validation[0].PRIX_ART,
-         OBSERVATION:validation[0].OBSERVATION,
-    }
-    useEffect(()=>{        
+    const Data = validation.length > 0 ? {
+        LIBELLE: validation[0].LIBELLE,
+        ENTETE1: validation[0].ENTETE1,
+        ENTETE2: validation[0].ENTETE2,
+        ENTETE3: validation[0].ENTETE3,
+        ENTETE4: validation[0].ENTETE4,
+        ENTETE5: validation[0].ENTETE5,
+        SIGLE: validation[0].SIGLE,
+        VILLE: validation[0].VILLE,
+        ADRESSE: validation[0].ADRESSE,
+        CONTACT: validation[0].CONTACT,
+        EMAIL: validation[0].EMAIL,
+        LABEL_DIVISION: validation[0].LABEL_DIVISION,
+        PRIX_ART: validation[0].PRIX_ART,
+        OBSERVATION: validation[0].OBSERVATION,
+    } : {
+        LIBELLE: "",
+        ENTETE1: "",
+        ENTETE2: "",
+        ENTETE3: "",
+        ENTETE4: "",
+        ENTETE5: "",
+        SIGLE: "",
+        VILLE: "",
+        ADRESSE: "",
+        CONTACT: "",
+        EMAIL: "",
+        LABEL_DIVISION: "",
+        PRIX_ART: "",
+        OBSERVATION: "",
+    };
+    useEffect(() => {
         chargeListValidation();
-        fetchValidation()
-    },[])
+        fetchValidation().then(() => {
+            setIsLoading(false);
+        });
+    }, []);
 
     const [currentYear] = useState(new Date().getFullYear());
 
     return(
         <Container className="mt-5">
-          <div className="breadcrumb">
-                <Breadcrumb routeSegments={[{ name: " Prevision Budgetaire " }]} />
-          </div >
+          
             <div className="shadow p-3 custom-bg" id="impression">
                 <div className="custom-logo-container">
                     <LogoMinister />
                 </div>
+                {isLoading ? (
+                    <div>Chargement en cours...</div>
+                ) : validationList.length > 0 ? (
                 <div className="custom-flex-container">
                     <div className="custom-text-container" style={{ float: 'left' }}>
                         <div className="custom-flex-column">
@@ -158,13 +177,16 @@ const Previsions = () =>{
                         </div>
                     </div>
                 </div>
+                ) : (
+                    <div>Aucune donnée disponible.</div>
+                )}
             </div>
 
             <div className="text-start mt-3">
-                <button className="btn btn-success" onClick={handlePrint}>
+                <button className="btn btn-success" onClick={handlePrint} disabled={validationList.length === 0}>
                     <DoneAllIcon color="white" /> Imprimer
                 </button>
-                <button className="btn btn-primary ms-3" onClick={handleExportExcel}>
+                <button className="btn btn-primary ms-3" onClick={handleExportExcel} disabled={validationList.length === 0}>
                     Export Excel
                 </button>
             </div>

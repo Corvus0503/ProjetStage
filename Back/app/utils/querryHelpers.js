@@ -785,7 +785,7 @@ const deleteArticle = async (req, res, id) => {
    getValidation,
    getValidationBesoin,
    getNotification,
-    addNotification,
-    deleteNotification,
+  addNotification,
+  deleteNotification,
 
   };
