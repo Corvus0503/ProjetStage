@@ -44,16 +44,21 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
       <DialogTitle>Liste des Catégories</DialogTitle>
       
       <DialogContent>
-      <input
-          type="text"
-          placeholder="Search category..."
-          value={searchQuery}
-          onChange={event => setSearchQuery(event.target.value)}
-        />
-        <button onClick={() => setSearchQuery("")}>X</button>
+      <div className="d-flex flex-row">
+                <input
+                  style={{height:'40px',marginLeft:'60%'}}
+                  className="mt-2 form-control"
+                  type="text"
+                  placeholder="Search article..."
+                  value={searchQuery}
+                  onChange={event => setSearchQuery(event.target.value)}
+                />
+                <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
+              </div>
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell align="center">Id Catégorie</TableCell>
               <TableCell align="center">Catégorie</TableCell>
               <TableCell align="center">Opération</TableCell>
             </TableRow>
@@ -63,6 +68,7 @@ const CategorieListModal = ({ isModalCatOpen, closeCatModal, onRowCatSelect }) =
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(cat => (
                 <TableRow key={cat.ID_CAT}>
+                  <TableCell align="center">{cat.ID_CAT}</TableCell>
                   <TableCell align="center">{cat.LABEL_CAT}</TableCell>
                   <TableCell align="center">
                     <IconButton onClick={() => {

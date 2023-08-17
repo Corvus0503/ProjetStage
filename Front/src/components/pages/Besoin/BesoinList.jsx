@@ -44,6 +44,18 @@ import { Span } from "../../Typography";
     const [besoinList, setBesoinList] = useState([]);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
     const matricule=user.user.user.user[0].MATRICULE;
+    const [searchQuery, setSearchQuery] = useState("");
+
+
+    const filteredBesoinList = besoinList.filter(besoin =>
+      besoin.NOM_AG.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.PRENOM_AG.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.LABEL_DIVISION.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.DESIGNATION_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.QUANTITE.toString().includes(searchQuery) ||
+      besoin.UNITE.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.ETAT_BESOIN.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const handleDialogClose = () => {
         setShouldOpenConfirmationDialog(false);
@@ -117,7 +129,18 @@ import { Span } from "../../Typography";
         <Container className="mt-5">
             <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
             <div className="m-5 mt-3 mb-3">
-              <h1 align="left"> Liste des Besoins</h1>
+            <div className="d-flex flex-row">
+                <h1 align="left" className="me-5"> Besoins </h1>
+                <input
+                    style={{height:'40px',marginLeft:'60%'}}
+                    className="mt-2 form-control"
+                    type="text"
+                    placeholder="Recherche de besoin..."
+                    value={searchQuery}
+                    onChange={event => setSearchQuery(event.target.value)}
+                />
+                <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
+              </div>
                 <hr />
                 
                     <StyledTable>

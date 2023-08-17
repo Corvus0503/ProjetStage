@@ -108,7 +108,7 @@ useEffect(() => {
               <div className="d-flex flex-row">
                 <h1 align="left" className="me-5"> Article </h1>
                 <input
-                  style={{height:'40px'}}
+                  style={{height:'40px',marginLeft:'60%'}}
                   className="mt-2 form-control"
                   type="text"
                   placeholder="Search article..."

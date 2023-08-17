@@ -113,7 +113,7 @@ useEffect(() => {
         </div>
         <div className=" text-start mb-3">
           <button className="btn btn-primary " onClick={ouvrirModal} > <AddCircleIcon/> Nouveau Division </button>
-          <NewDivision isOpen={isModalOuverte} onClose={fermerModal} />
+          <NewDivision ChargeTable={chargerListAdmin} isOpen={isModalOuverte} onClose={fermerModal} />
         </div>
             <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
             <div className="m-5 mt-3 mb-3">
@@ -124,11 +124,11 @@ useEffect(() => {
                         <TableHead>
                             <TableRow>
                             <TableCell align="left"> Code Division </TableCell>
-                            <TableCell align="center"> Label de Division  </TableCell>
-                            <TableCell align="center"> Libellé de Service </TableCell>
-                            <TableCell align="center"> Ville de Service </TableCell>
-                            <TableCell align="center"> Adresse de Service</TableCell>
-                            <TableCell align="center"> contact de Service</TableCell>
+                            <TableCell align="center"> Label Division  </TableCell>
+                            <TableCell align="center"> Libellé Service </TableCell>
+                            <TableCell align="center"> Ville </TableCell>
+                            <TableCell align="center"> Adresse </TableCell>
+                            <TableCell align="center"> contact </TableCell>
                             <TableCell align="center"> Opération </TableCell>
                             </TableRow>
                         </TableHead>

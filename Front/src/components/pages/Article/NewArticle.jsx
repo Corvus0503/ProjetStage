@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 
 const TextField = styled(TextValidator)(() => ({
   width: "100%",
-  marginBottom: "30px",
+  marginBottom: "15px",
   textAlign:"start"
 }));
 
@@ -36,6 +36,7 @@ const Article = () => {
         SPECIFICITE_ART: " ",
         PRIX_ART: " ",
         UNITE_ART:" ",
+        DATE_MODIFICATION:' ',
     });
 
     const [idCompte, setIdCompte] = useState("");
@@ -110,11 +111,14 @@ const Article = () => {
                 });
         
                 // Vider les champs après la soumission
+                setSelectedCompte(" ")
+                setSelectedCategorie(" ")
                 setArticle({
                     DESIGNATION_ART: "",
                     SPECIFICITE_ART: "",
                     PRIX_ART: "",
                     UNITE_ART: "",
+                    Categorie:" "
                 });
 
                 } catch (error) {

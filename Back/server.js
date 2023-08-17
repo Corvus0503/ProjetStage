@@ -13,8 +13,8 @@ const {
     getDivision, addDivision, updateDivision, deleteDivision, getArticle, getCategorieArticle,addArticle,
     updateArticle, deleteArticle,addBesoin, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,getSelectedArticle,
     getBesoinListe, addValidation ,getNotification, addNotification,
-    deleteNotification, getValidation,getValidationBesoin
-} = require("./app/utils/querryHelpers")
+    deleteNotification, getValidation,getValidationBesoin,getPrixPrevisionnel
+    } = require("./app/utils/querryHelpers")
 const getConnection = require("./app/utils/db.js");
 const socketIO = require("socket.io");
 const app = express()
@@ -126,14 +126,14 @@ app.get('/compte', function (req, res) {
   })
 
 app.post('/compte', function (req, res) {
-    let {NUM_CMPT, DESIGNTION_CMPT} = req.body
-    addCompte(req, res, NUM_CMPT, DESIGNTION_CMPT);
+    let {NUM_CMPT, DESIGNATION_CMPT} = req.body
+    addCompte(req, res, NUM_CMPT, DESIGNATION_CMPT);
 })
 
 app.put('/compte/:id', function (req, res) {
-    let {NUM_CMPT, DESIGNTION_CMPT} = req.body
+    let {NUM_CMPT, DESIGNATION_CMPT} = req.body
     let {id} = req.params
-    updateCompte(req, res, NUM_CMPT, DESIGNTION_CMPT, id);
+    updateCompte(req, res, NUM_CMPT, DESIGNATION_CMPT, id);
 })
 
 app.delete('/compte/:id', function (req, res) {
@@ -217,14 +217,14 @@ app.get('/articleCat/:id',(req,res)=>{
     getCategorieArticle(req,res,id)
 })
 app.post('/article', function (req, res) {
-    const { DESIGNATION_ART, SPECIFICITE_ART,UNITE_ART, PRIX_ART, ID_CAT } = req.body;
-    addArticle(req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT );
+    const { DESIGNATION_ART, SPECIFICITE_ART,UNITE_ART, PRIX_ART, ID_CAT ,DATE_MODIFICATION} = req.body;
+    addArticle(req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION );
 })
 
 app.put('/article/:id', function (req, res) {
-    let {DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT} = req.body
+    let {DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION} = req.body
     let {id} = req.params
-    updateArticle(req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT, id);
+    updateArticle(req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION, id);
 })
 
 app.delete('/article/:id', function (req, res) {
@@ -305,7 +305,9 @@ app.get('/validation',(req,res)=>{
 app.get('/validationList',(req,res)=>{
   getValidationBesoin(req,res);
 } )
-
+app.get('/prixTotal',(req,res)=>{
+  getPrixPrevisionnel(req,res);
+})
     //setter :
 
     //Creator :

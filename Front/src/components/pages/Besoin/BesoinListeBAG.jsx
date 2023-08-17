@@ -136,10 +136,10 @@ const Container = styled("div")(({ theme }) => ({
             <div className="d-flex flex-row">
             <h1 align="left" className="me-5"> Besoins </h1>
                 <input
-                  style={{height:'40px'}}
+                  style={{height:'40px',marginLeft:'60%'}}
                   className="mt-2 form-control"
                   type="text"
-                  placeholder="Search article..."
+                  placeholder="Recherche de besoin..."
                   value={searchQuery}
                   onChange={event => setSearchQuery(event.target.value)}
                 />

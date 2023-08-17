@@ -51,16 +51,21 @@ const ArticleListModal = ({ isModalOpen, closeModal, onRowSelect, idCat }) => {
     <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="md">
       <DialogTitle>Liste des Articles</DialogTitle>
       <DialogContent>
-      <input
-        type="text"
-        placeholder="Search article..."
-        value={searchQuery}
-        onChange={event => setSearchQuery(event.target.value)}
-      />
-      <button onClick={() => setSearchQuery(" ")}>X</button>
+      <div className="d-flex flex-row">
+                <input
+                  style={{height:'40px',marginLeft:'60%'}}
+                  className="mt-2 form-control"
+                  type="text"
+                  placeholder="Recherche des articles..."
+                  value={searchQuery}
+                  onChange={event => setSearchQuery(event.target.value)}
+                />
+                <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
+              </div>
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell align="center">Numérotation</TableCell>
               <TableCell align="center">Désignation</TableCell>
               <TableCell align="center">Spécification</TableCell>
               <TableCell align="center">Prix</TableCell>
@@ -73,6 +78,7 @@ const ArticleListModal = ({ isModalOpen, closeModal, onRowSelect, idCat }) => {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(article => (
                 <TableRow key={article.FORMULE}>
+                  <TableCell align="center">{article.FORMULE}</TableCell>
                   <TableCell align="center">{article.DESIGNATION_ART}</TableCell>
                   <TableCell align="center">{article.SPECIFICITE_ART}</TableCell>
                   <TableCell align="center">{article.PRIX_ART}</TableCell>

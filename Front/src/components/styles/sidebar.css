@@ -218,6 +218,14 @@
 .sidebar.open .sideText {
   transform: translateX(-300%);
 }
+.nav-button:hover {
+  background-color: #1d20ca;
+  transition-duration: 400ms;
+  color: white;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  width: 100%; 
+}
 /* 
 .sidebar {
   transition: 0.4s;
@@ -250,14 +258,7 @@
   transition: width 0.4s; /* Ajoutez une transition pour la largeur 
 }
 
-.nav-button:hover {
-  background-color: #1d20ca;
-  transition-duration: 400ms;
-  color: white;
-  border-top-left-radius: 25px;
-  border-bottom-left-radius: 25px;
-  width: 100%; /* La largeur s'élargira au passage du curseur 
-}
+
 
 .active {
   background-color: #1d20ca;

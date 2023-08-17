@@ -182,6 +182,7 @@ const NewBesoin = (user) => {
     setAddedItems(prevItems => [...prevItems, newItem]);
     setBesoin({
       QUANTITE: '',
+      OBSERVATION:" ",
     })
     setSelectedArticle({DESIGNATION_ART:''})
     setSelectedCategorie({LABEL_CAT: ""})

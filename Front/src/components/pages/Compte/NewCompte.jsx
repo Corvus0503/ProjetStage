@@ -2,15 +2,12 @@ import {
   Button,
   Grid,
   styled,
-  InputAdornment
 } from "@mui/material";
 import React, { useState } from "react";
 import axios from 'axios'
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { Modal} from '@mui/material';
 import Swal from 'sweetalert2'
-import CompteListModal from "./ListeCompte";
 
 const TextField = styled(TextValidator)(() => ({
   width: "100%",
@@ -26,46 +23,35 @@ const Container = styled("div")(({ theme }) => ({
   },
   boxShadow: theme.shadows[5],
 }));
+
 const CustomModal = styled(Modal)(() => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 }));
 
+const NewCompte = ({ isOpen, onClose, chargerListAdmin }) => {
 
-const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
-  const [categorie,setCategorie] = useState({
-      LABEL_CAT: "",
+  const [Compte,setCompte] = useState({
+      DESIGNATION_CMPT: "",
       NUM_CMPT: "" 
   })
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCompte, setSelectedCompte] = useState({
-      NUM_CMPT: "",
-      DESIGNATION_CMPT: "",
-    });
 
-    console.log("selected : ",selectedCompte)
-  
-    const handleRowSelect = (selectedRow) => {
-      setSelectedCompte(selectedRow);
-    };
 
     const handleModalOpen = () => {
-        setIsModalOpen(true);
-      };
-    const handleModalClose = () => {
-      setIsModalOpen(false);
+      setIsModalOpen(true);
     };
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
 
-  const addNewCategorie = async()=>{
+  const addNewCompte = async()=>{
 
-    let catToSend = {
-      LABEL_CAT: categorie.LABEL_CAT,
-      NUM_CMPT: selectedCompte.NUM_CMPT}
-    console.log(catToSend)
     try {
-        await axios.post(`http://localhost:8080/categorie`, catToSend)
+
+        await axios.post(`http://localhost:8080/Compte`,Compte)
         chargerListAdmin()
     } catch (error) {
         console.log(`Erreur : ${error}`)
@@ -76,7 +62,7 @@ const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
 
     event.preventDefault(); // Empêcher la soumission du formulaire
 
-    if (!categorie.LABEL_CAT || !selectedCompte.NUM_CMPT) {
+    if (!Compte.DESIGNATION_CMPT || !Compte.NUM_CMPT) {
         onClose();
         Swal.fire({
         icon: 'error',
@@ -89,7 +75,7 @@ const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
     onClose();
     Swal.fire({
       title: 'Confirmation',
-      text: "Voulez vous enregister cette categorie ?",
+      text: "Voulez vous enregister cette Compte ?",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -98,17 +84,17 @@ const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
       confirmButtonText: 'Enregistrer'
     }).then((result) => {
       if (result.isConfirmed) {
-        addNewCategorie();
+        addNewCompte();
         Swal.fire(
           'Confirmé!',
-          'Categorie enregistré.',
+          'Compte enregistré.',
           'success'
         )
       }
     })
     
-    setCategorie({
-      LABEL_CAT: "",
+    setCompte({
+      DESIGNATION_CMPT: "",
       NUM_CMPT: ""    
     })
   };
@@ -117,9 +103,7 @@ const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
 
   const handleChange = (event) => {
     event.persist();
-    setSelectedCompte({ ...selectedCompte, [event.target.name]: event.target.value });
-    setCategorie({ ...categorie, [event.target.name]: event.target.value });
-    console.log(event.target.value)
+    setCompte({ ...Compte, [event.target.name]: event.target.value });
   };
 
   const handleCloseModal = () => {
@@ -132,40 +116,32 @@ const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
         <Container>            
               <ValidatorForm onError={() => null} >
                   <div className=" card center shadow p-5">
-                  <h1 align="left"> Ajout d'une nouvelle categorie </h1>
+                  <h1 align="left"> Ajout d'une nouvelle Compte </h1>
                   <hr />
                       <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
 
-                        <TextField
+                      <TextField
                           placeholder="Compte..."
                           label="Compte"
-                          name="DESIGNATION_CMPT"
+                          name="NUM_CMPT"
                           onChange={handleChange}
-                          value={selectedCompte.DESIGNATION_CMPT }
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <h1 style={{border:"none",color:'SlateBlue',backgroundColor:"white"}}>|</h1>
-                                <button style={{border:"none",color:'SlateBlue',backgroundColor:"white"}} onClick={handleModalOpen}>
-                                  <FileUploadIcon style={{fontSize:'2.5rem'}} />
-                                </button>
-                                <CompteListModal  onRowSelect={handleRowSelect} isModalOpen={isModalOpen} closeModal={handleModalClose} />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />   
+                          value={Compte.NUM_CMPT}
+                          errorMessages={["this field is required"]}
+                          validators={["required", "minStringLength: 1", "maxStringLength: 40"]}
+                        />                              
 
                         <TextField
                           type="text"
-                          name="LABEL_CAT"
+                          name="DESIGNATION_CMPT"
                           id="standard-basic"
-                          placeholder="Saisir ici le label categorie...."
-                          value={categorie.LABEL_CAT}
+                          placeholder="Saisir la designation de Compte...."
+                          value={Compte.DESIGNATION_CMPT}
                           onChange={handleChange}
                           errorMessages={["this field is required"]}
-                          label="Label Categorie"
+                          label="Designation Compte"
                           validators={["required", "minStringLength: 1", "maxStringLength: 40"]}
                         />
+
                         <div className="text-center">
 
                         <Button color="primary" className="me-2 "  variant="outlined" type="submit" onClick={handleSubmit}>
@@ -191,4 +167,4 @@ const NewCategorie = ({ isOpen, onClose, chargerListAdmin }) => {
   );
 };
 
-export default NewCategorie;
+export default NewCompte;

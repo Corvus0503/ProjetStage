@@ -15,8 +15,8 @@ import {
   import ConfirmationDialog from "../../Utils/ConfirmationDialog";
   import DeleteIcon from '@mui/icons-material/Delete';
   import Breadcrumb from "../../Utils/Breadcrumb";
-  import UpdateCategorie from "./UpdateCategorie";
-  import NewCategorie from "./NewCategorie";
+  import UpdateCompte from "./UpdateCompte";
+  import NewCompte from "./NewCompte";
   import AddCircleIcon from '@mui/icons-material/AddCircle';
   import Swal from 'sweetalert2'
   
@@ -40,20 +40,14 @@ import {
   }));
   
   //A ne pas toucher
-  const Categorie = () => {
+  const Compte = () => {
     const [page, setPage] = useState(0);
-    const [categorie, setCategorie] = useState(null);
+    const [Compte, setCompte] = useState(null);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [CategorieListe, setCategorieList] = useState([]);
+    const [CompteListe, setCompteList] = useState([]);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");  
+  
     const [isModalOuverte, setIsModalOuverte] = useState(false);
-
-    const filteredCategorieListe = CategorieListe.filter(category =>
-      category.ID_CAT.toString().includes(searchQuery) ||
-      category.LABEL_CAT.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.NUM_CMPT.toString().includes(searchQuery)
-    );
   
     const ouvrirModal = () => {
       setIsModalOuverte(true);
@@ -69,11 +63,11 @@ import {
       chargerListAdmin();
     };
   
-    const handleDeleteUser = (categorie) => {
-      setCategorie(categorie);
+    const handleDeleteUser = (Compte) => {
+      setCompte(Compte);
        Swal.fire({
         title: 'Confirmation',
-        text: "Etes vous sur de supprimer cette Categorie ?",
+        text: "Etes vous sur de supprimer cette Compte ?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -82,7 +76,7 @@ import {
         confirmButtonText: 'Supprimer'
       }).then((result) => {
         if (result.isConfirmed) {
-          handleDelete(categorie)
+          handleDelete(Compte)
           Swal.fire(
             'Supprimé!',
             'Catégorie supprimeé.',
@@ -93,7 +87,7 @@ import {
     };
   
     const handleConfirmationResponse = () => {
-      handleDelete(categorie)
+      handleDelete(Compte)
       handleDialogClose()
     };
   
@@ -101,8 +95,8 @@ import {
   
   const chargerListAdmin = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/categorie');
-      setCategorieList(response.data);
+      const response = await axios.get('http://localhost:8080/Compte');
+      setCompteList(response.data);
       console.log("data loaded");
     } catch (error) {
       console.error(error);
@@ -110,7 +104,7 @@ import {
   };
   
   const handleDelete = id=>{
-      axios.delete(`http://localhost:8080/categorie/${id}`).then(reponse=>{
+      axios.delete(`http://localhost:8080/Compte/${id}`).then(reponse=>{
         chargerListAdmin()}).catch (error =>{
         console.error(`Erreur: ${error}`)
   }) 
@@ -128,54 +122,41 @@ import {
       setRowsPerPage(+event.target.value);
       setPage(0);
     };
-    console.log(CategorieListe)
+    console.log(CompteListe)
   
     return (
       <Container>
           <div className="breadcrumb">
-              <Breadcrumb routeSegments={[{ name: "Liste des Division" }]} />
+              <Breadcrumb routeSegments={[{ name: "Liste des Comptes" }]} />
           </div>
           <div className=" text-start mb-3">
-            <button className="btn btn-primary " onClick={ouvrirModal} > <AddCircleIcon/> Nouvelle Categorie </button>
-            <NewCategorie chargerListAdmin={chargerListAdmin} isOpen={isModalOuverte} onClose={fermerModal} />
+            <button className="btn btn-primary " onClick={ouvrirModal} > <AddCircleIcon/> Nouvelle Compte </button>
+            <NewCompte chargerListAdmin={chargerListAdmin} isOpen={isModalOuverte} onClose={fermerModal} />
           </div>
               <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
               <div className="m-5 mt-3 mb-3">
-              <div className="d-flex flex-row">
-              <h1 align="left" className="me-5"> Categorie </h1>
-                  <input
-                    style={{height:'40px',marginLeft:'60%'}}
-                    className="mt-2 form-control"
-                    type="text"
-                    placeholder="Search article..."
-                    value={searchQuery}
-                    onChange={event => setSearchQuery(event.target.value)}
-                  />
-                  <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
-                </div>
+                <h1 align="left"> Liste des Comptes </h1>
                   <hr />
                   
                       <StyledTable>
                           <TableHead>
                               <TableRow>
-                              <TableCell align="left"> ID categorie </TableCell>
-                              <TableCell align="center"> Label de Categorie </TableCell>
-                              <TableCell align="center"> Num Compte </TableCell>
+                              <TableCell align="left"> Compte</TableCell>
+                              <TableCell align="center"> Désignation Compte </TableCell>
                               <TableCell align="center"> Opération </TableCell>
                               </TableRow>
                           </TableHead>
                           <TableBody>
-                              {filteredCategorieListe
+                              {CompteListe
                               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                               .map((List) => (
-                                  <TableRow key={List.ID_CAT}>
-                                      <TableCell align="left">{List.ID_CAT}</TableCell>
-                                      <TableCell align="center">{List.LABEL_CAT}</TableCell>
-                                      <TableCell align="center">{List.NUM_CMPT}</TableCell>
+                                  <TableRow key={CompteListe.NUM_CMPT}>
+                                      <TableCell align="left">{List.NUM_CMPT}</TableCell>
+                                      <TableCell align="center">{List.DESIGNATION_CMPT}</TableCell>
                                       <TableCell align="center"  >
   
                                       <IconButton >
-                                          <UpdateCategorie  List={List} DivisionListe={CategorieListe}  chargerListAdmin={chargerListAdmin} />
+                                          <UpdateCompte  List={List} DivisionListe={CompteListe}  chargerListAdmin={chargerListAdmin} />
                                       </IconButton>
   
                                       <IconButton onClick={()=>handleDeleteUser(List.ID_CAT)}>
@@ -192,7 +173,7 @@ import {
                       page={page}
                       component="div"
                       rowsPerPage={rowsPerPage}
-                      count={CategorieListe.length}
+                      count={CompteListe.length}
                       onPageChange={handleChangePage}
                       rowsPerPageOptions={[5, 10, 25]}
                       onRowsPerPageChange={handleChangeRowsPerPage}
@@ -217,4 +198,4 @@ import {
     );
   };
   
-  export default Categorie;
+  export default Compte;

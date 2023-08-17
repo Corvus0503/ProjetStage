@@ -20,6 +20,9 @@ import Division from './components/pages/Division/Division';
 import Categorie from './components/pages/Categorie/Categorie';
 import Comments from './components/pages/Notification/Comments';
 import io from "socket.io-client";
+import Compte from './components/pages/Compte/Compte';
+
+
 
 function App() {
   const [IsOpen, setIsOpen] = useState (false)
@@ -87,7 +90,7 @@ useEffect(() => {
             />
             <Route element={<ProtectedRoute user={user} perm={'Admin'}/>}>
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
-              <Route path="/Prevision" element={<Previsions />} />
+              <Route path="/Prevision" element={<Previsions user={user} />} />
               <Route path="/Signup" element={<Signup />} />
               <Route path="/UserList" element={<UserList />} />
               <Route path="/ModUser" element={<ModUser />} />
@@ -97,11 +100,13 @@ useEffect(() => {
               <Route path="/Besoin" element={<Besoin user={user} />} />
               <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />
               <Route path="/Categorie" element={<Categorie user={user} />} />
+              <Route path="/Compte" element={<Compte user={user} />} />
+              
               <Route path="/Comments" element={<Comments comments={comments} setComments={setComments} user={user} IsOpenNot={IsOpenNot} />} />
             </Route>
             <Route element={<ProtectedRoute user={user} perm={'User'}/>}>
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
-              <Route path="/Prevision" element={<Previsions />} />
+              <Route path="/Prevision" element={<Previsions user={user} />} />
               <Route path="/Signup" element={<Signup />} />
               <Route path="/Article" element={<Article />} />
               <Route path="/ArticleList" element={<ArticleList />} />

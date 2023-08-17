@@ -222,13 +222,17 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
     <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="md">
       <DialogTitle><span className="h4">Validations des Besoin</span> <hr /></DialogTitle>
       <DialogContent>
-      <input
-        type="text"
-        placeholder="Search besoin..."
-        value={searchQuery}
-        onChange={event => setSearchQuery(event.target.value)}
-      />
-      <button onClick={() => setSearchQuery("")}>X</button>
+      <div className="d-flex flex-row">
+                <input
+                    style={{height:'40px',marginLeft:'60%'}}
+                    className="mt-2 form-control"
+                    type="text"
+                    placeholder="Recherche de besoin..."
+                    value={searchQuery}
+                    onChange={event => setSearchQuery(event.target.value)}
+                />
+                <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
+              </div>
 
         <Table>
           <TableHead>
@@ -239,6 +243,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
               <TableCell align="center"> Quantité </TableCell>
               <TableCell align="center"> Unité </TableCell>
               <TableCell align="center"> Date </TableCell>
+              <TableCell align="center"> Observation </TableCell>
               <TableCell align="left"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Opération</TableCell>
             </TableRow>
           </TableHead>
@@ -253,6 +258,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
                 <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                 <TableCell align="center">{besoinList.UNITE}</TableCell>
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
+                <TableCell align="center">{besoinList.OBSERVATION}</TableCell>
                 <TableCell align="center" className="d-flex inline">
                 <Button onClick={() => handleValidation(besoinList.NUM_BESOIN)}>
                   <CheckCircleIcon color="success"/>
