@@ -624,6 +624,19 @@ const addValidation = async(req,res,NUM_BESOIN, DATE_VALIDATION, QUANTITE_ACC) =
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+const deleteValidation = async(req,res)=>{
+  const query = `DELETE FROM VALIDATION`
+  try {
+      const connection= await getConnection();
+      const result= await connection.execute(query)
+      res.json(result.rows)
+      await connection.commit();
+      await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' }) 
+  };
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -640,7 +653,8 @@ const getCategorie = async (req,res) => {
     
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' }) };
+    res.status(500).json({ error: 'Internal server error' }) 
+  };
 };
 
 const addCategorie = async (req, res, LABEL_CAT, NUM_CMPT) => {
@@ -833,6 +847,7 @@ const getPrevision = async(req,res)=>{
    getSelectedArticle,
    getBesoinListe,
    addValidation,
+   deleteValidation,
    getValidation,
    getValidationBesoin,
    getNotification,

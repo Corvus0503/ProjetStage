@@ -14,6 +14,7 @@ import PageVide from "./PageVide";
 import Swal from 'sweetalert2';
 import PrintIcon from '@mui/icons-material/Print';
 import { format } from 'date-fns';
+import RestorePageIcon from '@mui/icons-material/RestorePage';
 
 const Container = styled("div")(({ theme }) => ({
     margin: "30px",
@@ -178,6 +179,17 @@ const Previsions = (user) =>{
 
     const [currentYear] = useState(new Date().getFullYear());
 
+    const handelReanitialiser= async()=>{
+        localStorage.removeItem('isButtonValidated');
+
+        axios.delete(`http://localhost:8080/validation`).then(reponse=>{
+
+            chargeListValidation();
+        }).catch (error =>{
+            console.error(`Erreur: ${error}`)
+        }) 
+    }
+
     return(
         <Container>
             <div className="breadcrumb">
@@ -246,7 +258,45 @@ const Previsions = (user) =>{
                 )}
             </div>
 
-            <div className="text-start mt-3">
+            <div className="text-start mt-3 ">
+                {typeCompte ==="Admin"&&(
+                    <div className="text-end mb-2">
+                        <button className="btn btn-info"
+                            onClick={()=>{
+                            Swal.fire({
+                                title: `Attention ! Si vous le validez maintenant, la prévision de l'année ${currentYear + 1} sera confirmée et vous ne pourrez plus apporter de modifications. `,
+                                input: 'password',
+                                inputPlaceholder: 'Mot de passe',
+                                showCancelButton: true,
+                                confirmButtonText: 'Valider',
+                                cancelButtonText: 'Annuler',
+                                html: `
+                                <div class="text-center" >
+                                <p class="h4"> Pour Confirmer Saisir votre mot de passe </p>
+                                </div>
+                            `,
+                                allowOutsideClick: false,
+                                inputValidator: (value) => {
+                                    if (!value) {
+                                        return 'Veuillez entrer le mot de passe';
+                                    }
+                                },
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    if (result.value === PASSWORD) {
+                                        handelReanitialiser();
+                                        window.location.reload()
+                                    } else {
+                                        Swal.fire('Mot de passe incorrect', 'Veuillez réessayer.', 'error');
+                                    }
+                                }
+                            });
+                        }}
+                        >
+                            <RestorePageIcon/> Réinitialiser
+                        </button>
+                    </div>
+                ) }
                 {typeCompte === "Admin" && (
                     <button
                         className="btn btn-primary ms-3 me-3"
@@ -283,7 +333,7 @@ const Previsions = (user) =>{
                         disabled={isButtonValidated || validationList.length === 0}
                     >
                         {isButtonValidated ? (
-                            <span>
+                            <span className="ms-4 me-4">
                                 <DoneAllIcon style={{ color: 'white' }} /> Validé
                             </span>
                         ) : (

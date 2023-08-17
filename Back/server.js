@@ -12,7 +12,7 @@ const {
     getService, addService, updateService, deleteService,
     getDivision, addDivision, updateDivision, deleteDivision, getArticle, getCategorieArticle,addArticle,
     updateArticle, deleteArticle,addBesoin, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,getSelectedArticle,
-    getBesoinListe, addValidation ,getNotification, addNotification,
+    getBesoinListe, addValidation,deleteValidation ,getNotification, addNotification,
     deleteNotification, getValidation,getValidationBesoin,getPrixPrevisionnel,addPrevision,getPrevision,
     } = require("./app/utils/querryHelpers")
 const getConnection = require("./app/utils/db.js");
@@ -302,6 +302,7 @@ app.post('/besoin', function(req, res){
 app.get('/validation',(req,res)=>{
   getValidation(req,res);
 })
+
 app.get('/validationList',(req,res)=>{
   getValidationBesoin(req,res);
 } )
@@ -324,6 +325,13 @@ app.post('/prevision',(req,res)=>{
   const{PREVISION, DATE_PREVISION}=req.body;
   addPrevision(req,res,PREVISION, DATE_PREVISION)
 })
+//delete
+app.delete('/validation',(req,res)=>{
+  deleteValidation(req,res);
+})
+
+
+
 
 server.listen(8080, () =>{
     console.log("Server is running")
