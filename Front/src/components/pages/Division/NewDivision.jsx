@@ -48,7 +48,6 @@ const NewDivision = ({ isOpen, onClose }) => {
   const addNewDivision = async()=>{
     try {
         await axios.post(`http://localhost:8080/division`, division)
-        alert("submited")
 
 
     } catch (error) {

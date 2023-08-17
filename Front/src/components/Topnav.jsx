@@ -237,7 +237,12 @@ const Topnav = ({user, IsOpen, togleSidebar, logout, comments, togleNot}) => {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <img src={require(`../uploads/${user[0].PHOTO}`)} alt="Avatar Logo" style={{width: "50px", height: "50px"}} className="rounded-pill" onClick={() => setTopDropdown(!topDropdown)}/>
+              {user[0].PHOTO && (
+                      <img
+                      src={require(`../uploads/${user[0].PHOTO}`)} // Serve the photo from the "uploads" directory on the server// Adjust the image size as needed
+                        alt="Avatar Logo" style={{width: "50px", height: "50px"}} className="rounded-pill" onClick={() => setTopDropdown(!topDropdown)}
+                      />
+                    )}
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

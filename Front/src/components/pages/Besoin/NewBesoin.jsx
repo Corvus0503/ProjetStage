@@ -11,6 +11,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import CategorieListModal from "./ListeCategorieModale.jsx";
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import Swal from 'sweetalert2';
+import io from "socket.io-client";
+
 // Création d'un composant TextField stylisé avec Styled-components
 const TextField = styled(TextValidator)(() => ({
   width: "100%",
@@ -129,13 +131,21 @@ const NewBesoin = (user) => {
 
   };
 
+  const socket = io("http://localhost:8080");
+
   async function sendComment() {
     try {
         await axios.post(`http://localhost:8080/notification`, {
-          BODY_NOT : `a envoyé une demande`, 
+            BODY_NOT : `a envoyé un besion`,
             MATRICULE : `${user.user.user.user[0].MATRICULE}`,  
             DATE_NOT : format(new Date(), 'yyyy-MM-dd')
         })
+
+        socket.emit("new-notfcation",{
+          BODY_NOT : `a envoyé un besion`, 
+          MATRICULE : `${user.user.user.user[0].MATRICULE}`,  
+          DATE_NOT : format(new Date(), 'yyyy-MM-dd')
+      })
 
     } catch (error) {
         console.log(`Erreur : ${error}`)

@@ -24,6 +24,8 @@ import Breadcrumb from "../../Utils/Breadcrumb";
 import Swal from 'sweetalert2'
 import { Span } from "../../Typography";
 import SearchIcon from '@mui/icons-material/Search';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -65,6 +67,15 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         width: '20ch',
       },
     },
+  },
+}));
+
+const Container = styled("div")(({ theme }) => ({
+  margin: "30px",
+  [theme.breakpoints.down("sm")]: { margin: "16px" },
+  "& .breadcrumb": {
+    marginBottom: "30px",
+    [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
   },
 }));
   
@@ -199,9 +210,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
     console.log(adminList)
     return (
-    <div className="containerBG">
-      <div className="breadcrumb">
+  
+      <Container >
+        <div className="m-5 mt-3 mb-3">
+        <div className="breadcrumb">
             <Breadcrumb routeSegments={[{ name: "Liste des Utilisateur" }]} />
+        </div>
+        <div className=" text-start mb-3">
+          <button className="btn btn-primary " onClick={() => navigate("/Signup", { replace: true })} > <AddCircleIcon/> Nouvelle utilisateur </button>
         </div>
         <div className="container mt-5 p-5 card shadow">
         <h1 align="left"> Liste des utilisateurs </h1>
@@ -292,8 +308,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
             )}
           </Box>
         </div>
+        </div>
       
-    </div>
+      </Container>
+      
+      
+  
       
     );
   };

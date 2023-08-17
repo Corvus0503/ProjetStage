@@ -11,6 +11,7 @@ import './styles/sidebar.css'
 import ArticleIcone from "./images/ArticleIcone";
 import Topnav from "./Topnav";
 import { useNavigate } from "react-router-dom";
+import SubMenu from "./SubMenu";
 
 const SideNav = ({IsOpen, togleSidebar, deconexion, user, comments, togleNot}) =>{
     const navigate = useNavigate();
@@ -20,26 +21,48 @@ const SideNav = ({IsOpen, togleSidebar, deconexion, user, comments, togleNot}) =
     {name : 'Prevision', icon: <SideCat/>, lien: "/Prevision"},
     {name: 'Article',icon: <ArticleIcone/> ,lien:"/Article" },
     {name: 'Besoin',icon: <SideValid/>, lien:"/Besoin" }
-    /*{name : 'User', icon: <SideCat/>},
-    {name : 'Validation', icon: <SideValid/>}*/
 ])
 
 const [lienAdmin] = useState([
     {name : 'Dashboard', icon: <SideDash/>, lien: "/Dashboard"},
     {name : 'Prevision',icon: <SideCat/>, lien: "/Prevision"},
-    {name: 'Article',icon: <ArticleIcone/> ,lien:"/Article" },
-    {name: 'Besoin',icon: <SideValid/>, lien:"/Besoin" },
+    {name : 'Division',icon: <SideCat/>, lien: "/Division"},
+    {name: 'Article',icon: <ArticleIcone/> ,lien:"/Article" , subNav : [
+        {name: 'Nouveau',icon: "." ,lien:"/Article/Nouvel_Article"},
+        {name: 'Liste',icon: "." ,lien:"/Article/Liste"},
+    ]},
     {name : 'User', icon: <SideUser/>,  lien:"/UserList"}
+])
+
+const [lienBAG] = useState([
+    {name : 'Dashboard', icon: <SideDash/>, lien: "/Dashboard"},
+    {name : 'Prevision',icon: <SideCat/>, lien: "/Prevision"},
+    {name: 'Article',icon: <ArticleIcone/> ,lien:"/Article" , subNav : [
+        {name: 'Nouveau',icon: "." ,lien:"/Article/Nouvel_Article"},
+        {name: 'Liste',icon: "." ,lien:"/Article/Liste"},
+    ]},
+    {name: 'Besoin',icon: <SideValid/>, lien:"/Besoin"},
+    {name: 'Validation',icon: <SideValid/>, lien:"/BesoinBag" },
 ])
 
 const lienPerm = () =>{
     if(user[0].TYPE_AG.includes("User")){
         return(
-            lien.map((i)=><NavLink to={i.lien} className={`nav-item ${IsOpen ? "open" : ""}`} activeClassName={`active ${IsOpen ? "open" : ""}`}><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
+            lien.map((item, index)=>{
+                return(<SubMenu item={item} key={index} IsOpen={IsOpen}/>)
+            })
         )
     } else if(user[0].TYPE_AG.includes("Admin")){
         return(
-            lienAdmin.map((i)=><NavLink to={i.lien} className={`nav-item ${IsOpen ? "open" : ""}`} activeClassName={`active ${IsOpen ? "open" : ""}`}><div style={{paddingRight: "22px"}}>{i.icon}</div><span className={`sideText ${IsOpen ? "open" : ""}`}>{i.name}</span></NavLink>)
+            lienAdmin.map((item, index)=>{
+                return(<SubMenu item={item} key={index} IsOpen={IsOpen}/>)
+            })
+        )
+    } else if(user[0].TYPE_AG.includes("BAG")){
+        return(
+            lienBAG.map((item, index)=>{
+                return(<SubMenu item={item} key={index} IsOpen={IsOpen}/>)
+            })
         )
     }
 }

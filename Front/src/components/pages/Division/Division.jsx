@@ -8,6 +8,8 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  alpha,
+  InputBase
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios"
@@ -18,7 +20,50 @@ import Breadcrumb from "../../Utils/Breadcrumb";
 import UpdateDivision from "./UpdateDivision";
 import NewDivision from "./NewDivision";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import SearchIcon from '@mui/icons-material/Search';
 
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.black, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.black, 0.25),
+  },
+  borderColor: 'black',
+  marginLeft: 0,
+  width: '50%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '50%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+    },
+  },
+}));
 
 const Container = styled("div")(({ theme }) => ({
   margin: "30px",
@@ -132,7 +177,22 @@ useEffect(() => {
             <div className="m-5 mt-3 mb-3">
               <h1 align="left"> Liste des Division </h1>
                 <hr />
-                
+                <div style={{paddingLeft: "80%"}}>
+          <div style={{width: "200px", right: 0}} className="text-end">
+          
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search…"
+              inputProps={{ 'aria-label': 'search' }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            </Search>
+          </div>
+          </div>
                     <StyledTable>
                         <TableHead>
                             <TableRow>
@@ -146,7 +206,7 @@ useEffect(() => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {DivisionListe
+                            {filteredDivisionList
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((List) => (
                                 <TableRow key={DivisionListe.CODE_DIVISION}>

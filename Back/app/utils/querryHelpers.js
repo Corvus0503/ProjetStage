@@ -115,6 +115,18 @@ const getNotification = async (req, res, id) => {
   }
 };
 
+const getNotificationUser = async (req, res, id) => {
+  try {
+    const connection = await getConnection()
+    const result = await connection.execute('SELECT NOTIFICATION.*, AGENT.NOM_UTIL_AG, AGENT.PHOTO FROM NOTIFICATION INNER JOIN AGENT ON NOTIFICATION.MATRICULE = AGENT.MATRICULE WHERE NOTIFICATION.MATR_DEST=:1', [id]);
+    res.json(result.rows);
+    await connection.close();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 const addNotification = async (req, res, BODY_NOT, MATRICULE, DATE_NOT) => {
   try {
     const connection = await getConnection();
@@ -534,45 +546,81 @@ const addBesoin = async (req, res, MATRICULE, FORMULE, DATE_BESOIN, QUANTITE, UN
 //requete Validation
 
 const getValidation = async (req,res) =>{
-    const query=`SELECT VALIDATION.*,BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*,SERVICE.* 
-            FROM ((((((VALIDATION 
-                INNER JOIN BESOIN ON VALIDATION.NUM_BESOIN = BESOIN.NUM_BESOIN)
-                INNER JOIN ARTICLE ON BESOIN.FORMULE=ARTICLE.FORMULE)
-                INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
-                INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
-                INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION)
-                INNER JOIN SERVICE ON DIVISION.CODE_SER = DIVISION.CODE_SER)
-                `;
-    try {
-        const connection = await getConnection();
-        const result = await connection.execute(query);
-        res.json(result.rows)
-        connection.commit();
-        await connection.close();
-    } catch (error) {
-        console.error("Erreur lors de l'affichage du besoin :", error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+  const query=`SELECT VALIDATION.*,BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*,SERVICE.*, COMPTE.*
+          FROM (((((((VALIDATION 
+              INNER JOIN BESOIN ON VALIDATION.NUM_BESOIN = BESOIN.NUM_BESOIN)
+              INNER JOIN ARTICLE ON BESOIN.FORMULE=ARTICLE.FORMULE)
+              INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+              INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
+              INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION)
+              INNER JOIN SERVICE ON DIVISION.CODE_SER = DIVISION.CODE_SER)
+              INNER JOIN COMPTE ON CATEGORIE.NUM_CMPT = COMPTE.NUM_CMPT)
+              `;
+  try {
+      const connection = await getConnection();
+      const result = await connection.execute(query);
+      res.json(result.rows)
+      connection.commit();
+      await connection.close();
+  } catch (error) {
+      console.error("Erreur lors de l'affichage du besoin :", error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
 }
 
-const addValidation = async(req,res,NUM_BESOIN) => {
-    const query = `
-        INSERT INTO VALIDATION (NUM_VALIDATION,NUM_BESOIN) 
-        VALUES (NUM_VALIDATION.nextval, :NUM_BESOIN)`;
-    try {
-        const connection = await getConnection();
-        const result = await connection.execute(query,[NUM_BESOIN])
-        res.json(result.rows)
-        connection.commit();
-        await connection.close();
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+const getValidationBesoin = async (req,res)=>{
+  const query=`
+              SELECT
+              SERVICE.CODE_SER,
+              SERVICE.LIBELLE,
+              COMPTE.NUM_CMPT,
+              COMPTE.DESIGNATION_CMPT,
+              SUM(VALIDATION.QUANTITE_ACC * ARTICLE.PRIX_ART) AS TOTAL
+                  FROM
+                  (((((((VALIDATION
+                  INNER JOIN BESOIN ON VALIDATION.NUM_BESOIN = BESOIN.NUM_BESOIN)
+                  INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+                  INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+                  INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
+                  INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION)
+                  INNER JOIN SERVICE ON DIVISION.CODE_SER = SERVICE.CODE_SER)
+                  INNER JOIN COMPTE ON CATEGORIE.NUM_CMPT = COMPTE.NUM_CMPT)
+                      GROUP BY
+                          SERVICE.CODE_SER,
+                          SERVICE.LIBELLE,
+                          COMPTE.NUM_CMPT,
+                          COMPTE.DESIGNATION_CMPT`;
+  try {
+      const connection= await getConnection();
+      const result = await connection.execute(query);
+      res.json(result.rows);
+      connection.commit();
+      await connection.close()
+  } catch (error) {
+      console.error("Erreur lors de l'affichage du besoin :", error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+const addValidation = async(req,res,NUM_BESOIN, DATE_VALIDATION, QUANTITE_ACC) => {
+  const query = `
+      INSERT INTO VALIDATION (NUM_VALIDATION,NUM_BESOIN, DATE_VALIDATION, QUANTITE_ACC) 
+      VALUES (NUM_VALIDATION.nextval, :NUM_BESOIN, :DATE_VALIDATION, :QUANTITE_ACC)`;
+  try {
+      const connection = await getConnection();
+      const result = await connection.execute(query,[NUM_BESOIN,DATE_VALIDATION, QUANTITE_ACC])
+      res.json(result.rows)
+      connection.commit();
+      await connection.close();
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 // Requete Categorie
@@ -738,7 +786,9 @@ module.exports = {
     getBesoinListe,
     addValidation,
     getValidation,
+    getValidationBesoin,
     getNotification,
+    getNotificationUser,
     addNotification,
     deleteNotification
 };

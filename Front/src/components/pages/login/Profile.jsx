@@ -14,10 +14,6 @@ import {
 import { FlexBetween, FlexBox } from "../../FlexBox";
 import { H4, Small } from "../../Typography";
 import {
-  Autocomplete,
-  Checkbox,
-  FormControlLabel,
-  FormControl,
   Grid,
   Icon,
   Radio,
@@ -33,6 +29,7 @@ import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { Modal } from 'react-bootstrap';
 import axios from "axios"
 import CreateIcon from '@mui/icons-material/Create';
+import Swal from 'sweetalert2'
 
 const ContentBox = styled(FlexBox)({
   alignItems: "center",
@@ -55,6 +52,15 @@ const StyledButton = styled(Button)(({ theme }) => ({
   fontSize: "13px",
   color: theme.palette.text.primary,
   ":hover": { background: "transparent" },
+}));
+
+const Container = styled("div")(({ theme }) => ({
+  margin: "30px",
+  [theme.breakpoints.down("sm")]: { margin: "16px" },
+  "& .breadcrumb": {
+    marginBottom: "30px",
+    [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
+  },
 }));
 
 const Profile = ({user}) => {
@@ -110,20 +116,50 @@ const updateUser = id => {
   }).catch(error =>{console.error(error);})
 }
 
+const handleSubmit = (id) => {
+  Swal.fire({
+    title: 'Confirmation',
+    text: "Voulez vous vrament modifier vos informations?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Enregistrer'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      updateUser(id)
+      Swal.fire(
+        'Confirmé!',
+        'Inormation modifiés.',
+        'success'
+      )
+    }
+  })
+  
+};
+
     useEffect(() =>{
       setModUser(user[0])
     }, [])
 
-    console.log(user[0].PHOTO)
+    console.log("modUser : ",modUser)
     return (
+      <Container>
         <Card sx={{ pt: 3 }} elevation={3}>
           <ContentBox mb={3} alignContent="center">
+          {user[0].PHOTO && (
+                      <img
+                        src={require(`../../../uploads/${user[0].PHOTO}`)} // Serve the photo from the "uploads" directory on the server
+                        alt={user[0].NOM_AG}
+                        style={{width: "150px", height: "150px"}} className="rounded-pill" // Adjust the image size as needed
+                      />
+                    )}
             <H4 sx={{ mt: "16px", mb: "8px" }}>{user[0].NOM_AG} {user[0].PRENOM_AG}</H4>
             <Small color="text.secondary">{user[0].FONCTION_AG}</Small>
           </ContentBox>
     
           <Divider />
-          <ValidatorForm onError={() => null}>
+          <ValidatorForm onSubmit={updateUser} onError={() => null}>
           <Grid container spacing={6}>
     <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
             <TextField
@@ -157,11 +193,6 @@ const updateUser = id => {
               validators={["required", "minStringLength: 1", "maxStringLength: 20"]}
             />
 
-<Button onClick={() => updateUser(modUser.MATRICULE)} color="success" variant="contained" type="submit">
-          {/*<Icon>send</Icon>*/}
-          Modifier
-        </Button>
-
     </Grid>
     <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
     <TextField
@@ -184,7 +215,7 @@ const updateUser = id => {
               />
 
             <TextField
-              type="number"
+              type="text"
               name="TEL_AG"
               value={modUser.TEL_AG}
               label="Contact"
@@ -192,6 +223,10 @@ const updateUser = id => {
               validators={["required"]}
               errorMessages={["Veuillez remplir ce champ"]}
             />
+            <Button onClick={() => handleSubmit(modUser.MATRICULE)} color="success" variant="contained" type="submit">
+          {/*<Icon>send</Icon>*/}
+          Modifier
+        </Button>
     </Grid>
     
 </Grid>
@@ -199,6 +234,8 @@ const updateUser = id => {
           
     
         </Card>
+      </Container>
+        
       );
     };
     

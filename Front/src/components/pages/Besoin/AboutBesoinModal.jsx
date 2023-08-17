@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Dialog, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, DialogTitle, DialogContent, DialogActions, Button, } from "@mui/material";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Swal from 'sweetalert2';
+import { format } from 'date-fns';
+
+//
+
 
 // Composant pour afficher la liste des articles dans une modal
 
 
 
-const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
+const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}) => {
   // Utilisation de useState pour gérer la pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [besoinList, setBesoinList] = useState([]);
-  const [selectedBesoins, setSelectedBesoins] = useState([]);
-  const [quantiteToUpdate, setQuantiteToUpdate] = useState('');
 
   const fetchArticleList = async () => {
     try {
@@ -32,6 +34,21 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
 
   //console.log(matricule)
 
+  async function sendComment() {
+    console.log('matricule : ',matricule)
+    try {
+        await axios.post(`http://localhost:8080/notificationRet`, {
+            BODY_NOT : `a analysé votre beson`, 
+            MATRICULE : `${user.user[0].MATRICULE}`,  
+            DATE_NOT : format(new Date(), 'yyyy-MM-dd'),
+            MATR_DEST: matricule
+        })
+
+    } catch (error) {
+        console.log(`Erreur : ${error}`)
+    }
+  }
+
   // Utilisation de useEffect pour charger la liste des articles lorsque l'idCat change
   useEffect(() => {  
     fetchArticleList();
@@ -43,19 +60,8 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
     const besoinToUpdate = besoinList.find(besoin => besoin.NUM_BESOIN === besoinId);
     
     try {
-      const formattedDateBesoin = besoinToUpdate.DATE_BESOIN instanceof Date
-        ? besoinToUpdate.DATE_BESOIN.toISOString()
-        : new Date(besoinToUpdate.DATE_BESOIN).toISOString();
-  
+      
       // Créez un nouvel objet de mise à jour en incluant tous les champs nécessaires
-      const updatedBesoin = {
-        MATRICULE: besoinToUpdate.MATRICULE,
-        FORMULE: besoinToUpdate.FORMULE,
-        DATE_BESOIN: formattedDateBesoin,
-        QUANTITE: besoinToUpdate.QUANTITE,
-        UNITE: besoinToUpdate.UNITE,
-        ETAT_BESOIN: 'Validé', // Nouvel état
-      };
 
       closeModal();
   
@@ -70,51 +76,87 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
         confirmButtonText: 'Oui, valider',
         cancelButtonText: 'Annuler'
       });
-      
-      if (result.isConfirmed) {
-        // Envoyez une requête au serveur pour mettre à jour le besoin avec les nouvelles données
-        await axios.put(`http://localhost:8080/besoins/${besoinId}`, updatedBesoin);
-  
-        // Mettez à jour la liste des besoins avec le nouvel état
-        setBesoinList(prevList =>
-          prevList.map(besoin => {
-            if (besoin.NUM_BESOIN === besoinId) {
-              return { ...besoin, ETAT_BESOIN: 'Valider' };
-            }
-            return besoin;
-          })
-        );
 
-        Swal.fire(
-          'Validé !',
-          'Le besoin a été validé avec succès.',
-          'success'
-        );
-        fetchArticleList();
-        chargerBag();
+      if (result.isConfirmed) {
+        const { value: quantiteAcc } = await Swal.fire({
+          title: 'Saisissez la quantité accordée :',
+          input: 'number',
+          inputAttributes: {
+            step: '1',
+            min: '0',
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Valider',
+          cancelButtonText: 'Annuler',
+          inputValidator: (value) => {
+            if (!value) {
+              return 'Vous devez saisir une quantité !';
+            }
+            if (parseInt(value) > besoinToUpdate.QUANTITE) {
+              return 'La quantité accordée ne peut pas être supérieure à la quantité demandée !';
+            }
+            if (parseInt(value) < 0) {
+              return 'La quantité accordée ne peut pas être négative !';
+            }
+          }
+        });
+  
+        if (quantiteAcc !== undefined) {
+          const DataValidated = {
+            NUM_BESOIN: besoinId,
+            DATE_VALIDATION:format(new Date(), 'yyyy-MM-dd'),
+            QUANTITE_ACC: parseInt(quantiteAcc),
+          };
+          const updatedBesoin = {
+            MATRICULE: besoinToUpdate.MATRICULE,
+            FORMULE: besoinToUpdate.FORMULE,
+            DATE_BESOIN: besoinToUpdate.DATE_BESOIN,
+            QUANTITE: besoinToUpdate.QUANTITE,
+            UNITE: besoinToUpdate.UNITE,
+            ETAT_BESOIN: 'Validé', // Nouvel état
+            QUANTITE_ACC: parseInt(quantiteAcc),
+          };
+
+          // Ajout des données à la table VALIDATION
+          await axios.post(`http://localhost:8080/validation`, DataValidated);
+
+          // Mise à jour du besoin dans la table principale
+          await axios.put(`http://localhost:8080/besoins/${besoinId}`, updatedBesoin);  
+          // Mettez à jour la liste des besoins avec le nouvel état
+          setBesoinList(prevList =>
+            prevList.map(besoin => {
+              if (besoin.NUM_BESOIN === besoinId) {
+                return { ...besoin, ETAT_BESOIN: 'Valider' };
+              }
+              return besoin;
+            })
+          );
+          Swal.fire(
+            'Validé !',
+            'Le besoin a été validé avec succès.',
+            'success'
+          );
+          sendComment()
+          fetchArticleList();
+          chargerBag();
+        }
       }
     } catch (error) {
       console.error(error);
     }
   };
 
-////////////////////////////////////////////////////////////////////////////////////
-
-
   const handleUpdate = async (besoinId, newEtat) => {
     const besoinToUpdate = besoinList.find(besoin => besoin.NUM_BESOIN === besoinId);
   
-    try {
-      const formattedDateBesoin = besoinToUpdate.DATE_BESOIN instanceof Date
-        ? besoinToUpdate.DATE_BESOIN.toISOString()
-        : new Date(besoinToUpdate.DATE_BESOIN).toISOString();
-  
+    try {  
       // Créez un nouvel objet de mise à jour en incluant tous les champs nécessaires
       const updatedBesoin = {
         MATRICULE: besoinToUpdate.MATRICULE,
         FORMULE: besoinToUpdate.FORMULE,
-        DATE_BESOIN: formattedDateBesoin,
+        DATE_BESOIN: besoinToUpdate.DATE_BESOIN,
         QUANTITE: besoinToUpdate.QUANTITE,
+        QUANTITE_ACC:0,
         UNITE: besoinToUpdate.UNITE,
         ETAT_BESOIN: newEtat, // Nouvel état
       };
@@ -140,7 +182,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
         // Mettez à jour la liste des besoins avec le nouvel état
         setBesoinList(prevList =>
           prevList.map(besoin => {
-            if (besoin.NUM_BESOIN === besoinId) {
+            if (besoin.NUM_BESOIN === besoinId ) {
               return { ...besoin, ETAT_BESOIN: newEtat };
             }
             return besoin;
@@ -149,11 +191,13 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
 
         Swal.fire(
           'Refusé !',
-          'Le besoin a été refusé avec succès.',
+          'Besoin refusé.',
           'success'
         );
+        
         fetchArticleList();
         chargerBag();
+
       }
     } catch (error) {
       console.error(error);
@@ -182,14 +226,13 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell align="center"> Matricule </TableCell>
-              <TableCell align="center"> Nom   </TableCell>
               <TableCell align="center"> Division </TableCell>
+              <TableCell align="center"> Compte </TableCell>
               <TableCell align="center"> Article </TableCell>
               <TableCell align="center"> Quantité </TableCell>
               <TableCell align="center"> Unité </TableCell>
               <TableCell align="center"> Date </TableCell>
-              <TableCell align="center">Opération</TableCell>
+              <TableCell align="left"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Opération</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -197,19 +240,18 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((besoinList) => (
                 <TableRow key={besoinList.NUM_BESOIN}>
-                <TableCell align="center">{besoinList.MATRICULE}</TableCell>
-                <TableCell align="center">{besoinList.NOM_AG + besoinList.PRENOM_AG}</TableCell>
                 <TableCell align="center">{besoinList.LABEL_DIVISION}</TableCell>
+                <TableCell align="center">{besoinList.DESIGNATION_CMPT +besoinList.NUM_CMPT }</TableCell>
                 <TableCell align="center">{besoinList.DESIGNATION_ART}</TableCell>
                 <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                 <TableCell align="center">{besoinList.UNITE}</TableCell>
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
                 <TableCell align="center" className="d-flex inline">
                 <Button onClick={() => handleValidation(besoinList.NUM_BESOIN)}>
-                  <CheckCircleOutlineIcon color="success" />
+                  <CheckCircleIcon color="success"/>
                 </Button>
                 <Button onClick={() => handleUpdate(besoinList.NUM_BESOIN, 'refusé')}>
-                  <CancelIcon color="error" />
+                  <CancelIcon color="error"/>
                 </Button>
 
                 </TableCell>

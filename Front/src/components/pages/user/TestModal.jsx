@@ -25,6 +25,8 @@ import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { Modal } from 'react-bootstrap';
 import axios from "axios"
 import CreateIcon from '@mui/icons-material/Create';
+import Swal from 'sweetalert2';
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -112,7 +114,7 @@ const TestModal = ({List, chargerListAdmin}) => {
     MAIL_AG: "",
     NOM_AG: "",
     NOM_UTIL_AG: "",
-    TYPE_AG: "user",
+    TYPE_AG: "User",
     PRENOM_AG: "",
     ADRESSE_AG: "",
     TEL_AG: "",
@@ -152,6 +154,11 @@ const updateUser = id => {
     });
     chargerListAdmin()
     closeModal()
+    Swal.fire({
+      icon: 'success',
+      title: 'Informations modifiés',
+      text: 'Information uutilisteur modifiés avec succès !',
+    });
     console.log('Le USer a été ajouté avec succès.');
   }).catch(error =>{console.error(error);})
 }
@@ -204,7 +211,13 @@ const updateUser = id => {
               onChange={handleFileChange}
             />
             <PhotoUploadButton htmlFor="raised-button-file" backgroundImage={imagePreview}>
-              {imagePreview ? null : <Icon fontSize="large">cloud_upload</Icon>}
+              {imagePreview ? null : <div>{List.PHOTO && (
+                      <img
+                        src={require(`../../../uploads/${List.PHOTO}`)} // Serve the photo from the "uploads" directory on the server
+                        alt={List.NOM_AG}
+                        style={{width: "150px", height: "150px"}} className="rounded-pill" // Adjust the image size as needed
+                      />
+                    )}</div>}
             </PhotoUploadButton>
           <TextField
               type="text"
@@ -368,7 +381,11 @@ const updateUser = id => {
           </Grid>
         </Grid>
 
-        <Button onClick={() => updateUser(List.MATRICULE)} color="success" variant="contained" type="submit">
+        <Button onClick={(e) => {
+          e.preventDefault();
+          updateUser(List.MATRICULE);
+          }} 
+          color="success" variant="contained" type="submit">
           {/*<Icon>send</Icon>*/}
           Modifier
         </Button>

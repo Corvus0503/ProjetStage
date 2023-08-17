@@ -56,7 +56,12 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
   }
 
   const redirection = (id) =>{
-    navigate("/BesoinBag", { replace: true })
+    if (user[0].TYPE_AG.includes("Admin")){
+      navigate("/BesoinBag", { replace: true })
+    } else {
+      navigate("/Besoin", { replace: true })
+    }
+    
     deleteNot(id)
     if (user[0].TYPE_AG.includes("Admin")){
       const fetchArticleList = async () => {
@@ -72,7 +77,7 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
   }
 
   useEffect(() => {
-    if (user[0].TYPE_AG.includes("Admin")){
+    if (user[0].TYPE_AG.includes("BAG")){
       const fetchArticleList = async () => {
         try {
           const response = await axios.get(`http://localhost:8080/notification/${user[0].MATRICULE}`);
@@ -82,6 +87,16 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
         }
       };
       fetchArticleList();
+    } else {
+      const fetchArticleListUser = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/notificationUser/${user[0].MATRICULE}`);
+          setComments(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchArticleListUser();
     }
     
   }, [user[0].MATRICULE]);

@@ -13,8 +13,8 @@ const {
     getDivision, addDivision, updateDivision, deleteDivision,
     getArticle, addArticle,
     updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail, getSelectedArticle, addBesoin,
-    getBesoinListe, addValidation, getValidation,
-    getNotification, addNotification, deleteNotification
+    getBesoinListe, addValidation, getValidation, getValidationBesoin,
+    getNotification, addNotification, getNotificationUser, deleteNotification
 } = require("./app/utils/querryHelpers")
 const getConnection = require("./app/utils/db.js");
 const socketIO = require("socket.io");
@@ -59,6 +59,54 @@ io.on("connection", (socket) => {
             removeUser(user.username)
         });
     });
+
+    //notification controiller
+    app.get('/notification/:id', function (req, res) {
+        let {id} = req.params
+        getNotification(req, res, id);
+    })
+
+    app.get('/notificationUser/:id', function (req, res) {
+        let {id} = req.params
+        getNotificationUser(req, res, id);
+    })
+
+    app.post('/notification', async function (req, res) {
+        let {BODY_NOT, MATRICULE, DATE_NOT} = req.body
+        try {
+            const connection = await getConnection();
+            const result = await connection.execute('INSERT INTO NOTIFICATION(ID_NOT, BODY_NOT, MATRICULE, DATE_NOT) VALUES (SEQ_NOTIFICATION.nextval, :1, :2, :3)', 
+            [BODY_NOT, MATRICULE, DATE_NOT]
+            );
+            await connection.commit();
+            await connection.close();
+            res.json(result.rows);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    })
+
+    app.post('/notificationRet', async function (req, res) {
+        let {BODY_NOT, MATRICULE, DATE_NOT, MATR_DEST} = req.body
+        try {
+            const connection = await getConnection();
+            const result = await connection.execute('INSERT INTO NOTIFICATION(ID_NOT, BODY_NOT, MATRICULE, DATE_NOT, MATR_DEST) VALUES (SEQ_NOTIFICATION.nextval, :1, :2, :3, :4)', 
+            [BODY_NOT, MATRICULE, DATE_NOT, MATR_DEST]
+            );
+            await connection.commit();
+            await connection.close();
+            res.json(result.rows);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    })
+
+    app.delete('/notification/:id', function (req, res) {
+        let {id} = req.params
+        deleteNotification(req, res, id);
+    })
 
     
 });
@@ -105,33 +153,7 @@ app.delete('/admin/:id', function (req, res) {
     deleteAdmin(req, res, id);
 })
 
-//notification controiller
-app.get('/notification/:id', function (req, res) {
-    let {id} = req.params
-    getNotification(req, res, id);
-  })
 
-app.post('/notification', async function (req, res) {
-    let {BODY_NOT, MATRICULE, DATE_NOT} = req.body
-    try {
-        const connection = await getConnection();
-        const result = await connection.execute('INSERT INTO NOTIFICATION(ID_NOT, BODY_NOT, MATRICULE, DATE_NOT) VALUES (SEQ_NOTIFICATION.nextval, :1, :2, :3)', 
-        [BODY_NOT, MATRICULE, DATE_NOT]
-        );
-        await connection.commit();
-        await connection.close();
-        io.emit("new-comment", result.rows );
-        res.json(result.rows);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
-      }
-})
-
-app.delete('/notification/:id', function (req, res) {
-    let {id} = req.params
-    deleteNotification(req, res, id);
-})
 
 //compte controller
 app.get('/compte', function (req, res) {
@@ -304,15 +326,23 @@ app.delete('/article/:id', function (req, res) {
     })
     
     //Validation des besoins Controller
-        //getter :
-    
-        //setter :
-    
-        //Creator :
-    app.post('/validation/:id', function(req,res){
-        let{id}=req.params;
-        
-    })
+    //getter :
+app.get('/validation',(req,res)=>{
+    getValidation(req,res);
+  })
+  app.get('/validationList',(req,res)=>{
+    getValidationBesoin(req,res);
+  } )
+  
+      //setter :
+  
+      //Creator :
+  app.post('/validation', function(req,res){
+      // let{id}=req.params;
+      // addValidation(req, res, id)
+      const {NUM_BESOIN,DATE_VALIDATION, QUANTITE_ACC}=req.body;
+      addValidation(req, res, NUM_BESOIN,DATE_VALIDATION, QUANTITE_ACC)
+  })
 
 server.listen(8080, () =>{
     console.log("Server is running")

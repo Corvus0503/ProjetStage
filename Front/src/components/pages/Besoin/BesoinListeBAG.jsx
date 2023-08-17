@@ -41,7 +41,7 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
     textTransform: "capitalize",
   }));
 
-  const BesoinListBag= ()=>{
+  const BesoinListBag= (user)=>{
 
     const [page, setPage] = useState(0);
     const [besoin, setBesoin] = useState(null);
@@ -164,6 +164,7 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
                               isModalOpen={isModalOpen}
                               closeModal={handleModalClose}
                               chargerBag={chargerListBesoin}
+                              user={user}
                             />
                                 <Button> <CheckCircleOutlineIcon color="success"/> </Button>
                                 <Button> <CancelIcon color="error"/> </Button>
