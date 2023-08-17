@@ -36,9 +36,9 @@ const ToggleablePills = (user) => {
         <hr className="m-3 mt-2 mb-2"/>
       
         {/* Contenu conditionnel en fonction de l'onglet actif */}
-        {activePill === "pill1" && <div > <NewBesoin user={user}/></div>}
+        {activePill === "pill1" && <div > <NewBesoin pillActive={() => handlePillClick("pill2")} user={user}/></div>}
 
-        {activePill === "pill2" && <div> <BesoinList user={user}/> </div>}
+        {activePill === "pill2" && <div> <BesoinList user={user}/> </div>} 
       </div>
     </div>
   );

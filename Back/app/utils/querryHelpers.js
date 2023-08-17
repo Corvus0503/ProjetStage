@@ -768,7 +768,35 @@ const deleteArticle = async (req, res, id) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const addPrevision = async(req,res,PREVISION, DATE_PREVISION)=>{
+    const query = ` INSERT INTO PREVISION (NUM_PREVISION, PREVISION, DATE_PREVISION) VALUES(NUM_PREVISION.nextval,:PREVISION, :DATE_PREVISION) `
+    try {
+        const connection = await getConnection();
+        const result = await connection.execute(query,[PREVISION, DATE_PREVISION]);
+        res.json(result.rows);
+        connection.commit()
+        await connection.close()
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+const getPrevision = async(req,res)=>{
+    const query = `SELECT * FROM PREVISION`
+    try {
+        const connection = await getConnection();
+        const result=await connection.execute(query);
+        res.json(result.rows);
+        await connection.commit();
+        await connection.close();
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
  module.exports = {
    getAdminList,
    getAdmin,
@@ -811,5 +839,6 @@ const deleteArticle = async (req, res, id) => {
   addNotification,
   deleteNotification,
   getPrixPrevisionnel,
-
+  addPrevision,
+  getPrevision,
   };

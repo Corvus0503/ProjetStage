@@ -13,7 +13,7 @@ const {
     getDivision, addDivision, updateDivision, deleteDivision, getArticle, getCategorieArticle,addArticle,
     updateArticle, deleteArticle,addBesoin, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,getSelectedArticle,
     getBesoinListe, addValidation ,getNotification, addNotification,
-    deleteNotification, getValidation,getValidationBesoin,getPrixPrevisionnel
+    deleteNotification, getValidation,getValidationBesoin,getPrixPrevisionnel,addPrevision,getPrevision,
     } = require("./app/utils/querryHelpers")
 const getConnection = require("./app/utils/db.js");
 const socketIO = require("socket.io");
@@ -308,6 +308,9 @@ app.get('/validationList',(req,res)=>{
 app.get('/prixTotal',(req,res)=>{
   getPrixPrevisionnel(req,res);
 })
+app.get('/prevision',(req,res)=>{
+  getPrevision(req,res)
+})
     //setter :
 
     //Creator :
@@ -317,7 +320,10 @@ app.post('/validation', function(req,res){
     const {NUM_BESOIN,DATE_VALIDATION, QUANTITE_ACC}=req.body;
     addValidation(req, res, NUM_BESOIN,DATE_VALIDATION, QUANTITE_ACC)
 })
-
+app.post('/prevision',(req,res)=>{
+  const{PREVISION, DATE_PREVISION}=req.body;
+  addPrevision(req,res,PREVISION, DATE_PREVISION)
+})
 
 server.listen(8080, () =>{
     console.log("Server is running")

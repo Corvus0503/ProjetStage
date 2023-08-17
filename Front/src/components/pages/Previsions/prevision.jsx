@@ -13,7 +13,7 @@ import './Prevision.css'
 import PageVide from "./PageVide";
 import Swal from 'sweetalert2';
 import PrintIcon from '@mui/icons-material/Print';
-
+import { format } from 'date-fns';
 
 const Container = styled("div")(({ theme }) => ({
     margin: "30px",
@@ -27,9 +27,14 @@ const Container = styled("div")(({ theme }) => ({
 
 
 const Previsions = (user) =>{
-
+    
+    const [validationEntete,setValidationEntete]=useState([]);
+    const [validationList, setValidationList] = useState([]);
     const [isButtonValidated, setIsButtonValidated] = useState(false);
-    const [password, setPassword] = useState('');
+    const [PrevisionBudgetaire, setPrevisionBudgetaire] = useState([{
+        PREVISION: '', // Use the PREVISION value from Prix
+        DATE_PREVISION: '',
+    }]);
     const [isLoading, setIsLoading] = useState(true);
     const [prix,setPrix]=useState([{
         PREVISION : " ",
@@ -50,8 +55,6 @@ const Previsions = (user) =>{
         PRIX_ART:"",
         OBSERVATION:"",
     }])
-    const [validationEntete,setValidationEntete]=useState([]);
-    const [validationList, setValidationList] = useState([]);
 
     const handlePrint = () => {
         const printContent = document.getElementById("impression");
@@ -87,7 +90,7 @@ const Previsions = (user) =>{
         } catch (error) {
             console.error(error);
         }
-    };
+    }; 
 
     const chargeListValidation = async()=>{
         try {
@@ -144,6 +147,17 @@ const Previsions = (user) =>{
         LABEL_DIVISION: "",
         PRIX_ART: "",
         OBSERVATION: "",
+    };
+    const addPrevision = async () => {
+        try {
+            const response = await axios.post('http://localhost:8080/prevision', {
+                PREVISION: Prix.PREVISION, // Use the PREVISION value from Prix
+                DATE_PREVISION: format(new Date(), 'yyyy-MM-dd'), // Current date as validation date
+            });
+            setPrevisionBudgetaire(response.data);
+        } catch (error) {
+            console.error(error);
+        }
     };
     useEffect(() => {
         chargeListValidation();
@@ -219,7 +233,7 @@ const Previsions = (user) =>{
                                         <tr>  
                                             <th > Total = </th>
                                             <td colSpan={'3'}> </td>
-                                            <td  align="left">{Prix.PREVISION}  </td>
+                                            <td  align="left">{Prix.PREVISION}</td>
                                         </tr>
                                 </tbody>
  
@@ -259,6 +273,7 @@ const Previsions = (user) =>{
                                 if (result.isConfirmed) {
                                     if (result.value === PASSWORD) {
                                         setIsButtonValidated(true);
+                                        addPrevision();
                                     } else {
                                         Swal.fire('Mot de passe incorrect', 'Veuillez réessayer.', 'error');
                                     }

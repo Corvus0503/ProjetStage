@@ -82,7 +82,7 @@ const Container = styled("div")(({ theme }) => ({
 }));
 
 // Définition du composant principal pour le formulaire de nouveau besoin
-const NewBesoin = (user) => {
+const NewBesoin = (user, pillActive) => {
   // Utilisation de useState pour stocker les données de l'article et de la catégorie sélectionnée
   const [selectedCategorie, setSelectedCategorie] = useState({
     ID_CAT: "",
@@ -245,11 +245,11 @@ const handleValidation = async () => {
       icon: 'success',
       title: 'Demande soumise',
       text: 'Votre demande a été soumise avec succès !',
+      
     });
     sendComment();
-    navigate('/besoin')
-
-
+    pillActive()
+    
   } catch (error) {
     console.error("Erreur lors de l'ajout des besoins :", error);
     // Traiter les erreurs ici
