@@ -36,4 +36,10 @@
 }
 .body{
   color: rgb(241, 180, 11);
+  font-family: 'Poppins', sans-serif;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('../src/components/styles/Poppins/Poppins-Regular.ttf') format('truetype');
+  /* Ajoutez d'autres variantes de police ici si nécessaire */
 }

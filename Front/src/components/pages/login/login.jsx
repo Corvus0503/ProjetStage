@@ -4,11 +4,12 @@ import "../../styles/login.css"
 import LoginPhoto from"../../images/account-validation-bg-mob.png"
 import LoginAvatar from"../../images/blog-wp-login.png"
 import IconButton from "@material-ui/core/IconButton";
+//import InputLabel from "@material-ui/core/InputLabel";
 import Visibility from "@material-ui/icons/Visibility";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import Input from "@material-ui/core/Input";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "./authProvider";
 import io from "socket.io-client";
 import axios from "axios"
@@ -21,9 +22,9 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
     const [isShow, setIsShow] = useState(false)
     
     const showMdp = (e) => {
-        e.preventDefault();
-        setIsShow(!isShow);
-    };
+        e.preventDefault()
+        setIsShow(!isShow)
+    }
     const [infoCon, setInfoCon] = useState({
         pseudo: "",
         mdp: ""
@@ -31,64 +32,62 @@ const Login = ({isConn, setIsConn, saveCon, user, setUser, getCon }) =>{
 
     const loadUser = async () => {
         try {
-            const response = await axios.post('http://localhost:8080/admin', infoCon);
-            setUser((prevUser) => response.data.length > 0 ? response.data : prevUser);
+          const response = await axios.post('http://localhost:8080/admin', infoCon);
+          setUser(response.data);
         } catch (error) {
-            console.error(error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Pseudo ou mot de passe incorrect',
-            });
+          console.error(error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Pseudo ou mot de passer incorrect',
+        })
         }
-    };  
+      };
 
     const connexion = async (e) => {
-        e.preventDefault();
-    
-        try {
-            await loadUser();
-    
-            if (user && user.length > 0 && user[0].NOM_UTIL_AG === infoCon.pseudo && user[0].PASSWORD === infoCon.mdp) {
+        e.preventDefault()
+        loadUser()
+            if(user[0].ACTIVATION.includes("Desactivé")){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Ce compte est desactvé',
+                })
+                
+            }
+            
+            if(user[0].NOM_UTIL_AG===infoCon.pseudo && user[0].PASSWORD===infoCon.mdp && user[0].ACTIVATION.includes("Activé")){
                 socket.emit("userLoggedIn", { username: user[0].NOM_UTIL_AG, socketId: user[0].MATRICULE });
                 setToken(JSON.stringify(user));
-                setIsConn(true);
-                saveCon();
+                setIsConn(true)
+                saveCon()
                 navigate("/Dashboard", { replace: true });
-            } else if (user && user.length > 0 && user[0].ACTIVATION.includes("Desactivé")) {
+            }else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'Ce compte est désactivé',
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Pseudo ou mot de passe incorrect',
-                });
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }; 
+                    text: 'Pseudo ou mot de passer incorrect',
+                })
+            }  
+    }
 
     // Initialize a Socket.IO client instance
     const socket = io("http://localhost:8080");
 
     useEffect(() => {
-        const socket = io("http://localhost:8080");
+        // Connect to the server
         socket.connect();
 
+        // Clean up the socket connection when the component unmounts
         return () => {
             socket.disconnect();
         };
-    }, []);
+    }, [socket]);
 
 
     return(
         <div className="login">
-            <img src={LoginPhoto} alt="login image"className='login_img'/>
+            <img src={LoginPhoto} alt="login image"className='login_img'  />
 
                 <h1>
                     Bienvenue

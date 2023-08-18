@@ -259,7 +259,7 @@ const Previsions = (user) =>{
             </div>
 
             <div className="text-start mt-3 ">
-                {typeCompte ==="Admin"&&(
+                {typeCompte ==="BAG"&&(
                     <div className="text-end mb-2">
                         <button className="btn btn-info"
                             onClick={()=>{
@@ -297,7 +297,7 @@ const Previsions = (user) =>{
                         </button>
                     </div>
                 ) }
-                {typeCompte === "Admin" && (
+                {typeCompte === "BAG" && (
                     <button
                         className="btn btn-primary ms-3 me-3"
                         onClick={() => {
@@ -341,7 +341,7 @@ const Previsions = (user) =>{
                         )}
                     </button>
                 )}
-                {typeCompte === "Admin" && (
+                {typeCompte === "BAG" && (
                     <button
                         className="btn btn-danger ps-3 pe-3"
                         onClick={handlePrint}
@@ -351,7 +351,7 @@ const Previsions = (user) =>{
                     </button>
                 )}
 
-                {typeCompte === "Admin" && (
+                {typeCompte === "BAG" && (
                     <button
                         className="btn btn-success ms-3"
                         onClick={handleExportExcel}

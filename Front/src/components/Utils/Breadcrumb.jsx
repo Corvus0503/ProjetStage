@@ -1,6 +1,7 @@
 import { Breadcrumbs, Hidden, Icon, styled, useTheme } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
+import poppins from '../styles/Poppins/Poppins-Light.ttf'
 
 const BreadcrumbRoot = styled('div')(() => ({
   display: 'flex',
@@ -11,7 +12,8 @@ const BreadcrumbRoot = styled('div')(() => ({
 const BreadcrumbName = styled('h3')(() => ({
   margin: 0,
   marginTop:'2px',
-  fontSize: '17px',
+  fontFamily:'poppins',
+  fontSize: '19px',
   paddingBottom: '-0px',
   verticalAlign: 'middle',
   textTransform: 'capitalize',

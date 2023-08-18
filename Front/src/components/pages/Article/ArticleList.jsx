@@ -120,7 +120,7 @@ useEffect(() => {
               
                 <hr />
                 
-                    <StyledTable>
+                    <StyledTable className="table table-bodered mt-3">
                     <TableHead>
                         <TableRow>
                         <TableCell align="left"> N° </TableCell>
@@ -128,6 +128,7 @@ useEffect(() => {
                         <TableCell align="center"> Designation </TableCell>
                         <TableCell align="center"> Spécification </TableCell>
                         <TableCell align="center"> Prix d'article(Ariary) </TableCell>
+                        <TableCell align="center"> Date de Modification </TableCell>
                         <TableCell align="center"> Unité </TableCell>
                         <TableCell align="center"> Opération </TableCell>
                         </TableRow>
@@ -142,6 +143,7 @@ useEffect(() => {
                             <TableCell align="center">{List.DESIGNATION_ART}</TableCell>
                             <TableCell align="center">{List.SPECIFICITE_ART}</TableCell>
                             <TableCell align="center">{List.PRIX_ART}</TableCell>
+                            <TableCell align="center">{List.DATE_MODIFICATION}</TableCell>
                             <TableCell align="center">{List.UNITE_ART}</TableCell>
                             <TableCell align="center"  >
                                 <IconButton >
