@@ -18,12 +18,12 @@ const Dashboard = ({user}) => {
       dataset: {
         source: [
           ['Month', 'Website', 'App'],
-          ['Jan', 2200, 1200],
-          ['Feb', 800, 500],
-          ['Mar', 700, 1350],
-          ['Apr', 1500, 1250],
-          ['May', 2450, 450],
-          ['June', 1700, 1250],
+          ['2018', 2200, 1200],
+          ['2019', 800, 500],
+          ['2020', 700, 1350],
+          ['2021', 1500, 1250],
+          ['2022', 2450, 450],
+          ['2024', 1700, 1250],
         ],
       },
       xAxis: {
@@ -52,7 +52,12 @@ const Dashboard = ({user}) => {
       series: [{ type: 'bar' }, { type: 'bar' }],
     };
   
-    return <ReactEcharts style={{ height: height }} option={{ ...option }} />;
+    return (
+      <div>
+        <h1>Historique des previsions</h1>
+        <ReactEcharts style={{ height: height }} option={{ ...option }} />
+      </div>
+    );
 }
 
 export default Dashboard

@@ -96,13 +96,13 @@ useEffect(() => {
             />
             <Route element={<ProtectedRoute user={user} perm={true}/>}>
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
-              <Route path="/Prevision" element={<Previsions />} />
               <Route path="/Besoin" element={<Besoin user={user} setComments={setComments}/>} />
               <Route path="/Besoin/Nouveau besoin" element={<NewBesoin user={user}/>} />
               <Route path="/Besoin/Liste" element={<BesoinList user={user}/>} />
               <Route path="/Profile" element={<Profile user={user} />} />
               <Route path="/Comments" element={<Comments comments={comments} setComments={setComments} user={user} IsOpenNot={IsOpenNot} />} />
               <Route element={<ProtectedRoute redirectPath="/Dashboard" user={user} perm={'BAG'}/>}>
+                <Route path="/Prevision" element={<Previsions user={user} />} />
                 <Route path="/Article/Nouvel_Article" element={<Article />} />
                 <Route path="/Article/Liste" element={<ArticleList />} />
                 <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />

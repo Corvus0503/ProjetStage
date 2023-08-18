@@ -18,6 +18,8 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [besoinList, setBesoinList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
 
   const fetchArticleList = async () => {
     try {
@@ -31,23 +33,28 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
       console.error(error);
     }
   };
+  const filteredBesoinList = besoinList.filter(besoin =>
+    besoin.DESIGNATION_CMPT.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    besoin.DESIGNATION_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    besoin.LABEL_DIVISION.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    besoin.NUM_CMPT.includes(searchQuery) ||
+    besoin.UNITE.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    besoin.DATE_BESOIN.includes(searchQuery)
+  );
 
   //console.log(matricule)
 
-  async function sendComment() {
-    console.log('matricule : ',matricule)
-    try {
-        await axios.post(`http://localhost:8080/notificationRet`, {
-            BODY_NOT : `a analysé votre beson`, 
-            MATRICULE : `${user.user[0].MATRICULE}`,  
-            DATE_NOT : format(new Date(), 'yyyy-MM-dd'),
-            MATR_DEST: matricule
-        })
-
-    } catch (error) {
-        console.log(`Erreur : ${error}`)
-    }
-  }
+  async function sendComment() { 
+    console.log('matricule : ',matricule) 
+    try { 
+      await axios.post(`http://localhost:8080/notificationRet`, { 
+        BODY_NOT : `a analysé votre beson`, 
+        MATRICULE : `${user.user[0].MATRICULE}`, 
+        DATE_NOT : format(new Date(), 'yyyy-MM-dd'), 
+        MATR_DEST: matricule }) } 
+        catch (error) { 
+          console.log(`Erreur : ${error}`) 
+        } }
 
   // Utilisation de useEffect pour charger la liste des articles lorsque l'idCat change
   useEffect(() => {  
@@ -88,6 +95,11 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
           showCancelButton: true,
           confirmButtonText: 'Valider',
           cancelButtonText: 'Annuler',
+          html: `
+            <div class="text-center" >
+              <p class="h4">Quantité demandée : <span class="badge rounded-pill bg-danger">${besoinToUpdate.QUANTITE} </span> </p>
+            </div>
+          `,
           inputValidator: (value) => {
             if (!value) {
               return 'Vous devez saisir une quantité !';
@@ -136,7 +148,6 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
             'Le besoin a été validé avec succès.',
             'success'
           );
-          sendComment()
           fetchArticleList();
           chargerBag();
         }
@@ -195,6 +206,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
           'success'
         );
         
+        sendComment()
         fetchArticleList();
         chargerBag();
 
@@ -221,8 +233,20 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
   // Rendu du composant de la modal
   return (
     <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="md">
-      <DialogTitle>Detail des Besoin</DialogTitle>
+      <DialogTitle><span className="h4">Validations des Besoin</span> <hr /></DialogTitle>
       <DialogContent>
+      <div className="d-flex flex-row">
+                <input
+                    style={{height:'40px',marginLeft:'60%'}}
+                    className="mt-2 form-control"
+                    type="text"
+                    placeholder="Recherche de besoin..."
+                    value={searchQuery}
+                    onChange={event => setSearchQuery(event.target.value)}
+                />
+                <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
+              </div>
+
         <Table>
           <TableHead>
             <TableRow>
@@ -232,11 +256,12 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
               <TableCell align="center"> Quantité </TableCell>
               <TableCell align="center"> Unité </TableCell>
               <TableCell align="center"> Date </TableCell>
+              <TableCell align="center"> Observation </TableCell>
               <TableCell align="left"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Opération</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {besoinList
+            {filteredBesoinList
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((besoinList) => (
                 <TableRow key={besoinList.NUM_BESOIN}>
@@ -246,6 +271,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
                 <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                 <TableCell align="center">{besoinList.UNITE}</TableCell>
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
+                <TableCell align="center">{besoinList.OBSERVATION}</TableCell>
                 <TableCell align="center" className="d-flex inline">
                 <Button onClick={() => handleValidation(besoinList.NUM_BESOIN)}>
                   <CheckCircleIcon color="success"/>

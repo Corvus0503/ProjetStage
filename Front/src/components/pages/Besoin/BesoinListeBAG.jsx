@@ -1,4 +1,4 @@
-import { IconButton, Card, styled, Table, TableBody, TableCell, TableHead, TablePagination, TableRow,useTheme, Button,
+import { Card, styled, Table, TableBody, TableCell, TableHead, TablePagination, TableRow,useTheme, Button,
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios"
@@ -8,21 +8,20 @@ import React,{ useEffect } from "react";
 import Breadcrumb from "../../Utils/Breadcrumb";
 import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import { Span } from "../../Typography";
-import InfoIcon from '@mui/icons-material/Info';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import CancelIcon from '@mui/icons-material/Cancel';
 import AboutBesoinModal from "./AboutBesoinModal";
-import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
+import PlaylistAddCheckCircleIcon from '@mui/icons-material/PlaylistAddCheckCircle';
 
 
-  const Container = styled("div")(({ theme }) => ({
-    margin: "30px",
-    [theme.breakpoints.down("sm")]: { margin: "16px" },
-    "& .breadcrumb": {
-      marginBottom: "30px",
-      [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
-    },
-  }));
+
+
+const Container = styled("div")(({ theme }) => ({
+  margin: "30px",
+  [theme.breakpoints.down("sm")]: { margin: "16px" },
+  "& .breadcrumb": {
+  marginBottom: "30px",
+  [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
+  },
+}));
 
   const StyledTable = styled(Table)(() => ({
     whiteSpace: "pre",
@@ -50,19 +49,25 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
     const [selectedMatricule, setSelectedMatricule] = useState(null);
-    const [selectedBesoin, setSelectedBesoin] = useState(null);
-    const [formattedDate, setFormattedDate] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
     
+    const filteredBesoinList = besoinList.filter(besoin =>
+      besoin.AGENT_MATRICULE.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.AGENT_NOM.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.AGENT_PRENOM.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.LABEL_DIVISION.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      besoin.DATE_BESOIN.includes(searchQuery)
+    );
 
     const handleDialogClose = () => {
         setShouldOpenConfirmationDialog(false);
         chargerListBesoin();
       };
 
-      const handleDeleteUser = (besoin) => {
-        setBesoin(besoin);
-        setShouldOpenConfirmationDialog(true);
-      };
+      // const handleDeleteUser = (besoin) => {
+      //   setBesoin(besoin);
+      //   setShouldOpenConfirmationDialog(true);
+      // };
 
       const handleConfirmationResponse = () => {
         handleDelete(besoin)
@@ -128,7 +133,18 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
           </div>
             <Card sx={{ width: "100%", overflow: "auto" }} elevation={6} className="mt-5">
             <div className="m-5 mt-3 mb-3">
-              <h1 align="left"> Liste de tous les Besoins </h1>
+            <div className="d-flex flex-row">
+            <h1 align="left" className="me-5"> Besoins </h1>
+                <input
+                  style={{height:'40px',marginLeft:'60%'}}
+                  className="mt-2 form-control"
+                  type="text"
+                  placeholder="Recherche de besoin..."
+                  value={searchQuery}
+                  onChange={event => setSearchQuery(event.target.value)}
+                />
+                <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
+              </div>
                 <hr />
                 
                     <StyledTable >
@@ -145,7 +161,7 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
                           </TableRow>
                       </TableHead>
                     <TableBody>
-                        {besoinList
+                        {filteredBesoinList
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                         .map((besoinList) => (
                             <TableRow key={besoinList.NUM_BESOIN}>
@@ -157,17 +173,14 @@ import { formatISODateToYYYYMMDD } from "../../Utils/dateUtils";
                             <TableCell align="center">{renderStatus(besoinList.BESOIN_COUNT)}</TableCell>
                             <TableCell align="center">
                             <Button onClick={() => handleModalOpen(besoinList.AGENT_MATRICULE)}>
-                              <InfoIcon color="warning" />
+                              <PlaylistAddCheckCircleIcon style={{fontSize:'2rem'}} color="info" />
                             </Button>
                             <AboutBesoinModal
                               matricule={selectedMatricule}                           
                               isModalOpen={isModalOpen}
                               closeModal={handleModalClose}
                               chargerBag={chargerListBesoin}
-                              user={user}
                             />
-                                <Button> <CheckCircleOutlineIcon color="success"/> </Button>
-                                <Button> <CancelIcon color="error"/> </Button>
                             </TableCell>
 
                             {/* <TableCell align="left"  >                               

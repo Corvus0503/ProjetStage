@@ -64,7 +64,7 @@ const Container = styled("div")(({ theme }) => ({
 }));
 
 const Profile = ({user}) => {
-
+  const [confirmMdp, setConfirmMdp] = useState("")
   const [modUser, setModUser] = useState({
     MATRICULE: "",
     FONCTION_AG: "",
@@ -137,6 +137,13 @@ const handleSubmit = (id) => {
   })
   
 };
+  useEffect(() => {
+    ValidatorForm.addValidationRule("isPasswordMatch", (value) => {
+      if (value !== modUser.PASSWORD) return false;
+      return true;
+    });
+    return () => ValidatorForm.removeValidationRule("isPasswordMatch");
+  }, [modUser.PASSWORD]);
 
     useEffect(() =>{
       setModUser(user[0])
@@ -191,6 +198,24 @@ const handleSubmit = (id) => {
               errorMessages={["Veuillez remplir ce champ"]}
               label="Nom d'utilisteur"
               validators={["required", "minStringLength: 1", "maxStringLength: 20"]}
+            />
+            <TextField
+              name="PASSWORD"
+              type="text"
+              label="Password"
+              value={modUser.PASSWORD}
+              onChange={handleChange}
+              validators={["required"]}
+              errorMessages={["this field is required"]}
+            />
+            <TextField
+              type="text"
+              name="confirmPassword"
+              label="Confirm Password"
+              onChange={(e) => setConfirmMdp(e.target.value)}
+              value={confirmMdp}
+              validators={["required", "isPasswordMatch"]}
+              errorMessages={["this field is required", "password didn't match"]}
             />
 
     </Grid>

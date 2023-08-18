@@ -27,7 +27,7 @@ const [lienAdmin] = useState([
     {name : 'Dashboard', icon: <SideDash/>, lien: "/Dashboard"},
     {name : 'Prevision',icon: <SideCat/>, lien: "/Prevision"},
     {name : 'Division',icon: <SideCat/>, lien: "/Division"},
-    {name: 'Article',icon: <ArticleIcone/> ,lien:"/Article" , subNav : [
+    {name: 'Article',icon: <ArticleIcone/> , subNav : [
         {name: 'Nouveau',icon: "." ,lien:"/Article/Nouvel_Article"},
         {name: 'Liste',icon: "." ,lien:"/Article/Liste"},
     ]},
@@ -37,7 +37,7 @@ const [lienAdmin] = useState([
 const [lienBAG] = useState([
     {name : 'Dashboard', icon: <SideDash/>, lien: "/Dashboard"},
     {name : 'Prevision',icon: <SideCat/>, lien: "/Prevision"},
-    {name: 'Article',icon: <ArticleIcone/> ,lien:"/Article" , subNav : [
+    {name: 'Article',icon: <ArticleIcone/> , subNav : [
         {name: 'Nouveau',icon: "." ,lien:"/Article/Nouvel_Article"},
         {name: 'Liste',icon: "." ,lien:"/Article/Liste"},
     ]},
