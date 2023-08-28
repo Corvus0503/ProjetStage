@@ -12,7 +12,7 @@ import { ProtectedRoute } from './components/routes/protectedRoute';
 import Signup from './components/pages/login/Signup';
 import UserList from './components/pages/user/UserList';
 import ModUser from './components/pages/user/modUser';
-import Article from './components/pages/Article/Article';
+import NewArticle from './components/pages/Article/NewArticle';
 import ArticleList from './components/pages/Article/ArticleList';
 import Besoin from './components/pages/Besoin/Besoin';
 import BesoinListBag from './components/pages/Besoin/BesoinListeBAG';
@@ -22,8 +22,8 @@ import Comments from './components/pages/Notification/Comments';
 import Profile from './components/pages/login/Profile';
 import NewBesoin from './components/pages/Besoin/NewBesoin';
 import BesoinList from './components/pages/Besoin/BesoinList';
-
 import io from "socket.io-client";
+import Historique from './components/pages/Besoin/Historique';
 
 function App() {
   const [IsOpen, setIsOpen] = useState (false)
@@ -98,21 +98,22 @@ useEffect(() => {
               <Route path="/Dashboard" element={<Dashboard user={user} />} />
               <Route path="/Prevision" element={<Previsions user={user}/>} />
               <Route path="/Besoin" element={<Besoin user={user} setComments={setComments}/>} />
-              <Route path="/Besoin/Nouveau besoin" element={<NewBesoin user={user}/>} />
-              <Route path="/Besoin/Liste" element={<BesoinList user={user}/>} />
+              <Route path="/Besoin/Nouveau besoin" element={<NewBesoin/>} />
+              <Route path="/Besoin/Liste" element={<BesoinList/>} />
               <Route path="/Profile" element={<Profile user={user} />} />
               <Route path="/Comments" element={<Comments comments={comments} setComments={setComments} user={user} IsOpenNot={IsOpenNot} />} />
               <Route element={<ProtectedRoute redirectPath="/Dashboard" user={user} perm={'BAG'}/>}>
-                <Route path="/Article/Nouvel_Article" element={<Article />} />
+                <Route path="/Article/Nouvel_Article" element={<NewArticle />} />
                 <Route path="/Article/Liste" element={<ArticleList />} />
                 <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />
                 <Route path="/Categorie" element={<Categorie user={user} />} />
+                <Route path="/historique" element={<Historique user={user} />} />
               </Route>
               <Route element={<ProtectedRoute redirectPath="/Dashboard" user={user} perm={'Admin'}/>}>
                 <Route path="/Signup" element={<Signup />} />
                 <Route path="/UserList" element={<UserList />} />
                 <Route path="/ModUser" element={<ModUser />} />
-                <Route path="/Article/Nouvel_Article" element={<Article />} />
+                <Route path="/Article/Nouvel_Article" element={<NewArticle />} />
                 <Route path="/Article/Liste" element={<ArticleList />} />
                 <Route path="/Division" element={<Division />} />
                 <Route path="/Categorie" element={<Categorie user={user} />} />

@@ -27,7 +27,7 @@ const Container = styled("div")(({ theme }) => ({
   },
 }));
 
-const Article = () => {
+const NewArticle = () => {
     // const [state, setState] = useState({ date: new Date() });
     const [isModalCatOpen,setIsModalCatOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -287,4 +287,4 @@ const Article = () => {
     );
     };
 
-export default Article;
+export default NewArticle;

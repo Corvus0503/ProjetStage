@@ -1,24 +1,85 @@
 import React from 'react'
+//import Modal from 'react-modal';
+import { DatePicker } from "@mui/lab";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import {
+  Autocomplete,
   Button,
+  Checkbox,
   FormControlLabel,
+  FormControl,
   Grid,
+  Icon,
   Radio,
   RadioGroup,
   styled,
-  IconButton
+  Select,
+  MenuItem,
+  InputLabel,
+  IconButton,
+  Switch
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import { Modal } from 'react-bootstrap';
 import axios from "axios"
 import CreateIcon from '@mui/icons-material/Create';
+import Swal from 'sweetalert2';
+
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '55%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    height: '80%',
+    width: '70%'
+  },
+};
 
 // Make sure to bind modal to your appElement (https://reactcommunity.org/react-modal/accessibility/)
 //Modal.setAppElement(document.getElementById('root'));
 const TextField = styled(TextValidator)(() => ({
   width: "80%",
   marginBottom: "13px",
+}));
+
+const AutoComplete = styled(Autocomplete)(() => ({
+  width: "80%",
+  marginBottom: "13px",
+}));
+
+const PhotoUploadButton = styled('label')(({ backgroundImage }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  border: '2px solid #ccc',
+  borderRadius: '50%',
+  width: '150px',
+  height: '150px',
+  cursor: 'pointer',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+  '&:hover': {
+    backgroundColor: '#f2f2f2',
+  },
 }));
 
 const TestModal = ({List, chargerListAdmin}) => {
@@ -30,9 +91,20 @@ const TestModal = ({List, chargerListAdmin}) => {
     setModUser(List)
   }
 
+  function afterOpenModal() {
+    // references are now sync'd and can be accessed.
+    subtitle.style.color = '#f00';
+  }
+
   function closeModal() {
     setIsOpen(false);
   }
+
+  const suggestions = [
+    {label : "Admin"},
+    {label : "AG"},
+    {label : "User"}
+  ]
 
   const [state, setState] = useState({ date: new Date() });
   const [confirmMdp, setConfirmMdp] = useState("")
@@ -47,7 +119,7 @@ const TestModal = ({List, chargerListAdmin}) => {
     ADRESSE_AG: "",
     TEL_AG: "",
     PASSWORD: "",
-    PHOTO: "",
+    PHOTO: null,
     GENRE: "",
     ACTIVATION: "",
     CODE_DIVISION: ""
@@ -55,7 +127,15 @@ const TestModal = ({List, chargerListAdmin}) => {
 
 
 const updateUser = id => {
-  axios.put(`http://localhost:8080/admin/${id}`, modUser).then(response => {
+  const formDataToSend = new FormData();
+    for (const key in modUser) {
+      formDataToSend.append(key, modUser[key]);
+    }
+  axios.put(`http://localhost:8080/admin/${id}`, formDataToSend, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }).then(response => {
     setModUser({
       MATRICULE: "",
       FONCTION_AG: "",
@@ -67,13 +147,18 @@ const updateUser = id => {
       ADRESSE_AG: "",
       TEL_AG: "",
       PASSWORD: "",
-      PHOTO: "",
+      PHOTO: null,
       GENRE: "",
       ACTIVATION: "",
       CODE_DIVISION: ""
     });
     chargerListAdmin()
     closeModal()
+    Swal.fire({
+      icon: 'success',
+      title: 'Informations modifiés',
+      text: 'Information uutilisteur modifiés avec succès !',
+    });
     console.log('Le USer a été ajouté avec succès.');
   }).catch(error =>{console.error(error);})
 }
@@ -92,6 +177,17 @@ const updateUser = id => {
     setModUser({ ...modUser, [e.target.name]: e.target.value });
   };
 
+  const [imagePreview, setImagePreview] = useState(null);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setModUser({ ...modUser, PHOTO: file });
+
+    // Display selected image in the button
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   return (
     <div>
       <IconButton onClick={openModal}>
@@ -105,6 +201,24 @@ const updateUser = id => {
         <ValidatorForm onError={() => null}>
         <Grid container spacing={6}>
           <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+          <input
+              accept="image/*"
+              style={{ display: "none" }}
+              id="raised-button-file"
+              multiple
+              type="file"
+              name="PHOTO"
+              onChange={handleFileChange}
+            />
+            <PhotoUploadButton htmlFor="raised-button-file" backgroundImage={imagePreview}>
+              {imagePreview ? null : <div>{List.PHOTO && (
+                      <img
+                        src={require(`../../../uploads/${List.PHOTO}`)} // Serve the photo from the "uploads" directory on the server
+                        alt={List.NOM_AG}
+                        style={{width: "150px", height: "150px"}} className="rounded-pill" // Adjust the image size as needed
+                      />
+                    )}</div>}
+            </PhotoUploadButton>
           <TextField
               type="text"
               name="MATRICULE"
@@ -136,6 +250,16 @@ const updateUser = id => {
               validators={["required", "minStringLength: 4", "maxStringLength: 9"]}
             />
 
+            <AutoComplete
+                options={suggestions}
+                getOptionLabel={(option) => option.label}
+                renderInput={(params) => (
+                  <TextField {...params} value={modUser.TYPE_AG}
+                  onChange={handleChange} name="TYPE_AG" label="Type" variant="outlined" fullWidth />
+                )}
+              />
+
+
             <TextField
               type="text"
               name="NOM_UTIL_AG"
@@ -147,7 +271,11 @@ const updateUser = id => {
               validators={["required", "minStringLength: 1", "maxStringLength: 9"]}
             />
 
-            <TextField
+            
+          </Grid>
+
+          <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+          <TextField
               type="text"
               name="NOM_AG"
               label="Nom"
@@ -176,11 +304,6 @@ const updateUser = id => {
               validators={["required", "isEmail"]}
               errorMessages={["this field is required", "email non valide"]}
             />
-
-            
-          </Grid>
-
-          <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
             <TextField
                 type="text"
                 name="ADRESSE_AG"
@@ -203,7 +326,7 @@ const updateUser = id => {
 
             <TextField
               name="PASSWORD"
-              type="password"
+              type="text"
               label="Password"
               value={modUser.PASSWORD}
               onChange={handleChange}
@@ -211,7 +334,7 @@ const updateUser = id => {
               errorMessages={["this field is required"]}
             />
             <TextField
-              type="password"
+              type="text"
               name="confirmPassword"
               label="Confirm Password"
               onChange={(e) => setConfirmMdp(e.target.value)}
@@ -241,32 +364,27 @@ const updateUser = id => {
               />
 
             </RadioGroup>
-            <RadioGroup
-              row
-              name="ACTIVATION"
-              sx={{ mb: 2 }}
-              value={modUser.ACTIVATION}
-              onChange={handleChange}
-            >
-              <FormControlLabel
-                value="Activé"
-                label="Activé"
-                labelPlacement="end"
-                control={<Radio color="secondary" />}
+            <FormControlLabel
+            control={
+              <Switch
+                color="secondary"
+                checked={modUser.ACTIVATION === 'Activé'}
+                onChange={handleChange}
+                name="ACTIVATION"
+                value={modUser.ACTIVATION === 'Activé' ? 'Desactivé' : 'Activé'}
               />
-
-              <FormControlLabel
-                value="Desactivé"
-                label="Desactivé"
-                labelPlacement="end"
-                control={<Radio color="secondary" />}
-              />
-
-            </RadioGroup>
+            }
+            label={modUser.ACTIVATION === 'Activé' ? 'Activé' : 'Desactivé'}
+            labelPlacement="end"
+          />
           </Grid>
         </Grid>
 
-        <Button onClick={() => updateUser(List.MATRICULE)} color="success" variant="contained" type="submit">
+        <Button onClick={(e) => {
+          e.preventDefault();
+          updateUser(List.MATRICULE);
+          }} 
+          color="success" variant="contained" type="submit">
           {/*<Icon>send</Icon>*/}
           Modifier
         </Button>

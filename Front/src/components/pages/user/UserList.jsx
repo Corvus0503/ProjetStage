@@ -1,5 +1,6 @@
 import {
-  Card,
+  Box,
+  Icon,
   IconButton,
   styled,
   Table,
@@ -9,16 +10,74 @@ import {
   TablePagination,
   TableRow,
   useTheme,
+ alpha,
+ InputBase
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios"
 import { React, useEffect } from "react";
 import TestModal from "./TestModal";
+import { useNavigate } from "react-router-dom";
 import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Breadcrumb from "../../Utils/Breadcrumb";
 import Swal from 'sweetalert2'
 import { Span } from "../../Typography";
+import SearchIcon from '@mui/icons-material/Search';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+
+
+const Search = styled('div')(({ theme }) => ({
+position: 'relative',
+borderRadius: theme.shape.borderRadius,
+backgroundColor: alpha(theme.palette.common.black, 0.15),
+'&:hover': {
+  backgroundColor: alpha(theme.palette.common.black, 0.25),
+},
+borderColor: 'black',
+marginLeft: 0,
+width: '50%',
+[theme.breakpoints.up('sm')]: {
+  marginLeft: theme.spacing(1),
+  width: 'auto',
+},
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+padding: theme.spacing(0, 2),
+height: '100%',
+position: 'absolute',
+pointerEvents: 'none',
+display: 'flex',
+alignItems: 'center',
+justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+color: 'inherit',
+'& .MuiInputBase-input': {
+  padding: theme.spacing(1, 1, 1, 0),
+  // vertical padding + font size from searchIcon
+  paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+  transition: theme.transitions.create('width'),
+  width: '50%',
+  [theme.breakpoints.up('sm')]: {
+    width: '12ch',
+    '&:focus': {
+      width: '20ch',
+    },
+  },
+},
+}));
+
+const Container = styled("div")(({ theme }) => ({
+margin: "30px",
+[theme.breakpoints.down("sm")]: { margin: "16px" },
+"& .breadcrumb": {
+  marginBottom: "30px",
+  [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
+},
+}));
 
 const StyledTable = styled(Table)(() => ({
   whiteSpace: "pre",
@@ -27,14 +86,6 @@ const StyledTable = styled(Table)(() => ({
   },
   "& tbody": {
     "& tr": { "& td": { paddingLeft: 0, textTransform: "capitalize" } },
-  },
-}));
-const Container = styled("div")(({ theme }) => ({
-  margin: "30px",
-  [theme.breakpoints.down("sm")]: { margin: "16px" },
-  "& .breadcrumb": {
-    marginBottom: "30px",
-    [theme.breakpoints.down("sm")]: { marginBottom: "16px" },
   },
 }));
 const StyledSpan = styled(Span)(({ bgColor }) => ({
@@ -47,7 +98,7 @@ const StyledSpan = styled(Span)(({ bgColor }) => ({
 
 //A ne pas toucher
 const UserList = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [user, setUser] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -78,7 +129,7 @@ useEffect(() => {
 const { palette } = useTheme();
 const bgGreen = "rgba(9, 182, 109, 1)";
 const bgError = palette.error.main;
-//const bgSecondary = palette.secondary.main;
+const bgSecondary = palette.secondary.main;
 
 const renderStatus = (status) => {
   if (status === "Activé") return <StyledSpan bgColor={bgGreen}>{status}</StyledSpan>;
@@ -144,22 +195,57 @@ const handleDialogClose = () => {
     })
   }
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+    // Filter the adminList based on the search term
+const filteredAdminList = adminList.filter(
+  (item) =>
+    item.NOM_UTIL_AG.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.MATRICULE.includes(searchTerm) ||
+    item.FONCTION_AG.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.TEL_AG.includes(searchTerm) ||
+    item.ACTIVATION.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
 
   console.log(adminList)
   return (
-  <Container className="containerBG">
-    <div className="breadcrumb">
+
+    <Container >
+      <div className="m-5 mt-3 mb-3">
+      <div className="breadcrumb">
           <Breadcrumb routeSegments={[{ name: "Liste des Utilisateur" }]} />
       </div>
-      <div className="mt-5 p-5 me-5 card shadow">
-          <div className="h1 text-start">
-            Utilisateur
-          </div>
-          <hr />
+      <div className=" text-start mb-3">
+        <button className="btn btn-primary " onClick={() => navigate("/Signup", { replace: true })} > <AddCircleIcon/> Nouvelle utilisateur </button>
+      </div>
+      <div className="mt-5 p-5 card shadow">
+      <h1 align="left"> Liste des utilisateurs </h1>
+        <hr />
+        <div style={{paddingLeft: "80%"}}>
+        <div style={{width: "200px", right: 0}} className="text-end">
+        
+        <Search>
+          <SearchIconWrapper>
+            <SearchIcon />
+          </SearchIconWrapper>
+          <StyledInputBase
+            placeholder="Search…"
+            inputProps={{ 'aria-label': 'search' }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          </Search>
+        </div>
+        </div>
+        
+        <Box width="100%" overflow="auto">
+        
+        
         <StyledTable>
           <TableHead>
             <TableRow>
-              <TableCell align="center">  </TableCell>
+              <TableCell align="center"></TableCell>
               <TableCell align="center">Nom d'utilisateur</TableCell>
               <TableCell align="center">Matricule</TableCell>
               <TableCell align="center">Fonction</TableCell>
@@ -167,9 +253,9 @@ const handleDialogClose = () => {
               <TableCell align="center">Activation</TableCell>
               <TableCell align="center">Action</TableCell>
             </TableRow>
-          </TableHead>
+          </TableHead> 
           <TableBody>
-            {adminList
+            {filteredAdminList
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((List) => (
 
@@ -220,9 +306,14 @@ const handleDialogClose = () => {
               onYesClick={handleConfirmationResponse}
             />
           )}
+        </Box>
+      </div>
       </div>
     
-  </Container>
+    </Container>
+    
+    
+
     
   );
 };

@@ -1,15 +1,34 @@
 import * as React from 'react';
 import { PieChart, pieArcClasses } from '@mui/x-charts/PieChart';
+import axios from 'axios'; // Importez Axios en minuscules
 
-const palette = ['#dc3545', 'rgba(9, 182, 109, 1)', '#ffc107'];
-
-const data = [
-  { id: 0, value: 3, label: 'Refusé' },
-  { id: 1, value: 2, label: 'Validé' },
-  { id: 2, value: 5, label: 'En Attente' },
-];
+const palette = ['#ff5223', '#217009', '#2181c2'];
 
 export default function PieActiveArc() {
+  const [data, setData] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const responseEnAttente = await axios.get('http://localhost:8080/besoinAttente');
+        const responseRefus = await axios.get('http://localhost:8080/besoinRefus');
+        const responseValider = await axios.get('http://localhost:8080/besoinValide');
+
+        const data = [
+          { id: 0, value: responseRefus.data[0].REFUS, label: 'Refusé' },
+          { id: 1, value: responseValider.data[0].VALIDE, label: 'Validé' },
+          { id: 2, value: responseEnAttente.data[0].ATTENT, label: 'En Attente' },
+        ];
+
+        setData(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <PieChart
       colors={palette}

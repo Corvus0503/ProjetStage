@@ -2,11 +2,15 @@ import React, { useState } from "react";
 import NewBesoin from "../pages/Besoin/NewBesoin";
 import BesoinList from "../pages/Besoin/BesoinList";
 
-const ToggleablePills = (user) => {
+const ToggleablePills = ({user}) => {
   const [activePill, setActivePill] = useState("pill2");
 
   const handlePillClick = (pillId) => {
     setActivePill(pillId);
+  };
+
+  const handleValidationComplete = () => {
+    handlePillClick("pill2"); // Active l'onglet "Suivi des Besoins"
   };
 
   console.log(user)
@@ -36,7 +40,7 @@ const ToggleablePills = (user) => {
         <hr className="m-3 mt-2 mb-2"/>
       
         {/* Contenu conditionnel en fonction de l'onglet actif */}
-        {activePill === "pill1" && <div > <NewBesoin pillActive={() => handlePillClick("pill2")} user={user}/></div>}
+        {activePill === "pill1" && <div > <NewBesoin pillActive={handleValidationComplete} user={user}/></div>}
 
         {activePill === "pill2" && <div> <BesoinList user={user}/> </div>} 
       </div>

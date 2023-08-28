@@ -18,7 +18,9 @@ const Container = styled("div")(({ theme }) => ({
     },
   }));
 
-const Besoin = (user) => {
+const Besoin = ({user}) => {
+
+  console.log(user)
 
   return (
     <Container >

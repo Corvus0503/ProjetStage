@@ -7,7 +7,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import ArticleListModal from "./ListeArticle";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import CategorieListModal from "./ListeCategorieModale.jsx";
+import CategorieListModal from "./ListeCategorieModale.jsx.jsx";
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import Swal from 'sweetalert2';
 import { format } from 'date-fns';
@@ -82,14 +82,13 @@ const Container = styled("div")(({ theme }) => ({
 }));
 
 // Définition du composant principal pour le formulaire de nouveau besoin
-const NewBesoin = (user, pillActive) => {
+const NewBesoin = ({ user , pillActive }) => {
   // Utilisation de useState pour stocker les données de l'article et de la catégorie sélectionnée
   const [selectedCategorie, setSelectedCategorie] = useState({
     ID_CAT: "",
     LABEL_CAT: "",
   });
 
-  const navigate =useNavigate()
 
   const [idCat, setIdCat] = useState("");
   const [selectedArticle, setSelectedArticle] = useState({
@@ -127,7 +126,7 @@ const NewBesoin = (user, pillActive) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [articleList, setArticleList] = useState([]);
-  console.log(user.user.user.user[0].MATRICULE)
+  //console.log(user.user.user[0])
   // Fonction pour ouvrir la modal de liste d'articles et de catégories
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -193,7 +192,7 @@ const NewBesoin = (user, pillActive) => {
     try {
         await axios.post(`http://localhost:8080/notification`, {
           BODY_NOT : `a envoyé une demande`, 
-            MATRICULE : `${user.user.user.user[0].MATRICULE}`,  
+            MATRICULE : `${user[0].MATRICULE}`,  
             DATE_NOT : format(new Date(), 'yyyy-MM-dd')
         })
 
@@ -211,7 +210,7 @@ const handleValidation = async () => {
       const FORMULE= item.numerotation; // Assurez-vous que les propriétés sont correctes
       const QUANTITE=item.quantite;
       const UNITE=item.unite;
-      const MATRICULE = user.user.user.user[0].MATRICULE;
+      const MATRICULE = user[0].MATRICULE;
       const DATE_BESOIN = format(new Date(), 'yyyy-MM-dd');
       const QUANTITE_ACC= 0;
       const ETAT_BESOIN = 'En Attente';

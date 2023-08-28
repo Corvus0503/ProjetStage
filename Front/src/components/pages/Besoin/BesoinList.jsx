@@ -36,14 +36,17 @@ import { Span } from "../../Typography";
     textTransform: "capitalize",
   }));
 
-  const BesoinList= (user)=>{
+  const BesoinList= ({user})=>{
 
     const [page, setPage] = useState(0);
     const [besoin, setBesoin] = useState(null);
     const [rowsPerPage, setRowsPerPage] = useState(15);
     const [besoinList, setBesoinList] = useState([]);
     const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
-    const matricule=user.user.user.user[0].MATRICULE;
+
+    console.log(user)
+
+    const matricule=user[0].MATRICULE;
     const [searchQuery, setSearchQuery] = useState("");
 
 

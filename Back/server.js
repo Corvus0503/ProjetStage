@@ -11,9 +11,11 @@ const {
     getCategorie, addCategorie, updateCategorie, deleteCategorie,
     getService, addService, updateService, deleteService,
     getDivision, addDivision, updateDivision, deleteDivision, getArticle, getCategorieArticle,addArticle,
-    updateArticle, deleteArticle,addBesoin, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail,getSelectedArticle,
+    updateArticle, deleteArticle,addBesoin, getBesoin,getAllBesoin , deleteBesoin, updateBesoin, getBesoinDetail,getSelectedArticle,
     getBesoinListe, addValidation,deleteValidation ,getNotification, addNotification,
-    deleteNotification, getValidation,getValidationBesoin,getPrixPrevisionnel,addPrevision,getPrevision,
+    deleteNotification,updateValidation, deleteValidationParUn, getValidation,getValidationBesoin,getPrixPrevisionnel,addPrevision,getPrevision,
+    getNombreEnAttent, getNombreEnAttentBag, getNombreRefus, getNombreRefusBag, getNombreValider, getNombreValiderBag
+    
     } = require("./app/utils/querryHelpers")
 const getConnection = require("./app/utils/db.js");
 const socketIO = require("socket.io");
@@ -239,6 +241,9 @@ app.get('/besoin/:id', (req,res)=>{
     const{id} = req.params;
     getBesoin(req, res,id)
 })
+app.get('/allBesoin', function (req, res){
+  getAllBesoin(req,res);
+})
 app.get('/besoinAtt', function(req, res){
     getBesoinAtt(req,res);
 })
@@ -296,6 +301,32 @@ app.post('/besoin', function(req, res){
     const {MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,QUANTITE_ACC,UNITE,ETAT_BESOIN,OBSERVATION}=req.body
     addBesoin(req, res,MATRICULE,FORMULE,DATE_BESOIN,QUANTITE,QUANTITE_ACC,UNITE,ETAT_BESOIN,OBSERVATION);
 })
+//DashBoard des Besoins 
+
+app.get('/besoinAttente/:id',(req,res)=>{
+  const {id}=req.params;
+  getNombreEnAttent(req,res,id)
+})
+app.get('/besoinAttente',(req,res)=>{
+  getNombreEnAttentBag(req,res)
+})
+
+app.get('/besoinRefus/:id',(req,res)=>{
+  const {id}=req.params;
+  getNombreRefus(req,res,id)
+})
+
+app.get('/besoinRefus',(req,res)=>{
+  getNombreRefusBag(req,res)
+})
+
+app.get('/besoinValide/:id',(req,res)=>{
+  const {id}=req.params;
+  getNombreValider(req,res,id)
+})
+app.get('/besoinValide',(req,res)=>{
+  getNombreValiderBag(req,res)
+}) 
 
 //Validation des besoins Controller
     //getter :
@@ -313,6 +344,11 @@ app.get('/prevision',(req,res)=>{
   getPrevision(req,res)
 })
     //setter :
+app.put('/validation/:id',(req,res)=>{
+  const{id}=req.params;
+  const{QUANTITE_ACC}=req.body;
+  updateValidation(req,res,QUANTITE_ACC)
+})
 
     //Creator :
 app.post('/validation', function(req,res){
@@ -325,13 +361,14 @@ app.post('/prevision',(req,res)=>{
   const{PREVISION, DATE_PREVISION}=req.body;
   addPrevision(req,res,PREVISION, DATE_PREVISION)
 })
-//delete
+    //delete
 app.delete('/validation',(req,res)=>{
   deleteValidation(req,res);
 })
-
-
-
+app.delete('/validation/:id',(req,res)=>{
+  let{id} = req.params;
+  deleteValidationParUn(req,res,id);
+})
 
 server.listen(8080, () =>{
     console.log("Server is running")

@@ -395,6 +395,103 @@ const getBesoin= async (req, res,id)=> {
   }
 }
 
+const getAllBesoin= async (req, res)=> {
+  const query = `SELECT BESOIN.* , ARTICLE.*, AGENT.*, CATEGORIE.*,DIVISION.* FROM ((((BESOIN
+    INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+    INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+    INNER JOIN CATEGORIE ON ARTICLE.ID_CAT=CATEGORIE.ID_CAT)
+    INNER JOIN DIVISION ON AGENT.CODE_DIVISION=DIVISION.CODE_DIVISION)
+    ORDER BY BESOIN.DATE_BESOIN DESC, BESOIN.ETAT_BESOIN, DIVISION.LABEL_DIVISION ASC
+  `;
+
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query);
+    res.json(result.rows)
+    connection.commit();
+    connection.release();
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+
+const getNombreEnAttent= async (req,res,id)=>{
+  const query = `SELECT COUNT(NUM_BESOIN) AS ATTENT FROM BESOIN WHERE ETAT_BESOIN= 'En Attente' AND BESOIN.MATRICULE =:id `;
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query,[id]);
+    res.json(result.rows)
+    connection.commit();
+    connection.close()
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+
+const getNombreEnAttentBag= async (req,res)=>{
+  const query = `SELECT COUNT(BESOIN.NUM_BESOIN) AS ATTENT FROM BESOIN WHERE BESOIN.ETAT_BESOIN= 'En Attente'`;
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query);
+    res.json(result.rows)
+    connection.commit();
+    connection.close()
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+
+const getNombreRefus= async(req,res,id)=>{
+  const query = `SELECT COUNT(BESOIN.NUM_BESOIN) AS REFUS FROM BESOIN WHERE BESOIN.ETAT_BESOIN= 'refusé' AND BESOIN.MATRICULE =:id`;
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query,[id]);
+    res.json(result.rows)
+    connection.commit();
+    connection.close()
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+
+const getNombreRefusBag= async(req,res)=>{
+  const query = `SELECT COUNT(BESOIN.NUM_BESOIN) AS REFUS FROM BESOIN WHERE BESOIN.ETAT_BESOIN= 'refusé'`;
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query);
+    res.json(result.rows)
+    connection.commit();
+    connection.close()
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+
+const getNombreValider=async(req,res,id)=>{
+  const query = `SELECT COUNT(BESOIN.NUM_BESOIN) AS VALIDE FROM BESOIN WHERE BESOIN.ETAT_BESOIN='Validé' AND BESOIN.MATRICULE=:id `
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query,[id]);
+    res.json(result.rows)
+    connection.commit();
+    connection.close()
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
+
+const getNombreValiderBag=async(req,res)=>{
+  const query = `SELECT COUNT(BESOIN.NUM_BESOIN) AS VALIDE FROM BESOIN WHERE BESOIN.ETAT_BESOIN='Validé'`
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute(query);
+    res.json(result.rows)
+    connection.commit();
+    connection.close()
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+  }
+}
 const getBesoinListe = async(req,res)=>{
     const query = `SELECT BESOIN.MATRICULE,BESOIN.DATE_BESOIN, BESOIN.ETAT_BESOIN, AGENT.MATRICULE AS AGENT_MATRICULE, AGENT.NOM_AG AS AGENT_NOM, AGENT.PRENOM_AG AS AGENT_PRENOM, DIVISION.LABEL_DIVISION, 
       COUNT(BESOIN.NUM_BESOIN) AS BESOIN_COUNT FROM BESOIN 
@@ -402,7 +499,8 @@ const getBesoinListe = async(req,res)=>{
         INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE
         INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION
         WHERE BESOIN.ETAT_BESOIN = 'En Attente'
-      GROUP BY BESOIN.MATRICULE, BESOIN.DATE_BESOIN, BESOIN.ETAT_BESOIN, AGENT.MATRICULE, AGENT.NOM_AG, AGENT.PRENOM_AG, DIVISION.LABEL_DIVISION    
+      GROUP BY BESOIN.MATRICULE, BESOIN.DATE_BESOIN, BESOIN.ETAT_BESOIN, AGENT.MATRICULE, AGENT.NOM_AG, AGENT.PRENOM_AG, DIVISION.LABEL_DIVISION
+      ORDER BY BESOIN.DATE_BESOIN DESC, BESOIN.ETAT_BESOIN, DIVISION.LABEL_DIVISION ASC
       `
     try {
       const connection = await getConnection();
@@ -415,7 +513,19 @@ const getBesoinListe = async(req,res)=>{
       res.status(500).json({ error: 'Internal server error' });
     }
 }
-
+const getNomDivision = async(req,res)=>{
+  const query= `SELECT LABEL_DIVISION FROM DIVISION `
+  try {
+    const connection = await getConnection();
+    const result= await connection.execute(query);
+    res.json(result.rows)
+    connection.commit();
+    connection.release();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
 const getBesoinDetail = async (req, res, id) => { // Utilisation dans l'ordre correct
     const query = `
       SELECT BESOIN.*, ARTICLE.*, AGENT.*, CATEGORIE.*, DIVISION.*,COMPTE.*,BESOIN.QUANTITE*ARTICLE.PRIX_ART AS PRIX_BESOIN
@@ -640,6 +750,33 @@ const deleteValidation = async(req,res)=>{
   };
 }
 
+const updateValidation= async(req,res,QUANTITE_ACC,id)=>{
+	const query=`UPDATE VALIDATION SET QUANTITE_ACC =:QUANTITE_ACC WHERE NUM_VALIDATION =:id`
+	try {
+		const connection= await getConnection();
+		const result = await connection.execute(query,[id]);
+		res.json(result.rows);
+		await connection.commit();
+		await connection.close();
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: 'Internal server error' }) 
+	};
+}
+const deleteValidationParUn = async(req, res,id)=>{
+	const query = ` DELETE FROM VALIDATION WHERE NUM_VALIDATION =:id `
+	try {
+		const connection = await getConnection();
+		const result = await connection.execute(query,[id])
+		res.json(result.rows);
+		await connection.commit();
+		await connection.close();
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ error: 'Internal server error' }) 
+	};
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -813,6 +950,7 @@ const getPrevision = async(req,res)=>{
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
  module.exports = {
    getAdminList,
    getAdmin,
@@ -842,6 +980,7 @@ const getPrevision = async(req,res)=>{
    deleteArticle,
    addBesoin,
    updateBesoin,
+   getAllBesoin,
    getBesoin,
    deleteBesoin,
    getBesoinRef,
@@ -851,6 +990,8 @@ const getPrevision = async(req,res)=>{
    addValidation,
    deleteValidation,
    getValidation,
+   updateValidation,
+   deleteValidationParUn,
    getValidationBesoin,
    getNotification,
   addNotification,
@@ -858,4 +999,10 @@ const getPrevision = async(req,res)=>{
   getPrixPrevisionnel,
   addPrevision,
   getPrevision,
+  getNombreEnAttent,
+  getNombreEnAttentBag,
+  getNombreRefus,
+  getNombreRefusBag,
+  getNombreValider,
+  getNombreValiderBag
   };

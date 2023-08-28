@@ -28,4 +28,4 @@ const Comment = ({ comment, isYou, deleteNot, redirection }) => {
   )
 }
 
-export default Comment;
+export default Comment

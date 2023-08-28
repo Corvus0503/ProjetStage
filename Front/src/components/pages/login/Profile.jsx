@@ -1,34 +1,18 @@
 import React from 'react'
-import { LockOpen, Person } from "@mui/icons-material";
 import {
-  Avatar,
   Button,
   Card,
   Divider,
   styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
 } from "@mui/material";
-import { FlexBetween, FlexBox } from "../../Utils/FlexBox";
+import { FlexBox } from "../../Utils/FlexBox";
 import { H4, Small } from "../../Typography";
 import {
-  Grid,
-  Icon,
-  Radio,
-  RadioGroup,
-  Select,
-  MenuItem,
-  InputLabel,
-  IconButton,
-  Switch
+  Grid
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
-import { Modal } from 'react-bootstrap';
 import axios from "axios"
-import CreateIcon from '@mui/icons-material/Create';
 import Swal from 'sweetalert2'
 
 const ContentBox = styled(FlexBox)({
@@ -41,19 +25,6 @@ const TextField = styled(TextValidator)(() => ({
   marginBottom: "13px",
 }));
 
-const StyedSmall = styled(Small)({
-  color: "#08ad6c",
-  padding: "2px 4px",
-  borderRadius: "4px",
-  background: "rgba(9, 182, 109, 0.15)",
-});
-
-const StyledButton = styled(Button)(({ theme }) => ({
-  fontSize: "13px",
-  color: theme.palette.text.primary,
-  ":hover": { background: "transparent" },
-}));
-
 const Container = styled("div")(({ theme }) => ({
   margin: "30px",
   [theme.breakpoints.down("sm")]: { margin: "16px" },
@@ -64,7 +35,7 @@ const Container = styled("div")(({ theme }) => ({
 }));
 
 const Profile = ({user}) => {
-
+  const [confirmMdp, setConfirmMdp] = useState("")
   const [modUser, setModUser] = useState({
     MATRICULE: "",
     FONCTION_AG: "",
@@ -137,6 +108,13 @@ const handleSubmit = (id) => {
   })
   
 };
+  useEffect(() => {
+    ValidatorForm.addValidationRule("isPasswordMatch", (value) => {
+      if (value !== modUser.PASSWORD) return false;
+      return true;
+    });
+    return () => ValidatorForm.removeValidationRule("isPasswordMatch");
+  }, [modUser.PASSWORD]);
 
     useEffect(() =>{
       setModUser(user[0])
@@ -191,6 +169,24 @@ const handleSubmit = (id) => {
               errorMessages={["Veuillez remplir ce champ"]}
               label="Nom d'utilisteur"
               validators={["required", "minStringLength: 1", "maxStringLength: 20"]}
+            />
+            <TextField
+              name="PASSWORD"
+              type="text"
+              label="Password"
+              value={modUser.PASSWORD}
+              onChange={handleChange}
+              validators={["required"]}
+              errorMessages={["this field is required"]}
+            />
+            <TextField
+              type="text"
+              name="confirmPassword"
+              label="Confirm Password"
+              onChange={(e) => setConfirmMdp(e.target.value)}
+              value={confirmMdp}
+              validators={["required", "isPasswordMatch"]}
+              errorMessages={["this field is required", "password didn't match"]}
             />
 
     </Grid>

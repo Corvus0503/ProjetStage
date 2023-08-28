@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 
 
 
-const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
+const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}) => {
   // Utilisation de useState pour gérer la pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
@@ -43,6 +43,18 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
   );
 
   //console.log(matricule)
+
+  async function sendComment() { 
+    console.log('matricule : ',matricule) 
+    try { 
+      await axios.post(`http://localhost:8080/notificationRet`, { 
+        BODY_NOT : `a analysé votre beson`, 
+        MATRICULE : `${user.user[0].MATRICULE}`, 
+        DATE_NOT : format(new Date(), 'yyyy-MM-dd'), 
+        MATR_DEST: matricule }) } 
+        catch (error) { 
+          console.log(`Erreur : ${error}`) 
+        } }
 
   // Utilisation de useEffect pour charger la liste des articles lorsque l'idCat change
   useEffect(() => {  
@@ -194,6 +206,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
           'success'
         );
         
+        sendComment()
         fetchArticleList();
         chargerBag();
 
@@ -219,9 +232,9 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
 
   // Rendu du composant de la modal
   return (
-    <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="auto" style={{ width:"92%",height:"100%" ,padding:"20px",marginLeft:"9%"}} >
+    <Dialog open={isModalOpen} onClose={closeModal} fullWidth maxWidth="md">
       <DialogTitle><span className="h4">Validations des Besoin</span> <hr /></DialogTitle>
-      <DialogContent className="">
+      <DialogContent>
       <div className="d-flex flex-row">
                 <input
                     style={{height:'40px',marginLeft:'60%'}}
@@ -234,7 +247,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
                 <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
               </div>
 
-        <Table className="table table-bordered mt-3">
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell align="center"> Division </TableCell>
@@ -243,12 +256,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
               <TableCell align="center"> Quantité </TableCell>
               <TableCell align="center"> Unité </TableCell>
               <TableCell align="center"> Date </TableCell>
-              <TableCell align="center"> Prix d'article </TableCell>
-              <TableCell align="center"> Mise à jour d'article </TableCell>
-              <TableCell align="center"> Prix Des Besoins </TableCell>
               <TableCell align="center"> Observation </TableCell>
-              
-
               <TableCell align="left"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Opération</TableCell>
             </TableRow>
           </TableHead>
@@ -258,14 +266,11 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag}) => {
             .map((besoinList) => (
                 <TableRow key={besoinList.NUM_BESOIN}>
                 <TableCell align="center">{besoinList.LABEL_DIVISION}</TableCell>
-                <TableCell align="center">{  besoinList.NUM_CMPT + ": " +besoinList.DESIGNATION_CMPT }</TableCell>
+                <TableCell align="center">{besoinList.DESIGNATION_CMPT +besoinList.NUM_CMPT }</TableCell>
                 <TableCell align="center">{besoinList.DESIGNATION_ART}</TableCell>
                 <TableCell align="center">{besoinList.QUANTITE}</TableCell>
                 <TableCell align="center">{besoinList.UNITE}</TableCell>
                 <TableCell align="center">{besoinList.DATE_BESOIN}</TableCell>
-                <TableCell align="center">{besoinList.PRIX_ART}</TableCell>
-                <TableCell align="center">{besoinList.DATE_MODIFICATION}</TableCell>
-                <TableCell align="center">{besoinList.PRIX_BESOIN}</TableCell>
                 <TableCell align="center">{besoinList.OBSERVATION}</TableCell>
                 <TableCell align="center" className="d-flex inline">
                 <Button onClick={() => handleValidation(besoinList.NUM_BESOIN)}>

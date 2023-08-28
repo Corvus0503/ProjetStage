@@ -12,6 +12,7 @@ import ArticleIcone from "./images/ArticleIcone";
 import Topnav from "./Topnav";
 import { useNavigate } from "react-router-dom";
 import SubMenu from "./SubMenu";
+import HistoryIcon from '@mui/icons-material/History';
 
 const SideNav = ({IsOpen, togleSidebar, deconexion, user, comments, togleNot}) =>{
     const navigate = useNavigate();
@@ -43,6 +44,7 @@ const [lienBAG] = useState([
     ]},
     {name: 'Besoin',icon: <SideValid/>, lien:"/Besoin"},
     {name: 'Validation',icon: <SideValid/>, lien:"/BesoinBag" },
+    {name: 'Historique',icon: <HistoryIcon/>, lien:"/historique" },
 ])
 
 const lienPerm = () =>{
@@ -79,8 +81,8 @@ return(
     <>
         <Topnav togleSidebar={togleSidebar} user={user} IsOpen={IsOpen} logout={logout} comments={comments} togleNot={togleNot}/>
         <aside className={`sidebar ${IsOpen ? "open" : ""}`}>
-            <nav>
-                <br/><br/><br/><br/><br/>
+            <nav className="navigation mt-5">
+                <br />
                 {lienPerm()}
             </nav>
         </aside>

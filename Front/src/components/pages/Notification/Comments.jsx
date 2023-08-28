@@ -55,18 +55,15 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
     }).catch(error =>{console.error(error);})
   }
 
-  const handleChange = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
-  };
-
   const redirection = (id) =>{
-    navigate("/BesoinBag", { replace: true })
+    if (user[0].TYPE_AG.includes("BAG")){
+      navigate("/BesoinBag", { replace: true })
+    } else {
+      navigate("/Besoin", { replace: true })
+    }
+    
     deleteNot(id)
-    window.location.reload()
-  }
-
-  useEffect(() => {
-    if (user[0].TYPE_AG.includes("Admin")){
+    if (user[0].TYPE_AG.includes("BAG")){
       const fetchArticleList = async () => {
         try {
           const response = await axios.get(`http://localhost:8080/notification/${user[0].MATRICULE}`);
@@ -76,6 +73,30 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
         }
       };
       fetchArticleList();
+    }
+  }
+
+  useEffect(() => {
+    if (user[0].TYPE_AG.includes("BAG")){
+      const fetchArticleList = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/notification/${user[0].MATRICULE}`);
+          setComments(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchArticleList();
+    } else {
+      const fetchArticleListUser = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/notificationUser/${user[0].MATRICULE}`);
+          setComments(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchArticleListUser();
     }
     
   }, [user[0].MATRICULE]);

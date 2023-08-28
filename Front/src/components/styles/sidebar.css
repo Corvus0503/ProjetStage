@@ -35,16 +35,17 @@
   background-color: #ffffff00;
   border-style: none;
 }
-
 .nav-item{
   display: flex;
   padding: 8px 8px 8px 20px;
   text-decoration: none;
+  margin-top: 10%;
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
   font-size: 18px;
   color: rgb(255, 255, 255);
   display: flex;
+  text-align: left;
 }
 .nav-item:hover{
   background-color: #1d20ca;
@@ -54,13 +55,6 @@
   border-bottom-left-radius: 25px;
 
 }
-.active{
-  background-color: #1d20ca;
-  color: white;
-  border-top-left-radius: 25px;
-  border-bottom-left-radius: 25px;
-}
-
 .nav-item.open:hover{
   background-color: #1d20ca;
   transition-duration: 400ms;
