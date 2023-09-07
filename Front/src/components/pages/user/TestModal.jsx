@@ -291,7 +291,13 @@ const updateUser = id => {
               errorMessages={["this field is required"]}
             />  
 
-            <TextField
+            
+
+            
+          </Grid>
+
+          <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+          <TextField
               type="email"
               name="MAIL_AG"
               label="Email"
@@ -300,11 +306,6 @@ const updateUser = id => {
               validators={["required", "isEmail"]}
               errorMessages={["this field is required", "email non valide"]}
             />
-
-            
-          </Grid>
-
-          <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
             <TextField
                 type="text"
                 name="ADRESSE_AG"
@@ -378,10 +379,7 @@ const updateUser = id => {
             label={modUser.ACTIVATION === 'Activé' ? 'Activé' : 'Desactivé'}
             labelPlacement="end"
           />
-          </Grid>
-        </Grid>
-
-        <Button onClick={(e) => {
+          <Button onClick={(e) => {
           e.preventDefault();
           updateUser(List.MATRICULE);
           }} 
@@ -389,6 +387,10 @@ const updateUser = id => {
           {/*<Icon>send</Icon>*/}
           Modifier
         </Button>
+          </Grid>
+        </Grid>
+
+        
       </ValidatorForm>
         </Modal.Body>
         

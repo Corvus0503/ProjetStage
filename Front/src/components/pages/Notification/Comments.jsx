@@ -56,12 +56,6 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
   }
 
   const redirection = (id) =>{
-    if (user[0].TYPE_AG.includes("Admin")){
-      navigate("/BesoinBag", { replace: true })
-    } else {
-      navigate("/Besoin", { replace: true })
-    }
-    
     deleteNot(id)
     if (user[0].TYPE_AG.includes("Admin")){
       const fetchArticleList = async () => {
@@ -74,6 +68,14 @@ const Comments = ({ user, comments, setComments, IsOpenNot, togleNot }) => {
       };
       fetchArticleList();
     }
+    togleNot()
+    if (user[0].TYPE_AG.includes("BAG")){
+      navigate("/BesoinBag", { replace: true })
+    } else {
+      navigate("/Besoin", { replace: true })
+    }
+    
+    
   }
 
   useEffect(() => {

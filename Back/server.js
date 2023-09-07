@@ -11,10 +11,11 @@ const {
     getCategorie, addCategorie, updateCategorie, deleteCategorie,
     getService, addService, updateService, deleteService,
     getDivision, addDivision, updateDivision, deleteDivision,
-    getArticle, addArticle,
+    getArticle, addArticle, getCategorieArticle,
     updateArticle, deleteArticle, getBesoin, deleteBesoin, updateBesoin, getBesoinDetail, getSelectedArticle, addBesoin,
-    getBesoinListe, addValidation, getValidation, getValidationBesoin,
-    getNotification, addNotification, getNotificationUser, deleteNotification
+    getBesoinListe, addValidation, getValidation, getValidationBesoin,getPrixPrevisionnel,
+    getNotification, addNotification, getNotificationUser, deleteNotification, addPrevision,
+    getPrevision
 } = require("./app/utils/querryHelpers")
 const getConnection = require("./app/utils/db.js");
 const socketIO = require("socket.io");
@@ -247,23 +248,25 @@ app.delete('/division/:id', function (req, res) {
 app.get('/article', function (req, res) {
     getArticle(req, res);
   })
-
+app.get('/articleCat/:id',(req,res)=>{
+    const{id}=req.params
+    getCategorieArticle(req,res,id)
+})
 app.post('/article', function (req, res) {
-    const {FORMULE, DESIGNATION_ART, SPECIFICITE_ART,UNITE_ART, EFFECTIF_ART, ID_CAT } = req.body;
-    addArticle(req, res,  FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT );
+    const { DESIGNATION_ART, SPECIFICITE_ART,UNITE_ART, PRIX_ART, ID_CAT ,DATE_MODIFICATION} = req.body;
+    addArticle(req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION );
 })
 
 app.put('/article/:id', function (req, res) {
-    let { FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT} = req.body
+    let {DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION} = req.body
     let {id} = req.params
-    updateArticle(req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id);
+    updateArticle(req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION, id);
 })
 
 app.delete('/article/:id', function (req, res) {
     let {id} = req.params
     deleteArticle(req, res, id);
 })
-
 
 //Besoin controller 
     //getter
@@ -290,6 +293,26 @@ app.delete('/article/:id', function (req, res) {
         let{id} = req.params;
         deleteBesoin(req, res, id);
     })
+
+    //Validation des besoins Controller
+    //getter :
+app.get('/validation',(req,res)=>{
+    getValidation(req,res);
+  })
+  
+  app.get('/validationList',(req,res)=>{
+    getValidationBesoin(req,res);
+  } )
+  app.get('/prixTotal',(req,res)=>{
+    getPrixPrevisionnel(req,res);
+  })
+  app.get('/prevision',(req,res)=>{
+    getPrevision(req,res)
+  })
+  app.post('/prevision',(req,res)=>{
+    const{PREVISION, DATE_PREVISION}=req.body;
+    addPrevision(req,res,PREVISION, DATE_PREVISION)
+  })
     
         //setter
     app.put('/besoins/:id', async (req, res) => {

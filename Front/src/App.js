@@ -12,8 +12,8 @@ import { ProtectedRoute } from './components/routes/protectedRoute';
 import Signup from './components/pages/login/Signup';
 import UserList from './components/pages/user/UserList';
 import ModUser from './components/pages/user/modUser';
-import Article from './components/pages/Article/Article';
 import ArticleList from './components/pages/Article/ArticleList';
+import Article from './components/pages/Article/NewArticle';
 import Besoin from './components/pages/Besoin/Besoin';
 import BesoinListBag from './components/pages/Besoin/BesoinListeBAG';
 import Division from './components/pages/Division/Division';
@@ -83,7 +83,7 @@ useEffect(() => {
         
         <AuthProvider>
           {isConn && <SideNav user={user} deconexion={deconexion} IsOpen={IsOpen} setIsOpen={setIsOpen} togleSidebar={togleSidebar} comments={comments} togleNot={togleNot}/>}
-          {isConn && <Comments comments={comments} setComments={setComments} user={user} IsOpenNot={IsOpenNot} />}
+          {isConn && <Comments comments={comments} setComments={setComments} user={user} IsOpenNot={IsOpenNot} togleNot={togleNot}/>}
           <Routes>
             <Route index element={<Login 
             isConn={isConn} setIsConn={setIsConn} saveCon={saveCon}
@@ -101,10 +101,10 @@ useEffect(() => {
               <Route path="/Besoin/Liste" element={<BesoinList user={user}/>} />
               <Route path="/Profile" element={<Profile user={user} />} />
               <Route path="/Comments" element={<Comments comments={comments} setComments={setComments} user={user} IsOpenNot={IsOpenNot} />} />
+              <Route path="/Prevision" element={<Previsions user={user} />} />
               <Route element={<ProtectedRoute redirectPath="/Dashboard" user={user} perm={'BAG'}/>}>
-                <Route path="/Prevision" element={<Previsions user={user} />} />
-                <Route path="/Article/Nouvel_Article" element={<Article />} />
                 <Route path="/Article/Liste" element={<ArticleList />} />
+                <Route path="/Article/Nouvel_Article" element={<Article />} />
                 <Route path="/BesoinBag" element={<BesoinListBag user={user} />} />
                 <Route path="/Categorie" element={<Categorie user={user} />} />
               </Route>
@@ -112,7 +112,6 @@ useEffect(() => {
                 <Route path="/Signup" element={<Signup />} />
                 <Route path="/UserList" element={<UserList />} />
                 <Route path="/ModUser" element={<ModUser />} />
-                <Route path="/Article/Nouvel_Article" element={<Article />} />
                 <Route path="/Article/Liste" element={<ArticleList />} />
                 <Route path="/Division" element={<Division />} />
                 <Route path="/Categorie" element={<Categorie user={user} />} />

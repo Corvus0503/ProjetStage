@@ -17,7 +17,6 @@ import ConfirmationDialog from "../../Utils/ConfirmationDialog";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Breadcrumb from "../../Utils/Breadcrumb";
 
-
 const Container = styled("div")(({ theme }) => ({
   margin: "30px",
   [theme.breakpoints.down("sm")]: { margin: "16px" },
@@ -41,9 +40,18 @@ const StyledTable = styled(Table)(() => ({
 const ArticleList = () => {
   const [page, setPage] = useState(0);
   const [user, setUser] = useState(null);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   const [ArticleListe, setArticleListe] = useState([]);
   const [shouldOpenConfirmationDialog, setShouldOpenConfirmationDialog] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+
+  const filteredArticleListe = ArticleListe.filter(article =>
+    article.LABEL_CAT.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.DESIGNATION_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.SPECIFICITE_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.UNITE_ART.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleDialogClose = () => {
     setShouldOpenConfirmationDialog(false);
@@ -59,8 +67,6 @@ const ArticleList = () => {
     handleDelete(user)
     handleDialogClose()
   };
-
-
 
 const chargerListAdmin = async () => {
   try {
@@ -93,50 +99,56 @@ useEffect(() => {
   };
   console.log(ArticleListe)
 
+
+
   return (
     <Container>
-        <div className="breadcrumb">
-            <Breadcrumb routeSegments={[{ name: "Liste des Article" }]} />
-        </div>
             <Card sx={{ width: "100%", overflow: "auto" }} elevation={6}>
             <div className="m-5 mt-3 mb-3">
-              <h1 align="left"> Ajout d'un nouveau Article </h1>
+              <div className="d-flex flex-row">
+                <h1 align="left" className="me-5"> Article </h1>
+                <input
+                  style={{height:'40px',marginLeft:'60%'}}
+                  className="mt-2 form-control"
+                  type="text"
+                  placeholder="Search article..."
+                  value={searchQuery}
+                  onChange={event => setSearchQuery(event.target.value)}
+                />
+                <button  style={{height:'40px'}} className="btn btn-danger mt-2 ms-2" onClick={() => setSearchQuery("")}>X</button>
+              </div>
+              
                 <hr />
                 
-                    <StyledTable>
+                    <StyledTable className="table table-bodered mt-3">
                     <TableHead>
                         <TableRow>
                         <TableCell align="left"> N° </TableCell>
                         <TableCell align="center"> Categorie  </TableCell>
                         <TableCell align="center"> Designation </TableCell>
                         <TableCell align="center"> Spécification </TableCell>
-                        <TableCell align="center"> Effectif </TableCell>
+                        <TableCell align="center"> Prix d'article(Ariary) </TableCell>
+          
                         <TableCell align="center"> Unité </TableCell>
                         <TableCell align="center"> Opération </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {ArticleListe
+                        {filteredArticleListe
                         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        .map((List) => (
+                        .map(List => (
                             <TableRow key={ArticleListe.FORMULE}>
                             <TableCell align="left">{List.FORMULE}</TableCell>
                             <TableCell align="center">{List.LABEL_CAT}</TableCell>
                             <TableCell align="center">{List.DESIGNATION_ART}</TableCell>
                             <TableCell align="center">{List.SPECIFICITE_ART}</TableCell>
-                            <TableCell align="center">{List.EFFECTIF_ART}</TableCell>
+                            <TableCell align="center">{List.PRIX_ART}</TableCell>
+              
                             <TableCell align="center">{List.UNITE_ART}</TableCell>
-
                             <TableCell align="center"  >
-                                
-                                
-                                
-                                
                                 <IconButton >
                                 <ModificationArticle  List={List} ArticleList={ArticleList}  chargerListAdmin={chargerListAdmin} />
                                 </IconButton>
-                                
-
                                 <IconButton onClick={()=>handleDeleteUser(List.FORMULE)}>
                                 <DeleteIcon color="error"/>
                                 </IconButton>

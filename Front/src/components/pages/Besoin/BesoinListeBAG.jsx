@@ -40,7 +40,7 @@ const Container = styled("div")(({ theme }) => ({
     textTransform: "capitalize",
   }));
 
-  const BesoinListBag= (user)=>{
+  const BesoinListBag= ({user})=>{
 
     const [page, setPage] = useState(0);
     const [besoin, setBesoin] = useState(null);
@@ -180,6 +180,7 @@ const Container = styled("div")(({ theme }) => ({
                               isModalOpen={isModalOpen}
                               closeModal={handleModalClose}
                               chargerBag={chargerListBesoin}
+                              user={user}
                             />
                             </TableCell>
 

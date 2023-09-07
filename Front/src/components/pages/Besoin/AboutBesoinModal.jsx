@@ -33,14 +33,14 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
       console.error(error);
     }
   };
-  const filteredBesoinList = besoinList.filter(besoin =>
-    besoin.DESIGNATION_CMPT.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    besoin.DESIGNATION_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    besoin.LABEL_DIVISION.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    besoin.NUM_CMPT.includes(searchQuery) ||
-    besoin.UNITE.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    besoin.DATE_BESOIN.includes(searchQuery)
-  );
+  // const filteredBesoinList = besoinList.filter(besoin =>
+  //   besoin.DESIGNATION_CMPT.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //   besoin.DESIGNATION_ART.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //   besoin.LABEL_DIVISION.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //   besoin.NUM_CMPT.includes(searchQuery) ||
+  //   besoin.UNITE.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //   besoin.DATE_BESOIN.includes(searchQuery)
+  // );
 
   //console.log(matricule)
 
@@ -49,7 +49,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
     try { 
       await axios.post(`http://localhost:8080/notificationRet`, { 
         BODY_NOT : `a analysé votre beson`, 
-        MATRICULE : `${user.user[0].MATRICULE}`, 
+        MATRICULE : `${user[0].MATRICULE}`, 
         DATE_NOT : format(new Date(), 'yyyy-MM-dd'), 
         MATR_DEST: matricule }) } 
         catch (error) { 
@@ -148,6 +148,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
             'Le besoin a été validé avec succès.',
             'success'
           );
+          sendComment();
           fetchArticleList();
           chargerBag();
         }
@@ -206,7 +207,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
           'success'
         );
         
-        sendComment()
+        sendComment();
         fetchArticleList();
         chargerBag();
 
@@ -261,7 +262,7 @@ const AboutBesoinModal = ({ matricule,isModalOpen, closeModal, chargerBag, user}
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredBesoinList
+            {besoinList
             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((besoinList) => (
                 <TableRow key={besoinList.NUM_BESOIN}>

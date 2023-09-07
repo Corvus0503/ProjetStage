@@ -131,8 +131,10 @@ const NewBesoin = (user) => {
 
   };
 
+  //initialiser une instance socket.io
   const socket = io("http://localhost:8080");
 
+  //Fonction pour envoyer une notification
   async function sendComment() {
     try {
         await axios.post(`http://localhost:8080/notification`, {
@@ -192,6 +194,7 @@ const handleValidation = async () => {
       text: 'Votre demande a été soumise avec succès !',
     });
 
+    //Envoyer une notification
     sendComment();
 
     // Réinitialiser la liste des articles ajoutés

@@ -54,8 +54,27 @@ const StyledButton = styled(Button)(({ theme }) => ({
   ":hover": { background: "transparent" },
 }));
 
+const PhotoUploadButton = styled('label')(({ backgroundImage }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  border: '2px solid #ccc',
+  borderRadius: '50%',
+  width: '150px',
+  height: '150px',
+  cursor: 'pointer',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+  '&:hover': {
+    backgroundColor: '#f2f2f2',
+  },
+}));
+
 const Container = styled("div")(({ theme }) => ({
   margin: "30px",
+  marginLeft : '150px',
   [theme.breakpoints.down("sm")]: { margin: "16px" },
   "& .breadcrumb": {
     marginBottom: "30px",
@@ -145,30 +164,58 @@ const handleSubmit = (id) => {
     return () => ValidatorForm.removeValidationRule("isPasswordMatch");
   }, [modUser.PASSWORD]);
 
+  const [imagePreview, setImagePreview] = useState(null);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setModUser({ ...modUser, PHOTO: file });
+
+    // Display selected image in the button
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
     useEffect(() =>{
       setModUser(user[0])
     }, [])
 
     console.log("modUser : ",modUser)
     return (
-      <Container>
-        <Card sx={{ pt: 3 }} elevation={3}>
-          <ContentBox mb={3} alignContent="center">
-          {user[0].PHOTO && (
+      <Container style={{display: "flex"}}>
+        <Card sx={{ pt: 3, width: 345 }} className="me-4" >
+          <Grid className='text-center'>
+            <div className='text-center ms-5'>
+            <input
+              accept="image/*"
+              style={{ display: "none" }}
+              id="raised-button-file"
+              multiple
+              type="file"
+              name="PHOTO"
+              onChange={handleFileChange}
+            />
+            <PhotoUploadButton className='text-center' htmlFor="raised-button-file" backgroundImage={imagePreview}>
+              {imagePreview ? null : <div>{user[0].PHOTO && (
                       <img
                         src={require(`../../../uploads/${user[0].PHOTO}`)} // Serve the photo from the "uploads" directory on the server
                         alt={user[0].NOM_AG}
                         style={{width: "150px", height: "150px"}} className="rounded-pill" // Adjust the image size as needed
                       />
-                    )}
+              )}</div>}
+            </PhotoUploadButton>
+            </div>
             <H4 sx={{ mt: "16px", mb: "8px" }}>{user[0].NOM_AG} {user[0].PRENOM_AG}</H4>
             <Small color="text.secondary">{user[0].FONCTION_AG}</Small>
-          </ContentBox>
+          </Grid>
+        </Card>
+        
+        <Card sx={{ pt: 3, width: 500, height: "500px" }} elevation={3}>
+          
     
           <Divider />
           <ValidatorForm onSubmit={updateUser} onError={() => null}>
           <Grid container spacing={6}>
-    <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+            <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
             <TextField
             type="text"
             name="NOM_AG"
@@ -201,22 +248,14 @@ const handleSubmit = (id) => {
             />
             <TextField
               name="PASSWORD"
-              type="text"
+              type="password"
               label="Password"
               value={modUser.PASSWORD}
               onChange={handleChange}
               validators={["required"]}
               errorMessages={["this field is required"]}
             />
-            <TextField
-              type="text"
-              name="confirmPassword"
-              label="Confirm Password"
-              onChange={(e) => setConfirmMdp(e.target.value)}
-              value={confirmMdp}
-              validators={["required", "isPasswordMatch"]}
-              errorMessages={["this field is required", "password didn't match"]}
-            />
+            
 
     </Grid>
     <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
@@ -248,13 +287,25 @@ const handleSubmit = (id) => {
               validators={["required"]}
               errorMessages={["Veuillez remplir ce champ"]}
             />
-            <Button onClick={() => handleSubmit(modUser.MATRICULE)} color="success" variant="contained" type="submit">
-          {/*<Icon>send</Icon>*/}
-          Modifier
-        </Button>
+
+            <TextField
+              type="text"
+              name="confirmPassword"
+              label="Confirm Password"
+              onChange={(e) => setConfirmMdp(e.target.value)}
+              value={confirmMdp}
+              validators={["required", "isPasswordMatch"]}
+              errorMessages={["this field is required", "password didn't match"]}
+            />
+           
     </Grid>
     
 </Grid>
+<hr />
+<Button onClick={() => handleSubmit(modUser.MATRICULE)} color="success" variant="contained" type="submit">
+          {/*<Icon>send</Icon>*/}
+          Modifier
+        </Button>
 </ValidatorForm>
           
     

@@ -13,7 +13,8 @@ import './Prevision.css'
 import PageVide from "./PageVide";
 import Swal from 'sweetalert2';
 import PrintIcon from '@mui/icons-material/Print';
-
+import { format } from 'date-fns';
+import RestorePageIcon from '@mui/icons-material/RestorePage';
 
 const Container = styled("div")(({ theme }) => ({
     margin: "30px",
@@ -27,9 +28,14 @@ const Container = styled("div")(({ theme }) => ({
 
 
 const Previsions = (user) =>{
-
+    
+    const [validationEntete,setValidationEntete]=useState([]);
+    const [validationList, setValidationList] = useState([]);
     const [isButtonValidated, setIsButtonValidated] = useState(false);
-    const [password, setPassword] = useState('');
+    const [PrevisionBudgetaire, setPrevisionBudgetaire] = useState([{
+        PREVISION: '', // Use the PREVISION value from Prix
+        DATE_PREVISION: '',
+    }]);
     const [isLoading, setIsLoading] = useState(true);
     const [prix,setPrix]=useState([{
         PREVISION : " ",
@@ -50,8 +56,6 @@ const Previsions = (user) =>{
         PRIX_ART:"",
         OBSERVATION:"",
     }])
-    const [validationEntete,setValidationEntete]=useState([]);
-    const [validationList, setValidationList] = useState([]);
 
     const handlePrint = () => {
         const printContent = document.getElementById("impression");
@@ -87,7 +91,7 @@ const Previsions = (user) =>{
         } catch (error) {
             console.error(error);
         }
-    };
+    }; 
 
     const chargeListValidation = async()=>{
         try {
@@ -145,6 +149,17 @@ const Previsions = (user) =>{
         PRIX_ART: "",
         OBSERVATION: "",
     };
+    const addPrevision = async () => {
+        try {
+            const response = await axios.post('http://localhost:8080/prevision', {
+                PREVISION: Prix.PREVISION, // Use the PREVISION value from Prix
+                DATE_PREVISION: format(new Date(), 'yyyy-MM-dd'), // Current date as validation date
+            });
+            setPrevisionBudgetaire(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     useEffect(() => {
         chargeListValidation();
         chargerPrix();
@@ -163,6 +178,17 @@ const Previsions = (user) =>{
     }, [isButtonValidated]);
 
     const [currentYear] = useState(new Date().getFullYear());
+
+    const handelReanitialiser= async()=>{
+        localStorage.removeItem('isButtonValidated');
+
+        axios.delete(`http://localhost:8080/validation`).then(reponse=>{
+
+            chargeListValidation();
+        }).catch (error =>{
+            console.error(`Erreur: ${error}`)
+        }) 
+    }
 
     return(
         <Container>
@@ -219,7 +245,7 @@ const Previsions = (user) =>{
                                         <tr>  
                                             <th > Total = </th>
                                             <td colSpan={'3'}> </td>
-                                            <td  align="left">{Prix.PREVISION}  </td>
+                                            <td  align="left">{Prix.PREVISION}</td>
                                         </tr>
                                 </tbody>
  
@@ -232,8 +258,46 @@ const Previsions = (user) =>{
                 )}
             </div>
 
-            <div className="text-start mt-3">
-                {typeCompte === "Admin" && (
+            <div className="text-start mt-3 ">
+                {typeCompte ==="BAG"&&(
+                    <div className="text-end mb-2">
+                        <button className="btn btn-info"
+                            onClick={()=>{
+                            Swal.fire({
+                                title: `Attention ! Si vous le validez maintenant, la prévision de l'année ${currentYear + 1} sera confirmée et vous ne pourrez plus apporter de modifications. `,
+                                input: 'password',
+                                inputPlaceholder: 'Mot de passe',
+                                showCancelButton: true,
+                                confirmButtonText: 'Valider',
+                                cancelButtonText: 'Annuler',
+                                html: `
+                                <div class="text-center" >
+                                <p class="h4"> Pour Confirmer Saisir votre mot de passe </p>
+                                </div>
+                            `,
+                                allowOutsideClick: false,
+                                inputValidator: (value) => {
+                                    if (!value) {
+                                        return 'Veuillez entrer le mot de passe';
+                                    }
+                                },
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    if (result.value === PASSWORD) {
+                                        handelReanitialiser();
+                                        window.location.reload()
+                                    } else {
+                                        Swal.fire('Mot de passe incorrect', 'Veuillez réessayer.', 'error');
+                                    }
+                                }
+                            });
+                        }}
+                        >
+                            <RestorePageIcon/> Réinitialiser
+                        </button>
+                    </div>
+                ) }
+                {typeCompte === "BAG" && (
                     <button
                         className="btn btn-primary ms-3 me-3"
                         onClick={() => {
@@ -259,6 +323,7 @@ const Previsions = (user) =>{
                                 if (result.isConfirmed) {
                                     if (result.value === PASSWORD) {
                                         setIsButtonValidated(true);
+                                        addPrevision();
                                     } else {
                                         Swal.fire('Mot de passe incorrect', 'Veuillez réessayer.', 'error');
                                     }
@@ -268,7 +333,7 @@ const Previsions = (user) =>{
                         disabled={isButtonValidated || validationList.length === 0}
                     >
                         {isButtonValidated ? (
-                            <span>
+                            <span className="ms-4 me-4">
                                 <DoneAllIcon style={{ color: 'white' }} /> Validé
                             </span>
                         ) : (
@@ -276,7 +341,7 @@ const Previsions = (user) =>{
                         )}
                     </button>
                 )}
-                {typeCompte === "Admin" && (
+                {typeCompte === "BAG" && (
                     <button
                         className="btn btn-danger ps-3 pe-3"
                         onClick={handlePrint}
@@ -286,7 +351,7 @@ const Previsions = (user) =>{
                     </button>
                 )}
 
-                {typeCompte === "Admin" && (
+                {typeCompte === "BAG" && (
                     <button
                         className="btn btn-success ms-3"
                         onClick={handleExportExcel}

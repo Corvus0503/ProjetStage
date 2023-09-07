@@ -602,6 +602,31 @@ const getValidationBesoin = async (req,res)=>{
   }
 }
 
+const getPrixPrevisionnel=async (req,res)=>{
+  const query =`
+                SELECT SERVICE.LIBELLE, SUM(VALIDATION.QUANTITE_ACC * ARTICLE.PRIX_ART) AS PREVISION FROM
+                    (((((((VALIDATION
+                    INNER JOIN BESOIN ON VALIDATION.NUM_BESOIN = BESOIN.NUM_BESOIN)
+                    INNER JOIN ARTICLE ON BESOIN.FORMULE = ARTICLE.FORMULE)
+                    INNER JOIN AGENT ON BESOIN.MATRICULE = AGENT.MATRICULE)
+                    INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT)
+                    INNER JOIN DIVISION ON AGENT.CODE_DIVISION = DIVISION.CODE_DIVISION)
+                    INNER JOIN SERVICE ON DIVISION.CODE_SER = SERVICE.CODE_SER)
+                    INNER JOIN COMPTE ON CATEGORIE.NUM_CMPT = COMPTE.NUM_CMPT)
+                    GROUP BY 
+                        SERVICE.LIBELLE`;
+  try {
+        const connection = await getConnection();
+        const result = await connection.execute(query);
+        res.json(result.rows);
+        await connection.commit();
+        await connection.close()
+  } catch (error) {
+    console.error("Erreur lors de l'affichage du besoin :", error);
+    res.status(500).json({ error: 'Internal server error' });
+}
+}
+
 const addValidation = async(req,res,NUM_BESOIN, DATE_VALIDATION, QUANTITE_ACC) => {
   const query = `
       INSERT INTO VALIDATION (NUM_VALIDATION,NUM_BESOIN, DATE_VALIDATION, QUANTITE_ACC) 
@@ -685,13 +710,12 @@ const deleteCategorie = async (req, res,id) => {
 };
 
 
-// Requetes article
-
 const getArticle = async (req, res) => {
   try {
     const connection = await getConnection();
     const result = await connection.execute('SELECT ARTICLE.*, CATEGORIE.LABEL_CAT FROM ARTICLE INNER JOIN CATEGORIE ON ARTICLE.ID_CAT = CATEGORIE.ID_CAT');
     res.json(result.rows);
+    await connection.commit();
     await connection.close();
   } catch (error) {
     console.error(error);
@@ -699,13 +723,26 @@ const getArticle = async (req, res) => {
   }
 };
 
+const getCategorieArticle = async (req,res,id) => {
+  try {
+    const connection = await getConnection();
+    const result = await connection.execute('SELECT * FROM CATEGORIE WHERE NUM_CMPT= :id',[id]);
+    res.json(result.rows);
+    await connection.commit();
+    await connection.close();
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' }) };
+};
 
-const addArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT) => {
+
+const addArticle = async (req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION) => {
   try {
     const connection = await getConnection();
     const result = await connection.execute(
-      'INSERT INTO ARTICLE(FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT) VALUES (:1, :2, :3, :4, :5, :6)',
-      [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT]
+      'INSERT INTO ARTICLE(FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT ,DATE_MODIFICATION) VALUES (FORMULE.nextval, :DESIGNATION_ART, :SPECIFICITE_ART, :UNITE_ART, :ID_CAT, :PRIX_ART, :DATE_MODIFICATION)',
+      [DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION]
     );
     res.json(result.rows);
     connection.commit()
@@ -715,14 +752,14 @@ const addArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, U
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-const updateArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id) => {
+const updateArticle = async (req, res, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION, id) => {
   try {
     // Convertir les champs numériques en nombres entiers
 
     const connection = await getConnection();
     const result = await connection.execute(
-      'UPDATE ARTICLE SET FORMULE=:1, DESIGNATION_ART=:2, SPECIFICITE_ART=:3, UNITE_ART=:4, EFFECTIF_ART=:5, ID_CAT=:6 WHERE FORMULE=:7',
-      [FORMULE, DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, EFFECTIF_ART, ID_CAT, id]
+      'UPDATE ARTICLE SET  DESIGNATION_ART=:DESIGNATION_ART, SPECIFICITE_ART=:SPECIFICITE_ART, UNITE_ART=:UNITE_ART, PRIX_ART=:PRIX_ART, ID_CAT=:ID_CAT, DATE_MODIFICATION= :DATE_MODIFICATION WHERE FORMULE=:id',
+      [DESIGNATION_ART, SPECIFICITE_ART, UNITE_ART, PRIX_ART, ID_CAT,DATE_MODIFICATION, id]
     );
     res.json(result.rows);
     connection.commit();
@@ -732,8 +769,6 @@ const updateArticle = async (req, res, FORMULE, DESIGNATION_ART, SPECIFICITE_ART
     res.status(500).json({ error: error.message });
   }
 };
-
-
 
 const deleteArticle = async (req, res, id) => {
   try {
@@ -748,6 +783,32 @@ const deleteArticle = async (req, res, id) => {
   }
 };
 
+const addPrevision = async(req,res,PREVISION, DATE_PREVISION)=>{
+  const query = ` INSERT INTO PREVISION (NUM_PREVISION, PREVISION, DATE_PREVISION) VALUES(NUM_PREVISION.nextval,:PREVISION, :DATE_PREVISION) `
+  try {
+      const connection = await getConnection();
+      const result = await connection.execute(query,[PREVISION, DATE_PREVISION]);
+      res.json(result.rows);
+      connection.commit()
+      await connection.close()
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+const getPrevision = async(req,res)=>{
+  const query = 'SELECT DATE_PREVISION, PREVISION FROM PREVISION'
+  try {
+      const connection = await getConnection();
+      const result=await connection.execute(query);
+      res.json(result.rows);
+      await connection.close();
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 
 module.exports = {
@@ -773,6 +834,7 @@ module.exports = {
     updateDivision,
     deleteDivision,
     getArticle,
+    getCategorieArticle,
     addArticle,
     updateArticle,
     deleteArticle,
@@ -786,9 +848,12 @@ module.exports = {
     getBesoinListe,
     addValidation,
     getValidation,
+    getPrixPrevisionnel,
     getValidationBesoin,
     getNotification,
     getNotificationUser,
     addNotification,
-    deleteNotification
+    deleteNotification,
+    addPrevision,
+    getPrevision
 };

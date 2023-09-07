@@ -21,6 +21,7 @@ import UpdateDivision from "./UpdateDivision";
 import NewDivision from "./NewDivision";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SearchIcon from '@mui/icons-material/Search';
+import Swal from 'sweetalert2'
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -132,7 +133,13 @@ const chargerListAdmin = async () => {
 
 const handleDelete = id=>{
     axios.delete(`http://localhost:8080/division/${id}`).then(reponse=>{
-      chargerListAdmin()}).catch (error =>{
+      chargerListAdmin();
+      Swal.fire(
+        'Confirmé!',
+        'Division supprimé.',
+        'success'
+      )
+    }).catch (error =>{
       console.error(`Erreur: ${error}`)
 }) 
 }
